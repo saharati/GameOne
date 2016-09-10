@@ -86,7 +86,8 @@ public final class Shutdown extends Thread
 					// Handled by runnable.
 					break;
 				default:
-					Broadcast.announceToOnlinePlayers("The server will be coming down in " + seconds + " seconds!");
+					final String msg = StringUtil.refineBeforeSend(activator, "The server will be coming down in " + seconds + " seconds!");
+					Broadcast.toAllUsers(msg);
 					break;
 			}
 		}
@@ -120,7 +121,8 @@ public final class Shutdown extends Thread
 					case 3:
 					case 2:
 					case 1:
-						Broadcast.announceToOnlinePlayers("The server will be coming down in " + _shutdownSeconds + " seconds!");
+						final String msg = StringUtil.refineBeforeSend("Server", "Coming down in " + _shutdownSeconds + " seconds!");
+						Broadcast.toAllUsers(msg);
 						break;
 				}
 				
@@ -184,7 +186,9 @@ public final class Shutdown extends Thread
 		if (_shutdownMode != ShutdownMode.SIGTERM)
 		{
 			LOGGER.warning(activator + " issued shutdown abort, " + _shutdownMode + " has been stopped.");
-			Broadcast.announceToOnlinePlayers("Server aborts " + _shutdownMode + " and continues normal operation.");
+			
+			final String msg = StringUtil.refineBeforeSend(activator, "Server aborts " + _shutdownMode + " and continues normal operation.");
+			Broadcast.toAllUsers(msg);
 			
 			_shutdownMode = ShutdownMode.SIGTERM;
 		}

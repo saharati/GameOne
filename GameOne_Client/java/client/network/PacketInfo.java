@@ -2,7 +2,7 @@ package client.network;
 
 import java.util.function.Supplier;
 
-import client.network.incoming.LoginResponse;
+import client.network.incoming.*;
 
 /**
  * List of all possible packets.
@@ -10,7 +10,8 @@ import client.network.incoming.LoginResponse;
  */
 public enum PacketInfo
 {
-	LOGIN(LoginResponse::new);
+	LOGIN(LoginResponse::new),
+	MESSAGE(MessageResponse::new);
 	
 	private final Supplier<IIncomingPacket> _incomingPacketFactory;
 	

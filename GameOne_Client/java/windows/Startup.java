@@ -1,4 +1,4 @@
-package client;
+package windows;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -18,7 +18,6 @@ import util.StringUtil;
 import util.configs.CommonConfig;
 import util.parsers.xml.XmlFactory;
 import util.threadpool.ThreadPool;
-import windows.Login;
 
 /**
  * This class loads client info and then connects to server.
@@ -60,7 +59,7 @@ public final class Startup extends JFrame
 		currentLoad.setText("Connecting to Server...");
 		
 		StringUtil.printSection("Network");
-		ConnectionManager.getInstance();
+		ConnectionManager.open();
 		
 		progressBar.setValue(1);
 		
@@ -85,6 +84,7 @@ public final class Startup extends JFrame
 		
 		StringUtil.printSection("Windows");
 		Login.getInstance();
+		GameSelect.getInstance();
 		
 		progressBar.setValue(4);
 		

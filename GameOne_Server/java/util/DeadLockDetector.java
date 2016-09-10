@@ -77,7 +77,9 @@ public final class DeadLockDetector extends Thread
 					
 					if (Config.RESTART_ON_DEADLOCK)
 					{
-						Broadcast.announceToOnlinePlayers("Server has stability issues - restarting now.");
+						final String msg = StringUtil.refineBeforeSend("Server", "Stability issue detected - auto restarting.");
+						
+						Broadcast.toAllUsers(msg);
 						Shutdown.getInstance().startShutdown("DeadLockDetector - Auto Restart", 30, true);
 					}
 				}

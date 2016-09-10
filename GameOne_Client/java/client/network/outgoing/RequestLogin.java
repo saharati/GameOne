@@ -3,6 +3,10 @@ package client.network.outgoing;
 import client.network.PacketInfo;
 import network.PacketWriter;
 
+/**
+ * RequestLogin packet implementation.
+ * @author Sahar
+ */
 public final class RequestLogin extends PacketWriter
 {
 	private String _username;

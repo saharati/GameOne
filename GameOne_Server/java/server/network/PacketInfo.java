@@ -2,7 +2,7 @@ package server.network;
 
 import java.util.function.Supplier;
 
-import server.network.incoming.RequestLogin;
+import server.network.incoming.*;
 
 /**
  * List of all possible packets.
@@ -10,7 +10,8 @@ import server.network.incoming.RequestLogin;
  */
 public enum PacketInfo
 {
-	LOGIN(RequestLogin::new, false);
+	LOGIN(RequestLogin::new, false),
+	MESSAGE(RequestMessage::new, true);
 	
 	private final Supplier<IIncomingPacket> _incomingPacketFactory;
 	private final boolean _authed;

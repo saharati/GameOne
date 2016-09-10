@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
@@ -22,13 +23,18 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
-import client.network.ConnectionManager;
+import client.Client;
 import client.network.outgoing.RequestLogin;
 import configs.Config;
 import gui.SpringUtilities;
 
+/**
+ * Login screen implementation.
+ * @author Sahar
+ */
 public final class Login extends JFrame
 {
+	private static final Logger LOGGER = Logger.getLogger(Login.class.getSimpleName());
 	private static final long serialVersionUID = 5594699723429753388L;
 	
 	private final JTextField _username;
@@ -86,6 +92,8 @@ public final class Login extends JFrame
 		pack();
 		setLocationRelativeTo(null);
 		setResizable(false);
+		
+		LOGGER.info("Login screen loaded.");
 	}
 	
 	private void submitForm()
@@ -99,17 +107,21 @@ public final class Login extends JFrame
 			try
 			{
 				final String username = _username.getText();
+				final String password = new String(_password.getPassword());
+				
+				Client.getInstance().setLoginDetails(username, password);
+				
 				final MessageDigest md = MessageDigest.getInstance("SHA");
-				final byte[] raw = new String(_password.getPassword()).getBytes(StandardCharsets.UTF_8);
-				final String password = Base64.getEncoder().encodeToString(md.digest(raw));
+				final byte[] raw = password.getBytes(StandardCharsets.UTF_8);
+				final String hashed = Base64.getEncoder().encodeToString(md.digest(raw));
 				final byte[] macBytes = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 				final StringBuilder sb = new StringBuilder();
 				for (int i = 0;i < macBytes.length;i++)
 					sb.append(String.format("%02X%s", macBytes[i], (i < macBytes.length - 1) ? "-" : ""));
 				final String mac = sb.toString();
-				final RequestLogin loginPacket = new RequestLogin(username, password, mac);
+				final RequestLogin loginPacket = new RequestLogin(username, hashed, mac);
 				
-				ConnectionManager.getInstance().sendPacket(loginPacket);
+				Client.getInstance().sendPacket(loginPacket);
 			}
 			catch (final NoSuchAlgorithmException e)
 			{
@@ -125,7 +137,7 @@ public final class Login extends JFrame
 	private class KeyboardLoginListener extends KeyAdapter
 	{
 		@Override
-		public void keyTyped(KeyEvent ke)
+		public void keyTyped(final KeyEvent ke)
 		{
 			if (ke.getKeyChar() == KeyEvent.VK_ENTER)
 				submitForm();

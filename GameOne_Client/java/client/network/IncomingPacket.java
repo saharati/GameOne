@@ -5,18 +5,19 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import client.Client;
 import network.PacketReader;
 
 /**
  * Initial packet handler.
  * @author Sahar
  */
-public final class IncomingPacket implements CompletionHandler<Integer, ConnectionManager>
+public final class IncomingPacket implements CompletionHandler<Integer, Client>
 {
 	private static final Logger LOGGER = Logger.getLogger(IncomingPacket.class.getName());
 	
 	@Override
-	public void completed(final Integer result, final ConnectionManager attachment)
+	public void completed(final Integer result, final Client attachment)
 	{
 		final PacketReader reader = attachment.getReader();
 		reader.getBuffer().flip();
@@ -33,7 +34,7 @@ public final class IncomingPacket implements CompletionHandler<Integer, Connecti
 	}
 	
 	@Override
-	public void failed(final Throwable exc, final ConnectionManager attachment)
+	public void failed(final Throwable exc, final Client attachment)
 	{
 		try
 		{

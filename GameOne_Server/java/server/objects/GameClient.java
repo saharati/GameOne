@@ -52,6 +52,7 @@ public final class GameClient
 	public void sendPacket(final PacketWriter packet)
 	{
 		packet.write();
+		packet.pack();
 		
 		_asynchronousSocketChannel.write(packet.getBuffer());
 	}

@@ -14,6 +14,7 @@ import server.objects.GameClient;
 import server.objects.GameStat;
 import server.objects.User;
 import util.Broadcast;
+import util.StringUtil;
 import util.configs.Config;
 import util.database.Database;
 
@@ -25,10 +26,11 @@ public final class RequestLogin implements IIncomingPacket
 {
 	private static final Logger LOGGER = Logger.getLogger(RequestLogin.class.getName());
 	
-	private static final String SELECT_USER = "SELECT id, password, lastIp, lastMac FROM users WHERE username=?";
+	private static final String SELECT_USER = "SELECT id, password, lastIp, lastMac, isGM FROM users WHERE username=?";
 	private static final String SELECT_GAMES = "SELECT gameId, score, wins, loses FROM user_games WHERE userId=?";
 	private static final String UPDATE_USER = "UPDATE users SET lastIp=?, lastMac=? WHERE id=?";
-	private static final String INSERT_USER = "INSERT INTO users (username, password, lastIp, lastMac) VALUES (?, ?, ?, ?)";
+	private static final String INSERT_USER = "INSERT INTO users (username, password, lastIp, lastMac, isGM) VALUES (?, ?, ?, ?, ?)";
+	private static final String SELECT_COUNT = "SELECT COUNT(*) FROM users";
 	
 	private String _username;
 	private String _password;
@@ -60,7 +62,7 @@ public final class RequestLogin implements IIncomingPacket
 					{
 						if (rs.getString("password").equals(_password))
 						{
-							final User user = new User(rs.getInt("id"), _username);
+							final User user = new User(rs.getInt("id"), _username, rs.getInt("isGM") == 1);
 							try (final PreparedStatement ps2 = con.prepareStatement(SELECT_GAMES))
 							{
 								ps2.setInt(1, user.getId());
@@ -83,6 +85,9 @@ public final class RequestLogin implements IIncomingPacket
 								ps2.execute();
 							}
 							
+							final String msg = StringUtil.refineBeforeSend("Server", user.getName() + " has logged on.");
+							Broadcast.toAllUsers(msg);
+							
 							client.setUser(user);
 							client.sendPacket(LoginResponse.LOGIN_OK);
 						}
@@ -93,19 +98,31 @@ public final class RequestLogin implements IIncomingPacket
 					{
 						if (Config.AUTO_CREATE_ACCOUNTS)
 						{
+							boolean setGM = false;
+							try (final PreparedStatement ps2 = con.prepareStatement(SELECT_COUNT))
+							{
+								try (final ResultSet rs2 = ps2.executeQuery())
+								{
+									if (rs2.getInt(1) == 0)
+										setGM = true;
+								}
+							}
 							try (final PreparedStatement ps2 = con.prepareStatement(INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS))
 							{
 								ps2.setString(1, _username);
 								ps2.setString(2, _password);
 								ps2.setString(3, client.getRemoteAddress().toString());
 								ps2.setString(4, _mac);
+								ps2.setInt(5, setGM ? 1 : 0);
 								ps2.executeUpdate();
 								
 								try (final ResultSet rs2 = ps2.getGeneratedKeys())
 								{
 									if (rs2.next())
 									{
-										final User user = new User(rs2.getInt(1), _username);
+										final User user = new User(rs2.getInt(1), _username, setGM);
+										final String msg = StringUtil.refineBeforeSend("Server", user.getName() + " has logged on.");
+										Broadcast.toAllUsers(msg);
 										
 										client.setUser(user);
 										client.sendPacket(LoginResponse.LOGIN_OK);

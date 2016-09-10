@@ -1,5 +1,6 @@
 package client.network;
 
+import client.Client;
 import network.PacketReader;
 
 /**
@@ -8,7 +9,7 @@ import network.PacketReader;
  */
 public interface IIncomingPacket
 {
-	public void read(final ConnectionManager client, final PacketReader packet);
+	public void read(final Client client, final PacketReader packet);
 	
-	public void run(final ConnectionManager client);
+	public void run(final Client client);
 }

@@ -4,3 +4,7 @@ Broadcast:
 * Todo.
 IncomingPacket:
 * Todo.
+
+IS GM - DO WELCOME MSG.
+CREATE ANNOUNCEMENT TABLE.
+GMs can type in chat //abort //shut //restart

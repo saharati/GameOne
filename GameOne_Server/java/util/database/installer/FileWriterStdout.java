@@ -20,12 +20,12 @@ public final class FileWriterStdout extends BufferedWriter
 		append(System.getProperty("line.separator"));
 	}
 	
-	public void println(String line) throws IOException
+	public void println(final String line) throws IOException
 	{
 		append(line + System.getProperty("line.separator"));
 	}
 	
-	public void print(String text) throws IOException
+	public void print(final String text) throws IOException
 	{
 		append(text);
 	}

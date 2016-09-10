@@ -1,16 +1,14 @@
-package server.network.outgoing;
+package network;
 
 import java.nio.ByteBuffer;
-
-import server.network.GameClient;
 
 /**
  * Outgoing packet implementation.
  * @author Sahar
  */
-public abstract class OutgoingPacket
+public abstract class PacketWriter
 {
-	private final ByteBuffer _buf = ByteBuffer.allocateDirect(GameClient.BUFFER_SIZE);
+	private final ByteBuffer _buf = ByteBuffer.allocateDirect(1024);
 	
 	public abstract void write();
 	
@@ -22,6 +20,14 @@ public abstract class OutgoingPacket
 	public final int getRemainingBytes()
 	{
 		return _buf.remaining();
+	}
+	
+	public final void pack()
+	{
+		_buf.limit(_buf.position());
+		_buf.rewind();
+		_buf.compact();
+		_buf.flip();
 	}
 	
 	protected final void writeByte(final byte val)

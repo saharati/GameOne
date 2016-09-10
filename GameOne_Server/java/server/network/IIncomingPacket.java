@@ -1,6 +1,7 @@
-package server.network.incoming;
+package server.network;
 
-import server.network.GameClient;
+import network.PacketReader;
+import server.objects.GameClient;
 
 /**
  * Interface for incoming packet implementation.

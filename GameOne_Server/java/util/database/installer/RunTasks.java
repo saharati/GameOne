@@ -24,7 +24,7 @@ public final class RunTasks extends Thread
 	public void run()
 	{
 		final ScriptExecutor exec = new ScriptExecutor(_frame);
-		final File clnFile = new File("cleanup.sql");
+		final File clnFile = new File("./sql/clean/cleanup.sql");
 		final File sqlDir = new File("./sql/");
 		
 		exec.createDump();

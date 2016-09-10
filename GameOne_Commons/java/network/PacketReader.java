@@ -1,4 +1,4 @@
-package server.network.incoming;
+package network;
 
 import java.nio.ByteBuffer;
 

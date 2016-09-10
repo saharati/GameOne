@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 import org.xml.sax.SAXException;
 
 import server.network.ConnectionManager;
-import server.network.UPnPService;
 import util.Broadcast;
 import util.StringUtil;
+import util.UPnPService;
 import util.database.Database;
 import util.threadpool.ThreadPool;
 
@@ -133,7 +133,7 @@ public final class Shutdown extends Thread
 					return;
 			}
 		}
-		catch (InterruptedException e)
+		catch (final InterruptedException e)
 		{
 			
 		}
@@ -179,7 +179,7 @@ public final class Shutdown extends Thread
 		}
 	}
 	
-	public void abort(String activator)
+	public void abort(final String activator)
 	{
 		if (_shutdownMode != ShutdownMode.SIGTERM)
 		{

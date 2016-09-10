@@ -112,10 +112,10 @@ public final class ScriptExecutor implements FileFilter
 			try (final Statement s = con.createStatement();
 				final ResultSet rset = s.executeQuery("SHOW TABLES"))
 			{
-				final File dir = new File("dumps");
-				dir.mkdir();
+				final File dir = new File("./log/dumps");
+				dir.mkdirs();
 				
-				final File dump = new File("dumps", form.format("gameOne_dump_%2$tY%2$tm%2$td-%2$tH%2$tM%2$tS.sql", Calendar.getInstance().getTime()).toString());
+				final File dump = new File("./log/dumps", form.format("gameOne_dump_%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS.sql", Calendar.getInstance().getTime()).toString());
 				dump.createNewFile();
 				
 				_frame.appendToProgressArea("Writing dump " + dump.getName());

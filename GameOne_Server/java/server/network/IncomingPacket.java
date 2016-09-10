@@ -1,12 +1,12 @@
-package server.network.incoming;
+package server.network;
 
 import java.io.IOException;
 import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import server.network.GameClient;
-import server.network.PacketInfo;
+import network.PacketReader;
+import server.objects.GameClient;
 import util.Broadcast;
 
 /**
@@ -21,6 +21,8 @@ public final class IncomingPacket implements CompletionHandler<Integer, GameClie
 	public void completed(final Integer result, final GameClient attachment)
 	{
 		final PacketReader reader = attachment.getReader();
+		reader.getBuffer().flip();
+		
 		final int opCode = reader.readInt();
 		final PacketInfo inf = PacketInfo.values()[opCode];
 		if (inf.isAuthedState() != attachment.isAuthed())
@@ -32,7 +34,6 @@ public final class IncomingPacket implements CompletionHandler<Integer, GameClie
 		}
 		
 		final IIncomingPacket packet = inf.newIncomingPacket();
-		
 		packet.read(attachment, reader);
 		packet.run(attachment);
 		
@@ -40,16 +41,10 @@ public final class IncomingPacket implements CompletionHandler<Integer, GameClie
 		
 		attachment.getAsynchronousSocketChannel().read(reader.getBuffer(), attachment, this);
 	}
-
+	
 	@Override
 	public void failed(final Throwable exc, final GameClient attachment)
 	{
-		// TODO AsynchronousCloseException ?
-		
-		LOGGER.log(Level.WARNING, "Error during communication, disconnecting user! ", exc);
-		
-		Broadcast.THREADS.remove(this);
-		
 		try
 		{
 			if (attachment.getAsynchronousSocketChannel().isOpen())
@@ -60,8 +55,10 @@ public final class IncomingPacket implements CompletionHandler<Integer, GameClie
 			LOGGER.log(Level.WARNING, "Error while closing connection: ", e);
 		}
 		
+		Broadcast.THREADS.remove(attachment);
+		
 		if (attachment.getUser() == null)
-			LOGGER.info("A connection has been terminated.");
+			LOGGER.info(attachment.getRemoteAddress() + " terminated the connection.");
 		else
 		{
 			// TODO
@@ -73,6 +70,7 @@ public final class IncomingPacket implements CompletionHandler<Integer, GameClie
 
 			new WaitingRoomInfo(this);
 			 */
+			
 			LOGGER.info("User: " + attachment.getUser().getName() + " has logged off.");
 		}
 	}

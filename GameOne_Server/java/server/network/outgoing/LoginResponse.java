@@ -1,13 +1,13 @@
-package server.network.outgoing.impl;
+package server.network.outgoing;
 
+import network.PacketWriter;
 import server.network.PacketInfo;
-import server.network.outgoing.OutgoingPacket;
 
 /**
  * Outgoing Login packet implementation.
  * @author Sahar
  */
-public final class LoginResponse extends OutgoingPacket
+public final class LoginResponse extends PacketWriter
 {
 	public static final LoginResponse LOGIN_OK = new LoginResponse((byte) 1);
 	public static final LoginResponse LOGIN_FAILED = new LoginResponse((byte) -1);

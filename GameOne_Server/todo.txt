@@ -1,11 +1,6 @@
+IPConfig:
+* IPv6 support.
 Broadcast:
 * Todo.
-User:
-* Todo.
-Shutdown:
-* Build user button to shutdown in client for GMs.
 IncomingPacket:
 * Todo.
-RequestLogin:
-* Send the password already encryptyed from client.
-* Add hardware ID.

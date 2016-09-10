@@ -1,5 +1,6 @@
 package util.database.installer;
 
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import util.database.installer.console.DBInstallerConsole;
@@ -16,6 +17,7 @@ public final class Launcher
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			JFrame.setDefaultLookAndFeelDecorated(true);
 			
 			new DBConfigGUI();
 		}

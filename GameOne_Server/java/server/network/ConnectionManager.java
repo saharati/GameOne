@@ -3,14 +3,13 @@ package server.network;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+import server.objects.GameClient;
 import util.configs.Config;
 
 /**
@@ -27,9 +26,7 @@ public final class ConnectionManager
 	{
 		try
 		{
-			final AsynchronousChannelGroup group = AsynchronousChannelGroup.withThreadPool(Executors.newSingleThreadExecutor());
-			
-			_asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open(group);
+			_asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open();
 			_asynchronousServerSocketChannel.bind(new InetSocketAddress(Config.PORT), 0);
 			
 			while (_asynchronousServerSocketChannel.isOpen())

@@ -1,0 +1,10 @@
+Does client needs deadlock detector?
+Is shutdown hook needed in order to properly shut network connection? if so need to close connection and shutdown threadpool.
+Builder user button for GMs to shutdown server via client.
+
+IncomingPacket:
+* Todo.
+LoginResponse:
+* Todo
+Login:
+* Keep record of username/password, otherwise there's no point in _prop var.

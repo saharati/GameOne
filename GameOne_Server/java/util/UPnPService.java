@@ -1,4 +1,4 @@
-package server.network;
+package util;
 
 import java.io.IOException;
 import java.net.InetAddress;

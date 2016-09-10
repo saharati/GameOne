@@ -1,0 +1,15 @@
+10-09-2016 17:05:01	INFO	1	util.configs.IPConfig	Adding new subnet: 127.0.0.0/8 address: 127.0.0.1
+10-09-2016 17:05:01	INFO	1	util.configs.IPConfig	Adding new subnet: 192.168.1.0/24 address: 192.168.1.31
+10-09-2016 17:05:01	INFO	1	util.configs.IPConfig	Adding new subnet: 0.0.0.0/0 address: 84.109.127.119
+10-09-2016 17:05:01	INFO	1	util.StringUtil	--------------------------------------=[ Parsers ]
+10-09-2016 17:05:01	INFO	1	util.parsers.xml.XmlFactory	XmlFactory initialized.
+10-09-2016 17:05:01	INFO	1	util.StringUtil	-------------------------------------=[ Database ]
+10-09-2016 17:05:01	INFO	14	com.mchange.v2.log.MLog	MLog clients using java 1.4+ standard logging.
+10-09-2016 17:05:01	INFO	1	com.mchange.v2.c3p0.C3P0Registry	Initializing c3p0-0.9.5-pre5 [debug? false; trace: 5]
+10-09-2016 17:05:01	INFO	1	util.StringUtil	-----------------------------------=[ ThreadPool ]
+10-09-2016 17:05:01	INFO	1	util.threadpool.ThreadPool	Initialized 32 scheduled, 16 instant thread(s).
+10-09-2016 17:05:01	INFO	1	util.StringUtil	--------------------------------------=[ Network ]
+10-09-2016 17:05:01	INFO	1	util.UPnPService	Looking for UPnP Gateway Devices...
+10-09-2016 17:05:01	INFO	1	util.UPnPService	Using UPnP gateway: SAGEM EMTA42-1.
+10-09-2016 17:05:01	INFO	1	util.UPnPService	Using local address: 192.168.1.31 External address: 84.109.127.119.
+10-09-2016 17:05:02	INFO	1	util.UPnPService	Mapping already exists on [192.168.1.31:777]

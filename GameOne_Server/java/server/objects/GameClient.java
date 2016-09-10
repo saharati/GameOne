@@ -1,14 +1,13 @@
-package server.network;
+package server.objects;
 
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.logging.Logger;
 
-import server.network.incoming.IncomingPacket;
-import server.network.incoming.PacketReader;
-import server.network.outgoing.OutgoingPacket;
-import server.objects.User;
+import network.PacketReader;
+import network.PacketWriter;
+import server.network.IncomingPacket;
 import util.Broadcast;
 
 /**
@@ -17,16 +16,14 @@ import util.Broadcast;
  */
 public final class GameClient
 {
-	public static final int BUFFER_SIZE = 1024; // 1kb, change according to program's needs.
-	
 	private static final Logger LOGGER = Logger.getLogger(GameClient.class.getName());
 	
 	private final AsynchronousSocketChannel _asynchronousSocketChannel;
-	private final PacketReader _reader = new PacketReader(ByteBuffer.allocateDirect(BUFFER_SIZE));
+	private final PacketReader _reader = new PacketReader(ByteBuffer.allocateDirect(1024));
 	private final SocketAddress _remoteAddr;
 	
 	private User _user;
-	 
+	
 	public GameClient(final AsynchronousSocketChannel asynchronousSocketChannel, final SocketAddress remoteAddress)
 	{
 		_asynchronousSocketChannel = asynchronousSocketChannel;
@@ -52,8 +49,10 @@ public final class GameClient
 		return _remoteAddr;
 	}
 	
-	public void sendPacket(OutgoingPacket packet)
+	public void sendPacket(final PacketWriter packet)
 	{
+		packet.write();
+		
 		_asynchronousSocketChannel.write(packet.getBuffer());
 	}
 	
@@ -62,7 +61,7 @@ public final class GameClient
 		return _user;
 	}
 	
-	public void setUser(User user)
+	public void setUser(final User user)
 	{
 		_user = user;
 		

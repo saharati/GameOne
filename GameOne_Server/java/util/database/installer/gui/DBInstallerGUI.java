@@ -1,8 +1,6 @@
 package util.database.installer.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.sql.Connection;
 
 import javax.swing.JFrame;
@@ -31,15 +29,7 @@ public final class DBInstallerGUI extends JFrame implements DBInstallerInterface
 		
 		_con = con;
 		
-		final int width = 480;
-		final int height = 360;
-		final Dimension resolution = Toolkit.getDefaultToolkit().getScreenSize();
-		
 		setLayout(new BorderLayout());
-		setDefaultLookAndFeelDecorated(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds((resolution.width - width) / 2, (resolution.height - height) / 2, width, height);
-		setResizable(false);
 		
 		_progBar = new JProgressBar();
 		_progBar.setIndeterminate(true);
@@ -53,6 +43,11 @@ public final class DBInstallerGUI extends JFrame implements DBInstallerInterface
 		appendToProgressArea("Connected");
 		
 		add(scrollPane, BorderLayout.CENTER);
+		
+		pack();
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 	}
 	
 	@Override

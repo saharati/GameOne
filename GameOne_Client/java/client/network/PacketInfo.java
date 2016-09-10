@@ -1,8 +1,8 @@
-package server.network;
+package client.network;
 
 import java.util.function.Supplier;
 
-import server.network.incoming.RequestLogin;
+import client.network.incoming.LoginResponse;
 
 /**
  * List of all possible packets.
@@ -10,24 +10,17 @@ import server.network.incoming.RequestLogin;
  */
 public enum PacketInfo
 {
-	LOGIN(RequestLogin::new, false);
+	LOGIN(LoginResponse::new);
 	
 	private final Supplier<IIncomingPacket> _incomingPacketFactory;
-	private final boolean _authed;
 	
-	private PacketInfo(final Supplier<IIncomingPacket> incomingPacketFactory, final boolean authed)
+	private PacketInfo(final Supplier<IIncomingPacket> incomingPacketFactory)
 	{
 		_incomingPacketFactory = incomingPacketFactory;
-		_authed = authed;
 	}
 	
 	public IIncomingPacket newIncomingPacket()
 	{
 		return _incomingPacketFactory.get();
-	}
-	
-	public boolean isAuthedState()
-	{
-		return _authed;
 	}
 }

@@ -1,19 +1,16 @@
 package server;
 
 import java.awt.Toolkit;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.util.logging.LogManager;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import server.network.ConnectionManager;
-import server.network.UPnPService;
 import util.DeadLockDetector;
 import util.StringUtil;
+import util.UPnPService;
+import util.configs.CommonConfig;
 import util.configs.Config;
 import util.configs.IPConfig;
 import util.database.Database;
@@ -28,17 +25,9 @@ public final class Startup
 {
 	private static final Logger LOGGER = Logger.getLogger(Startup.class.getName());
 	
-	public static void main(final String[] args) throws FileNotFoundException, IOException
+	public static void main(final String[] args) throws SecurityException, URISyntaxException, IOException
 	{
-		new File("./log").mkdir();
-		try (final InputStream is = new FileInputStream(new File("configs/log.cfg")))
-		{
-			LogManager.getLogManager().readConfiguration(is);
-		}
-		
-		StringUtil.printSection("GameOne Server - Sahar Atias");
-		
-		StringUtil.printSection("Configs");
+		CommonConfig.load();
 		IPConfig.load();
 		Config.load();
 		

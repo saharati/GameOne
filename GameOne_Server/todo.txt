@@ -1,10 +1,12 @@
 IPConfig:
 * IPv6 support.
-Broadcast:
-* Todo.
 IncomingPacket:
 * Todo.
+User:
+* Add _currentGameId var.
 
-IS GM - DO WELCOME MSG.
-CREATE ANNOUNCEMENT TABLE.
-GMs can type in chat //abort //shut //restart
+Create build.xml:
+* Runnable jar for Launcher.java and convert to exe.
+* Runnable jar for Startup.java and convert to exe.
+* Copy sql and configs directories as they are.
+* Copy libs/* to install dir.

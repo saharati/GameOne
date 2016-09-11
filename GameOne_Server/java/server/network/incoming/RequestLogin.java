@@ -47,6 +47,14 @@ public final class RequestLogin implements IIncomingPacket
 	@Override
 	public void run(final GameClient client)
 	{
+		if (_username == null || _password == null || _mac == null)
+			return;
+		
+		_username = _username.trim();
+		_password = _password.trim();
+		if (_username.isEmpty() || _password.isEmpty())
+			return;
+		
 		if (Broadcast.THREADS.size() > Config.MAXIMUM_ONLINE_USERS)
 			client.sendPacket(LoginResponse.SERVER_FULL);
 		else
@@ -62,7 +70,7 @@ public final class RequestLogin implements IIncomingPacket
 					{
 						if (rs.getString("password").equals(_password))
 						{
-							final User user = new User(rs.getInt("id"), _username, rs.getInt("isGM") == 1);
+							final User user = new User(rs.getInt("id"), _username, rs.getInt("isGM") == 1, client);
 							try (final PreparedStatement ps2 = con.prepareStatement(SELECT_GAMES))
 							{
 								ps2.setInt(1, user.getId());
@@ -89,7 +97,7 @@ public final class RequestLogin implements IIncomingPacket
 							Broadcast.toAllUsers(msg);
 							
 							client.setUser(user);
-							client.sendPacket(LoginResponse.LOGIN_OK);
+							client.sendPacket(new LoginResponse(LoginResponse.LOGIN_OK, user));
 						}
 						else
 							client.sendPacket(LoginResponse.LOGIN_FAILED);
@@ -120,12 +128,12 @@ public final class RequestLogin implements IIncomingPacket
 								{
 									if (rs2.next())
 									{
-										final User user = new User(rs2.getInt(1), _username, setGM);
+										final User user = new User(rs2.getInt(1), _username, setGM, client);
 										final String msg = StringUtil.refineBeforeSend("Server", user.getName() + " has logged on.");
 										Broadcast.toAllUsers(msg);
 										
 										client.setUser(user);
-										client.sendPacket(LoginResponse.LOGIN_OK);
+										client.sendPacket(new LoginResponse(LoginResponse.LOGIN_OK, user));
 									}
 									else
 										client.sendPacket(LoginResponse.SERVER_ERROR);

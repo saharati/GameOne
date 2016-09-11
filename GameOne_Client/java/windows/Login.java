@@ -39,19 +39,17 @@ public final class Login extends JFrame
 	
 	private final JTextField _username;
 	private final JPasswordField _password;
-	private final Preferences _prop;
 	
 	private Login()
 	{
 		super("GameOne Client - Sahar Atias");
 		
-		_prop = Preferences.userRoot();
-		
+		final Preferences prop = Preferences.userRoot();
 		final KeyboardLoginListener enterListener = new KeyboardLoginListener();
 		
 		// Username
 		_username = new JTextField(15);
-		_username.setText(_prop.get("user_gameOne", ""));
+		_username.setText(prop.get("user_gameOne", ""));
 		_username.addKeyListener(enterListener);
 		
 		final JLabel labelUsername = new JLabel("Username: ", SwingConstants.LEFT);
@@ -62,7 +60,7 @@ public final class Login extends JFrame
 		
 		// Password
 		_password = new JPasswordField(15);
-		_password.setText(_prop.get("pass_gameOne", ""));
+		_password.setText(prop.get("pass_gameOne", ""));
 		_password.addKeyListener(enterListener);
 		
 		final JLabel labelPassword = new JLabel("Password: ", SwingConstants.LEFT);

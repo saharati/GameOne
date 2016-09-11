@@ -20,4 +20,11 @@ public final class Broadcast
 		
 		THREADS.stream().filter(t -> t.isAuthed()).forEach(t -> t.sendPacket(msg));
 	}
+	
+	public static void toAllUsersExcept(final String text, final GameClient client)
+	{
+		final MessageResponse msg = new MessageResponse(text);
+		
+		THREADS.stream().filter(t -> t.isAuthed() && t != client).forEach(t -> t.sendPacket(msg));
+	}
 }

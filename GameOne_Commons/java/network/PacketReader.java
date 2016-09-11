@@ -60,6 +60,11 @@ public final class PacketReader
 		return _buf.getChar();
 	}
 	
+	public boolean readBoolean()
+	{
+		return _buf.get() == 1;
+	}
+	
 	public String readString()
 	{
 		final StringBuilder sb = new StringBuilder();

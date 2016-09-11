@@ -8,7 +8,9 @@ import java.util.logging.Logger;
 import network.PacketReader;
 import network.PacketWriter;
 import server.network.IncomingPacket;
+import server.network.outgoing.MessageResponse;
 import util.Broadcast;
+import util.StringUtil;
 
 /**
  * This class represents a game client attached to the server.
@@ -55,6 +57,14 @@ public final class GameClient
 		packet.pack();
 		
 		_asynchronousSocketChannel.write(packet.getBuffer());
+	}
+	
+	public void sendPacket(final String sender, final String msg)
+	{
+		final String refinedMsg = StringUtil.refineBeforeSend(sender, msg);
+		final MessageResponse packet = new MessageResponse(refinedMsg);
+		
+		sendPacket(packet);
 	}
 	
 	public User getUser()

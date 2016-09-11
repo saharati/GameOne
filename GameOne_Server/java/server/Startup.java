@@ -6,6 +6,8 @@ import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
+import data.sql.AnnouncementsTable;
+import handlers.AdminCommandHandler;
 import server.network.ConnectionManager;
 import util.DeadLockDetector;
 import util.StringUtil;
@@ -36,9 +38,13 @@ public final class Startup
 		
 		StringUtil.printSection("Database");
 		Database.load();
+		AnnouncementsTable.getInstance();
 		
 		StringUtil.printSection("ThreadPool");
 		ThreadPool.load();
+		
+		StringUtil.printSection("Handlers");
+		LOGGER.info("Loaded " + AdminCommandHandler.getInstance().size() + " admin commands.");
 		
 		StringUtil.printSection("Network");
 		UPnPService.openPorts();

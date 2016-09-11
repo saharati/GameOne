@@ -12,13 +12,15 @@ public final class User
 	private final int _id;
 	private final String _name;
 	private final boolean _isGM;
+	private final GameClient _client;
 	private final Map<Integer, GameStat> _gameStats = new HashMap<>();
 	
-	public User(final int id, final String name, final boolean isGM)
+	public User(final int id, final String name, final boolean isGM, final GameClient client)
 	{
 		_id = id;
 		_name = name;
 		_isGM = isGM;
+		_client = client;
 	}
 	
 	public int getId()
@@ -34,6 +36,11 @@ public final class User
 	public boolean isGM()
 	{
 		return _isGM;
+	}
+	
+	public GameClient getClient()
+	{
+		return _client;
 	}
 	
 	public Map<Integer, GameStat> getGameStats()

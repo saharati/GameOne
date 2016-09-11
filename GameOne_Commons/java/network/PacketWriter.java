@@ -65,6 +65,11 @@ public abstract class PacketWriter
 		_buf.putChar(val);
 	}
 	
+	protected final void writeBoolean(final boolean val)
+	{
+		_buf.put((byte) (val ? 1 : 0));
+	}
+	
 	protected final void writeString(final String val)
 	{
 		if (val != null)

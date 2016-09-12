@@ -3,7 +3,7 @@ package client.network.incoming;
 import javax.swing.JOptionPane;
 
 import client.Client;
-import client.network.IIncomingPacket;
+import network.IIncomingPacket;
 import network.PacketReader;
 import windows.GameSelect;
 import windows.Login;
@@ -12,7 +12,7 @@ import windows.Login;
  * LoginResponse packet implementation.
  * @author Sahar
  */
-public final class LoginResponse implements IIncomingPacket
+public final class LoginResponse implements IIncomingPacket<Client>
 {
 	private static final byte LOGIN_OK = 1;
 	private static final byte LOGIN_FAILED = -1;

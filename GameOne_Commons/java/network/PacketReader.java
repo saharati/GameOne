@@ -8,12 +8,7 @@ import java.nio.ByteBuffer;
  */
 public final class PacketReader
 {
-	private final ByteBuffer _buf;
-	
-	public PacketReader(final ByteBuffer buf)
-	{
-		_buf = buf;
-	}
+	private final ByteBuffer _buf = ByteBuffer.allocateDirect(1024);
 	
 	public ByteBuffer getBuffer()
 	{

@@ -1,7 +1,7 @@
 package client.network.incoming;
 
 import client.Client;
-import client.network.IIncomingPacket;
+import network.IIncomingPacket;
 import network.PacketReader;
 import windows.GameSelect;
 
@@ -9,7 +9,7 @@ import windows.GameSelect;
  * MessageResponse packet implementation.
  * @author Sahar
  */
-public final class MessageResponse implements IIncomingPacket
+public final class MessageResponse implements IIncomingPacket<Client>
 {
 	private String _message;
 	

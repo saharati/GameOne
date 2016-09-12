@@ -2,7 +2,9 @@ package client.network;
 
 import java.util.function.Supplier;
 
+import client.Client;
 import client.network.incoming.*;
+import network.IIncomingPacket;
 
 /**
  * List of all possible packets.
@@ -13,14 +15,14 @@ public enum PacketInfo
 	LOGIN(LoginResponse::new),
 	MESSAGE(MessageResponse::new);
 	
-	private final Supplier<IIncomingPacket> _incomingPacketFactory;
+	private final Supplier<IIncomingPacket<Client>> _incomingPacketFactory;
 	
-	private PacketInfo(final Supplier<IIncomingPacket> incomingPacketFactory)
+	private PacketInfo(final Supplier<IIncomingPacket<Client>> incomingPacketFactory)
 	{
 		_incomingPacketFactory = incomingPacketFactory;
 	}
 	
-	public IIncomingPacket newIncomingPacket()
+	public IIncomingPacket<Client> newIncomingPacket()
 	{
 		return _incomingPacketFactory.get();
 	}

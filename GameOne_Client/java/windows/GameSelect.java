@@ -138,14 +138,14 @@ public final class GameSelect extends JFrame
 	private class MouseGameSelectListener extends MouseAdapter
 	{
 		private int _gameId;
-
-		private MouseGameSelectListener(int gameId)
+		
+		private MouseGameSelectListener(final int gameId)
 		{
 			_gameId = gameId;
 		}
-
+		
 		@Override
-		public void mousePressed(MouseEvent me)
+		public void mousePressed(final MouseEvent me)
 		{
 			//_client.getConnection().gameSelect(_gameId);
 		}
@@ -154,7 +154,7 @@ public final class GameSelect extends JFrame
 	private class KeyboardChatSendListener extends KeyAdapter
 	{
 		@Override
-		public void keyTyped(KeyEvent ke)
+		public void keyTyped(final KeyEvent ke)
 		{
 			if (ke.getKeyChar() == KeyEvent.VK_ENTER)
 				sendText();

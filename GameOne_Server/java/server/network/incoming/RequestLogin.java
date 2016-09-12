@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import network.IIncomingPacket;
 import network.PacketReader;
-import server.network.IIncomingPacket;
 import server.network.outgoing.LoginResponse;
 import server.objects.GameClient;
 import server.objects.GameStat;
@@ -22,7 +22,7 @@ import util.database.Database;
  * RequestLogin packet implementation.
  * @author Sahar
  */
-public final class RequestLogin implements IIncomingPacket
+public final class RequestLogin implements IIncomingPacket<GameClient>
 {
 	private static final Logger LOGGER = Logger.getLogger(RequestLogin.class.getName());
 	
@@ -97,7 +97,8 @@ public final class RequestLogin implements IIncomingPacket
 							Broadcast.toAllUsers(msg);
 							
 							client.setUser(user);
-							client.sendPacket(new LoginResponse(LoginResponse.LOGIN_OK, user));
+							client.sendPacket(LoginResponse.LOGIN_OK);
+							client.onEnter();
 						}
 						else
 							client.sendPacket(LoginResponse.LOGIN_FAILED);
@@ -133,7 +134,8 @@ public final class RequestLogin implements IIncomingPacket
 										Broadcast.toAllUsers(msg);
 										
 										client.setUser(user);
-										client.sendPacket(new LoginResponse(LoginResponse.LOGIN_OK, user));
+										client.sendPacket(LoginResponse.LOGIN_OK);
+										client.onEnter();
 									}
 									else
 										client.sendPacket(LoginResponse.SERVER_ERROR);

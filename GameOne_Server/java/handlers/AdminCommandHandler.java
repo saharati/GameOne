@@ -1,9 +1,8 @@
 package handlers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import handlers.admin.*;
 
@@ -38,14 +37,9 @@ public final class AdminCommandHandler
 		return _datatable.size();
 	}
 	
-	public List<String> getAllAvailableCommands()
+	public Set<String> getAllAvailableCommands()
 	{
-		final List<String> list = new ArrayList<>();
-		for (final IAdminCommandHandler a : _datatable.values())
-			for (final String c : a.getVoicedCommandList())
-				list.add(c);
-		
-		return list;
+		return _datatable.keySet();
 	}
 	
 	public static AdminCommandHandler getInstance()

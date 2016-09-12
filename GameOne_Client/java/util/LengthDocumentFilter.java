@@ -8,7 +8,7 @@ import javax.swing.text.DocumentFilter;
  * Sets a max length for a certain JTextField.
  * @author Sahar
  */
-public class LengthDocumentFilter extends DocumentFilter
+public final class LengthDocumentFilter extends DocumentFilter
 {
 	private final int _maxLength;
 	

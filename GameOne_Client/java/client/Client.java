@@ -1,24 +1,20 @@
 package client;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.util.prefs.Preferences;
 
-import client.network.IncomingPacket;
-import network.PacketReader;
-import network.PacketWriter;
+import client.network.PacketInfo;
+import network.BasicClient;
+import network.IIncomingPacket;
 
 /**
  * Class holding info regarding client such as current socket, records, user etc.
  * @author Sahar
  */
-public final class Client
+public final class Client extends BasicClient
 {
 	private String _username;
 	private String _password;
-	private AsynchronousSocketChannel _channel;
-	private final PacketReader _reader = new PacketReader(ByteBuffer.allocateDirect(1024));
 	
 	public void setLoginDetails(final String username, final String password)
 	{
@@ -34,31 +30,29 @@ public final class Client
 		prop.put("pass_gameOne", _password);
 	}
 	
-	public void setChannel(final AsynchronousSocketChannel channel) throws IOException
+	@Override
+	public void readPacket()
 	{
-		if (_channel != null && _channel.isOpen())
-			_channel.close();
+		final ByteBuffer buffer = getReader().getBuffer();
+		buffer.flip();
 		
-		_channel = channel;
-		_channel.read(_reader.getBuffer(), this, new IncomingPacket());
-	}
-	
-	public AsynchronousSocketChannel getChannel()
-	{
-		return _channel;
-	}
-	
-	public PacketReader getReader()
-	{
-		return _reader;
-	}
-	
-	public void sendPacket(final PacketWriter packet)
-	{
-		packet.write();
-		packet.pack();
+		while (buffer.hasRemaining())
+		{
+			final int opCode = getReader().readInt();
+			final PacketInfo inf = PacketInfo.values()[opCode];
+			final IIncomingPacket<Client> packet = inf.newIncomingPacket();
+			packet.read(this, getReader());
+			packet.run(this);
+		}
+		buffer.clear();
 		
-		_channel.write(packet.getBuffer());
+		getChannel().read(buffer, this, getReadHandler());
+	}
+	
+	@Override
+	public void onDisconnect()
+	{
+		// TODO What do we do when we get here as a client?
 	}
 	
 	private Client() {}

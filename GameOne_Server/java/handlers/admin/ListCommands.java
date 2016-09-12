@@ -1,6 +1,6 @@
 package handlers.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import handlers.AdminCommandHandler;
 import handlers.IAdminCommandHandler;
@@ -20,7 +20,7 @@ public final class ListCommands implements IAdminCommandHandler
 	public boolean useCommand(final String command, final User user)
 	{
 		final StringBuilder sb = new StringBuilder();
-		final List<String> availableCommands = AdminCommandHandler.getInstance().getAllAvailableCommands();
+		final Set<String> availableCommands = AdminCommandHandler.getInstance().getAllAvailableCommands();
 		availableCommands.forEach(c -> sb.append(StringUtil.refineBeforeSend("Server", c)));
 		
 		final MessageResponse msg = new MessageResponse(sb.toString());

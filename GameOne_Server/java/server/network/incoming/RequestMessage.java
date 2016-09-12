@@ -4,8 +4,8 @@ import java.util.StringTokenizer;
 
 import handlers.AdminCommandHandler;
 import handlers.IAdminCommandHandler;
+import network.IIncomingPacket;
 import network.PacketReader;
-import server.network.IIncomingPacket;
 import server.objects.GameClient;
 import util.Broadcast;
 import util.StringUtil;
@@ -14,7 +14,7 @@ import util.StringUtil;
  * RequestMessage packet implementation.
  * @author Sahar
  */
-public final class RequestMessage implements IIncomingPacket
+public final class RequestMessage implements IIncomingPacket<GameClient>
 {
 	private String _message;
 	
@@ -47,8 +47,6 @@ public final class RequestMessage implements IIncomingPacket
 			{
 				if (handler.useCommand(_message, client.getUser()))
 					client.sendPacket("Server", "Command executed succesfully.");
-				else
-					sendMessage(client);
 			}
 			else
 				sendMessage(client);

@@ -1,6 +1,10 @@
 Does client needs deadlock detector?
-Is shutdown hook needed in order to properly shut network connection? if so need to close connection and shutdown threadpool.
-Build user button for GMs to shutdown server via client.
+Is shutdown hook needed in order to properly shut network connection? if so need to shutdown threadpool.
 
-IncomingPacket:
-* Todo.
+Client#onDisconnect - TODO.
+
+add logout button.
+
+add a readme telling that external program is needed to create the exe called launch4j.
+in any case include the already built program in the source.
+add icon.

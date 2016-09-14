@@ -23,8 +23,8 @@ public final class AnnouncementsTable
 	private static final Logger LOGGER = Logger.getLogger(AnnouncementsTable.class.getName());
 	
 	private static final String SELECT_ANNOUNCEMENTS = "SELECT * FROM announcements";
-	private static final String DELETE_ANNOUNCEMENT = "DELETE FROM announcements WHERE order=?";
-	private static final String ADD_ANNOUNCEMENT = "INSERT INTO announcements (?, ?)";
+	private static final String DELETE_ANNOUNCEMENT = "DELETE FROM announcements WHERE `order`=?";
+	private static final String ADD_ANNOUNCEMENT = "INSERT INTO announcements VALUES (?, ?)";
 	
 	private final Map<Integer, MessageResponse> _announcements = new ConcurrentSkipListMap<>();
 	

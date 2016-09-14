@@ -1,9 +1,7 @@
 package server;
 
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import data.sql.AnnouncementsTable;
@@ -27,7 +25,7 @@ public final class Startup
 {
 	private static final Logger LOGGER = Logger.getLogger(Startup.class.getName());
 	
-	public static void main(final String[] args) throws SecurityException, URISyntaxException, IOException
+	public static void main(final String[] args) throws Exception
 	{
 		CommonConfig.load();
 		IPConfig.load();
@@ -48,7 +46,7 @@ public final class Startup
 		
 		StringUtil.printSection("Network");
 		UPnPService.openPorts();
-		ConnectionManager.open();
+		ConnectionManager.getInstance().listen();
 		
 		StringUtil.printSection("System");
 		Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());

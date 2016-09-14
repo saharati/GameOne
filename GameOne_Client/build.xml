@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GameOne_Client" default="dist" basedir=".">
+	
+	<property name="src" location="java" />
+	<property name="build" location="build" />
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.dist" location="${build}/dist" />
+	<property name="commons" location="${basedir}/../GameOne_Commons" />
+	
+	<target name="dist" depends="jar">
+		<mkdir dir="${build.dist}/log" />
+		<mkdir dir="${build.dist}/configs" />
+		<copy todir="${build.dist}/configs">
+			<fileset dir="configs">
+				<include name="*.properties" />
+			</fileset>
+			<fileset dir="${commons}/configs">
+				<include name="log.cfg" />
+				<include name="Threads.properties" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="jar" depends="compile" description="Create the jar file.">
+		<jar destfile="${build}/GameOne_Client.jar">
+			<fileset dir="${build.classes}" />
+			<manifest>
+				<attribute name="Main-Class" value="windows.Startup" />
+			</manifest>
+		</jar>
+		<copy todir="${build.dist}">
+			<fileset dir="${build}">
+				<include name="GameOne_Client.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="compile" depends="init" description="Compile the source.">
+		<javac srcdir="${commons}/java" destdir="${build.classes}" compiler="javac1.8" debug="true" debuglevel="lines,vars,source" includeantruntime="false" source="1.8" target="1.8" />
+		<javac srcdir="${src}" destdir="${build.classes}" compiler="javac1.8" debug="true" debuglevel="lines,vars,source" includeantruntime="false" source="1.8" target="1.8" />
+	</target>
+	
+	<target name="init" depends="clean,checkRequirements" description="Create the output directories.">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.dist}" />
+	</target>
+	
+	<target name="clean" description="Remove the output directories.">
+		<delete dir="${build}" />
+	</target>
+	
+	<target name="checkRequirements" description="Check requirements.">
+		<echo message="Verification of your JDK version." />
+		<available classname="java.util.stream.Stream" property="JDK8.present" />
+		<fail unless="JDK8.present" message="Java 1.8 is required, but your version is Java ${ant.java.version}. Install latest JDK." />
+	</target>
+	
+</project>

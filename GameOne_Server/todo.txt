@@ -1,13 +1,4 @@
-IPConfig:
-* IPv6 support.
-User:
-* Add _currentGameId var.
-GameClient#onDisconnect:
-* Todo.
+IPConfig - IPv6 support.
+GameClient#onDisconnect - TODO.
 
-Create build.xml:
-* Runnable jar for Launcher.java and convert to exe.
-* Runnable jar for Startup.java and convert to exe.
-* Copy sql and configs directories as they are.
-* Copy libs/* to install dir.
-Create .bat/.sh files.
+on shutdown disconnect all players.

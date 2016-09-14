@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -93,14 +94,15 @@ public final class GameSelect extends JFrame
 		// Finally, create the chat panel, also using BorderLayout.
 		final JPanel chatPanel = new JPanel(new BorderLayout(5, 5));
 		final Font chatFont = new Font("Arial", Font.BOLD, 15);
+		final JScrollPane chat = new JScrollPane(_chat);
 		_chat.setFont(chatFont);
 		_chat.setLineWrap(true);
 		_chat.setWrapStyleWord(true);
 		_chat.setEditable(false);
 		_chat.setBorder(LineBorder.createBlackLineBorder());
-		chatPanel.add(_chat, BorderLayout.PAGE_START);
+		chatPanel.add(chat, BorderLayout.PAGE_START);
 		_sender.setBorder(LineBorder.createBlackLineBorder());
-		((AbstractDocument) _sender.getDocument()).setDocumentFilter(new LengthDocumentFilter(20));
+		((AbstractDocument) _sender.getDocument()).setDocumentFilter(new LengthDocumentFilter(40));
 		_sender.addKeyListener(new KeyboardChatSendListener());
 		chatPanel.add(_sender, BorderLayout.WEST);
 		final JButton send = new JButton("Send");

@@ -39,7 +39,7 @@ public final class Announce implements IAdminCommandHandler
 					return false;
 				}
 				
-				final String msg = st.nextToken().trim();
+				final String msg = command.substring(command.indexOf("" + order) + 1).trim();
 				if (msg.isEmpty())
 				{
 					user.getClient().sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");

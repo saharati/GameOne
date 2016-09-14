@@ -86,7 +86,7 @@ public final class Shutdown extends Thread
 					// Handled by runnable.
 					break;
 				default:
-					final String msg = StringUtil.refineBeforeSend(activator, "The server will be coming down in " + seconds + " seconds!");
+					final String msg = StringUtil.refineBeforeSend("Server", "The server will be coming down in " + seconds + " seconds!");
 					Broadcast.toAllUsers(msg);
 					break;
 			}
@@ -154,7 +154,7 @@ public final class Shutdown extends Thread
 		
 		try
 		{
-			ConnectionManager.close();
+			ConnectionManager.getInstance().close();
 			LOGGER.info("ConnectionManager: Connection closed.");
 		}
 		catch (final IOException e)
@@ -187,7 +187,7 @@ public final class Shutdown extends Thread
 		{
 			LOGGER.warning(activator + " issued shutdown abort, " + _shutdownMode + " has been stopped.");
 			
-			final String msg = StringUtil.refineBeforeSend(activator, "Server aborts " + _shutdownMode + " and continues normal operation.");
+			final String msg = StringUtil.refineBeforeSend("Server", "Server aborts " + _shutdownMode + " and continues normal operation.");
 			Broadcast.toAllUsers(msg);
 			
 			_shutdownMode = ShutdownMode.SIGTERM;

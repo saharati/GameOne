@@ -87,8 +87,15 @@ public abstract class BasicClient
 	public final void setPendingWrite(final boolean val)
 	{
 		_writeLock.lock();
-		_pendingWrite = val;
-		_writeLock.unlock();
+		
+		try
+		{
+			_pendingWrite = val;
+		}
+		finally
+		{
+			_writeLock.unlock();
+		}
 	}
 	
 	public final void executeWriteTask()
@@ -96,28 +103,35 @@ public abstract class BasicClient
 		if (!_sendQueue.isEmpty())
 		{
 			_writeLock.lock();
-			if (!_pendingWrite)
+			
+			try
 			{
-				_pendingWrite = true;
-				
-				ThreadPool.execute(() ->
+				if (!_pendingWrite)
 				{
-					final Queue<PacketWriter> copy = new ConcurrentLinkedQueue<>();
-					while (!_sendQueue.isEmpty())
-						copy.add(_sendQueue.poll());
+					_pendingWrite = true;
 					
-					int bytes = 0;
-					for (final PacketWriter packet : copy)
-						bytes += packet.getBuffer().limit();
-					final ByteBuffer toSend = ByteBuffer.allocateDirect(bytes);
-					for (final PacketWriter packet : copy)
-						toSend.put(packet.getBuffer());
-					toSend.flip();
-					
-					_channel.write(toSend, this, _writeHandler);
-				});
+					ThreadPool.execute(() ->
+					{
+						final Queue<PacketWriter> copy = new ConcurrentLinkedQueue<>();
+						while (!_sendQueue.isEmpty())
+							copy.add(_sendQueue.poll());
+						
+						int bytes = 0;
+						for (final PacketWriter packet : copy)
+							bytes += packet.getBuffer().limit();
+						final ByteBuffer toSend = ByteBuffer.allocateDirect(bytes);
+						for (final PacketWriter packet : copy)
+							toSend.put(packet.getBuffer());
+						toSend.flip();
+						
+						_channel.write(toSend, this, _writeHandler);
+					});
+				}
 			}
-			_writeLock.unlock();
+			finally
+			{
+				_writeLock.unlock();
+			}
 		}
 	}
 	

@@ -31,17 +31,30 @@ public final class CommonConfig
 	
 	public static void load() throws URISyntaxException, SecurityException, IOException
 	{
-		final String classFile = CommonConfig.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-		final String classDir = new File(classFile).getParentFile().getAbsolutePath();
-		
 		new File("./log").mkdir();
-		try (final InputStream is = new FileInputStream(new File(classDir + LOGS_FILE)))
+		
+		File logFile = new File(LOGS_FILE);
+		File threadFile;
+		// It exists only when running compiled version.
+		if (logFile.exists())
+			threadFile = new File(THREADS_FILE);
+		// Doesn't exist when running through source.
+		else
+		{
+			final String classFile = CommonConfig.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			final String classDir = new File(classFile).getParentFile().getAbsolutePath();
+			
+			logFile = new File(classDir + LOGS_FILE);
+			threadFile = new File(classDir + THREADS_FILE);
+		}
+		
+		try (final InputStream is = new FileInputStream(logFile))
 		{
 			LogManager.getLogManager().readConfiguration(is);
 		}
 		
 		// Load Threads.properties file (if exists)
-		final ExProperties threads = new ExProperties(classDir + THREADS_FILE);
+		final ExProperties threads = new ExProperties(threadFile);
 		
 		SCHEDULED_THREAD_POOL_COUNT = threads.getProperty("ScheduledThreadPoolCount", -1);
 		THREADS_PER_SCHEDULED_THREAD_POOL = threads.getProperty("ThreadsPerScheduledThreadPool", 4);

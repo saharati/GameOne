@@ -33,7 +33,7 @@ public final class RequestMessage implements IIncomingPacket<GameClient>
 		_message = _message.trim();
 		if (_message.isEmpty())
 			return;
-		if (_message.length() > 20)
+		if (_message.length() > 40)
 			return;
 		
 		if (client.getUser().isGM() && _message.startsWith("//"))

@@ -13,7 +13,8 @@ import server.objects.GameClient;
 public enum PacketInfo
 {
 	LOGIN(RequestLogin::new, false),
-	MESSAGE(RequestMessage::new, true);
+	MESSAGE(RequestMessage::new, true),
+	LOGOUT(RequestLogout::new, true);
 	
 	private final Supplier<IIncomingPacket<GameClient>> _incomingPacketFactory;
 	private final boolean _authed;

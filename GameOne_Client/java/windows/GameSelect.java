@@ -22,6 +22,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.AbstractDocument;
 
 import client.Client;
+import client.network.outgoing.RequestLogout;
 import client.network.outgoing.RequestMessage;
 import configs.Config;
 import gui.SpringUtilities;
@@ -33,8 +34,13 @@ import util.LengthDocumentFilter;
  */
 public final class GameSelect extends JFrame
 {
-	private static final Logger LOGGER = Logger.getLogger(GameSelect.class.getSimpleName());
 	private static final long serialVersionUID = 4663554734276386234L;
+	private static final Logger LOGGER = Logger.getLogger(GameSelect.class.getSimpleName());
+	private static final JButton DUMMY = new JButton();
+	static
+	{
+		DUMMY.setVisible(false);
+	}
 	
 	private JTextField _sender = new JTextField(20);
 	private JTextArea _chat = new JTextArea(10, 10);
@@ -85,8 +91,9 @@ public final class GameSelect extends JFrame
 		final JButton s2048 = new JButton("2048 (SP)");
 		s2048.addMouseListener(new MouseGameSelectListener(7));
 		buttonsPanel.add(s2048);
+		buttonsPanel.add(DUMMY);
 		
-		SpringUtilities.makeCompactGrid(buttonsPanel, 4, 2, 10, 10, 10, 10);
+		SpringUtilities.makeCompactGrid(buttonsPanel, 3, 3, 10, 10, 10, 10);
 		
 		buttonsPanel.setBackground(Config.UI_COLOR);
 		add(buttonsPanel, BorderLayout.CENTER);
@@ -104,11 +111,13 @@ public final class GameSelect extends JFrame
 		_sender.setBorder(LineBorder.createBlackLineBorder());
 		((AbstractDocument) _sender.getDocument()).setDocumentFilter(new LengthDocumentFilter(40));
 		_sender.addKeyListener(new KeyboardChatSendListener());
-		chatPanel.add(_sender, BorderLayout.WEST);
+		chatPanel.add(_sender, BorderLayout.CENTER);
 		final JButton send = new JButton("Send");
 		send.addActionListener(e -> sendText());
 		chatPanel.add(send, BorderLayout.EAST);
-		
+		final JButton logout = new JButton("Logout");
+		logout.addActionListener(e -> Client.getInstance().sendPacket(RequestLogout.STATIC_PACKET));
+		chatPanel.add(logout, BorderLayout.WEST);
 		chatPanel.setBackground(Config.UI_COLOR);
 		add(chatPanel, BorderLayout.PAGE_END);
 		
@@ -124,6 +133,11 @@ public final class GameSelect extends JFrame
 	public JTextArea getChatWindow()
 	{
 		return _chat;
+	}
+	
+	public JTextField getSender()
+	{
+		return _sender;
 	}
 	
 	private void sendText()

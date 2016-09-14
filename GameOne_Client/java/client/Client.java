@@ -3,9 +3,12 @@ package client;
 import java.nio.ByteBuffer;
 import java.util.prefs.Preferences;
 
+import javax.swing.JFrame;
+
 import client.network.PacketInfo;
 import network.BasicClient;
 import network.IIncomingPacket;
+import windows.Login;
 
 /**
  * Class holding info regarding client such as current socket, records, user etc.
@@ -15,6 +18,7 @@ public final class Client extends BasicClient
 {
 	private String _username;
 	private String _password;
+	private JFrame _currentWindow = Login.getInstance();
 	
 	public void setLoginDetails(final String username, final String password)
 	{
@@ -28,6 +32,18 @@ public final class Client extends BasicClient
 		
 		prop.put("user_gameOne", _username);
 		prop.put("pass_gameOne", _password);
+	}
+	
+	public void setCurrentWindow(final JFrame window)
+	{
+		_currentWindow.setVisible(false);
+		_currentWindow = window;
+		_currentWindow.setVisible(true);
+	}
+	
+	public JFrame getCurrentWindow()
+	{
+		return _currentWindow;
 	}
 	
 	@Override

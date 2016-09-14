@@ -13,7 +13,8 @@ import network.IIncomingPacket;
 public enum PacketInfo
 {
 	LOGIN(LoginResponse::new),
-	MESSAGE(MessageResponse::new);
+	MESSAGE(MessageResponse::new),
+	LOGOUT(LogoutResponse::new);
 	
 	private final Supplier<IIncomingPacket<Client>> _incomingPacketFactory;
 	

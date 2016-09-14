@@ -45,9 +45,12 @@ public final class GameClient extends BasicClient
 	
 	public void setUser(final User user)
 	{
-		_user = user;
+		if (user == null)
+			LOGGER.info("User: " + _user.getName() + " has logged off.");
+		else
+			LOGGER.info("User: " + user.getName() + " has logged on.");
 		
-		LOGGER.info("User: " + user.getName() + " has logged on.");
+		_user = user;
 	}
 	
 	public boolean isAuthed()

@@ -6,7 +6,6 @@ import client.Client;
 import network.IIncomingPacket;
 import network.PacketReader;
 import windows.GameSelect;
-import windows.Login;
 
 /**
  * LoginResponse packet implementation.
@@ -34,9 +33,7 @@ public final class LoginResponse implements IIncomingPacket<Client>
 		{
 			case LOGIN_OK:
 				client.storeUserDetails();
-				
-				Login.getInstance().setVisible(false);
-				GameSelect.getInstance().setVisible(true);
+				client.setCurrentWindow(GameSelect.getInstance());
 				break;
 			case LOGIN_FAILED:
 				JOptionPane.showMessageDialog(null, "Username or password incorrect.", "Login Failed", JOptionPane.ERROR_MESSAGE);

@@ -3,8 +3,6 @@ Is shutdown hook needed in order to properly shut network connection? if so need
 
 Client#onDisconnect - TODO.
 
-add logout button.
-
 add a readme telling that external program is needed to create the exe called launch4j.
 in any case include the already built program in the source.
 add icon.

@@ -112,6 +112,7 @@ public final class RequestLogin implements IIncomingPacket<GameClient>
 							{
 								try (final ResultSet rs2 = ps2.executeQuery())
 								{
+									rs2.next();
 									if (rs2.getInt(1) == 0)
 										setGM = true;
 								}

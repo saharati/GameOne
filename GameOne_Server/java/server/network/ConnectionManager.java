@@ -21,7 +21,7 @@ public final class ConnectionManager implements CompletionHandler<AsynchronousSo
 {
 	private static final Logger LOGGER = Logger.getLogger(ConnectionManager.class.getName());
 	
-	private final AsynchronousServerSocketChannel _asynchronousServerSocketChannel;
+	private AsynchronousServerSocketChannel _asynchronousServerSocketChannel;
 	
 	private ConnectionManager()
 	{
@@ -32,7 +32,9 @@ public final class ConnectionManager implements CompletionHandler<AsynchronousSo
 		}
 		catch (final IOException e)
 		{
-			throw new ExceptionInInitializerError(e);
+			LOGGER.info("Cannot bind on *:" + Config.PORT + ", address already in use, shutting down.");
+			
+			System.exit(0);
 		}
 	}
 	

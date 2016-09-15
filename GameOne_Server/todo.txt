@@ -2,3 +2,5 @@ IPConfig - IPv6 support.
 GameClient#onDisconnect - TODO.
 
 on shutdown disconnect all players.
+
+add //kick, //ban, //unban and //setgm commands.

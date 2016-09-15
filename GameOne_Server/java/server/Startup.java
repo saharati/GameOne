@@ -5,6 +5,7 @@ import java.lang.management.ManagementFactory;
 import java.util.logging.Logger;
 
 import data.sql.AnnouncementsTable;
+import data.sql.UsersTable;
 import handlers.AdminCommandHandler;
 import server.network.ConnectionManager;
 import util.DeadLockDetector;
@@ -37,6 +38,7 @@ public final class Startup
 		StringUtil.printSection("Database");
 		Database.load();
 		AnnouncementsTable.getInstance();
+		UsersTable.getInstance();
 		
 		StringUtil.printSection("ThreadPool");
 		ThreadPool.load();

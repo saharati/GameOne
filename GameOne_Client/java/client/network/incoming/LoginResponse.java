@@ -17,6 +17,7 @@ public final class LoginResponse implements IIncomingPacket<Client>
 	private static final byte LOGIN_FAILED = -1;
 	private static final byte SERVER_FULL = -2;
 	private static final byte SERVER_ERROR = -3;
+	private static final byte ALREADY_ONLINE = -4;
 	
 	private byte _result;
 	
@@ -43,6 +44,9 @@ public final class LoginResponse implements IIncomingPacket<Client>
 				break;
 			case SERVER_ERROR:
 				JOptionPane.showMessageDialog(null, "There was an error connecting to the server.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+				break;
+			case ALREADY_ONLINE:
+				JOptionPane.showMessageDialog(null, "User already online, access denied.", "Login Failed", JOptionPane.ERROR_MESSAGE);
 				break;
 		}
 	}

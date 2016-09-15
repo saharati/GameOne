@@ -1,10 +1,8 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import data.sql.UsersTable;
 import server.network.outgoing.MessageResponse;
-import server.objects.GameClient;
+import server.objects.User;
 
 /**
  * Class responsible to broadcasting packets depending on situation.
@@ -12,19 +10,17 @@ import server.objects.GameClient;
  */
 public final class Broadcast
 {
-	public static final List<GameClient> THREADS = new ArrayList<>();
-	
 	public static void toAllUsers(final String text)
 	{
 		final MessageResponse msg = new MessageResponse(text);
 		
-		THREADS.stream().filter(t -> t.isAuthed()).forEach(t -> t.sendPacket(msg));
+		UsersTable.getInstance().getOnlineUsers().forEach(u -> u.sendPacket(msg));
 	}
 	
-	public static void toAllUsersExcept(final String text, final GameClient client)
+	public static void toAllUsersExcept(final String text, final User user)
 	{
 		final MessageResponse msg = new MessageResponse(text);
 		
-		THREADS.stream().filter(t -> t.isAuthed() && t != client).forEach(t -> t.sendPacket(msg));
+		UsersTable.getInstance().getOnlineUsers().filter(u -> u != user).forEach(u -> u.sendPacket(msg));
 	}
 }

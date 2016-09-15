@@ -25,7 +25,7 @@ public final class AdminShutdown implements IAdminCommandHandler
 			case "restart":
 				if (!st.hasMoreTokens())
 				{
-					user.getClient().sendPacket("Server", "Required syntax: " + cmd + " <time>");
+					user.sendPacket("Server", "Required syntax: " + cmd + " <time>");
 					return false;
 				}
 				
@@ -36,14 +36,14 @@ public final class AdminShutdown implements IAdminCommandHandler
 				}
 				catch (final NumberFormatException e)
 				{
-					user.getClient().sendPacket("Server", "Required syntax: " + cmd + " <time>");
+					user.sendPacket("Server", "Required syntax: " + cmd + " <time>");
 					return false;
 				}
 				
-				Shutdown.getInstance().startShutdown(user.getName(), time, cmd.equalsIgnoreCase("restart"));
+				Shutdown.getInstance().startShutdown(user.getUsername(), time, cmd.equalsIgnoreCase("restart"));
 				break;
 			case "abort":
-				Shutdown.getInstance().abort(user.getName());
+				Shutdown.getInstance().abort(user.getUsername());
 				break;
 			default:
 				return false;

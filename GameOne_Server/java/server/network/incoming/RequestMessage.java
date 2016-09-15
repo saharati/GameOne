@@ -57,7 +57,7 @@ public final class RequestMessage implements IIncomingPacket<GameClient>
 	
 	private void sendMessage(final GameClient client)
 	{
-		_message = StringUtil.refineBeforeSend(client.getUser().getName(), _message);
+		_message = StringUtil.refineBeforeSend(client.getUser().getUsername(), _message);
 		
 		Broadcast.toAllUsers(_message);
 	}

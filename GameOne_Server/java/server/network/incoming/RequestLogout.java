@@ -20,6 +20,7 @@ public final class RequestLogout implements IIncomingPacket<GameClient>
 	@Override
 	public void run(final GameClient client)
 	{
+		client.getUser().onLogout();
 		client.setUser(null);
 		client.sendPacket(LogoutResponse.STATIC_PACKET);
 	}

@@ -6,13 +6,13 @@ package server.objects;
  */
 public final class GameStat
 {
-	private final int _gameId;
+	private final GameId _gameId;
 	
 	private int _score;
 	private int _wins;
 	private int _loses;
 	
-	public GameStat(final int gameId, final int score, final int wins, final int loses)
+	public GameStat(final GameId gameId, final int score, final int wins, final int loses)
 	{
 		_gameId = gameId;
 		_score = score;
@@ -20,7 +20,7 @@ public final class GameStat
 		_loses = loses;
 	}
 	
-	public int getGameId()
+	public GameId getGameId()
 	{
 		return _gameId;
 	}

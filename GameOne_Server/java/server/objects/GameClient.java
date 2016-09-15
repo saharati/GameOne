@@ -5,12 +5,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.logging.Logger;
 
-import data.sql.AnnouncementsTable;
 import network.BasicClient;
 import network.IIncomingPacket;
 import server.network.PacketInfo;
 import server.network.outgoing.MessageResponse;
-import util.Broadcast;
 import util.StringUtil;
 
 /**
@@ -29,8 +27,6 @@ public final class GameClient extends BasicClient
 		super.setChannel(channel);
 		
 		_remoteAddr = remoteAddress;
-		
-		Broadcast.THREADS.add(this);
 	}
 	
 	public SocketAddress getRemoteAddress()
@@ -46,9 +42,9 @@ public final class GameClient extends BasicClient
 	public void setUser(final User user)
 	{
 		if (user == null)
-			LOGGER.info("User: " + _user.getName() + " has logged off.");
+			LOGGER.info("User: " + _user.getUsername() + " has logged off.");
 		else
-			LOGGER.info("User: " + user.getName() + " has logged on.");
+			LOGGER.info("User: " + user.getUsername() + " has logged on.");
 		
 		_user = user;
 	}
@@ -64,20 +60,6 @@ public final class GameClient extends BasicClient
 		final MessageResponse packet = new MessageResponse(refinedMsg);
 		
 		sendPacket(packet);
-	}
-	
-	public void onEnter()
-	{
-		final String logonMsg = StringUtil.refineBeforeSend("Server", getUser().getName() + " has logged on.");
-		Broadcast.toAllUsersExcept(logonMsg, getUser().getClient());
-		
-		AnnouncementsTable.getInstance().showAnnouncements(getUser().getClient());
-		
-		if (getUser().isGM())
-		{
-			getUser().getClient().sendPacket("Server", "You have admin priviliges.");
-			getUser().getClient().sendPacket("Server", "Type //list for available commands.");
-		}
 	}
 	
 	@Override
@@ -104,8 +86,6 @@ public final class GameClient extends BasicClient
 	@Override
 	public void onDisconnect()
 	{
-		Broadcast.THREADS.remove(this);
-		
 		if (_user == null)
 			LOGGER.info(_remoteAddr + " terminated the connection.");
 		else
@@ -120,7 +100,7 @@ public final class GameClient extends BasicClient
 			new WaitingRoomInfo(this);
 			 */
 			
-			LOGGER.info("User: " + _user.getName() + " has logged off.");
+			LOGGER.info("User: " + _user.getUsername() + " has logged off.");
 		}
 	}
 }

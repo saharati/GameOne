@@ -24,25 +24,26 @@ public final class Announce implements IAdminCommandHandler
 			case "addAnnounce":
 				if (st.countTokens() < 2)
 				{
-					user.getClient().sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
+					user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
 					return false;
 				}
 				
+				final String orderString = st.nextToken();
 				int order;
 				try
 				{
-					order = Integer.parseInt(st.nextToken());
+					order = Integer.parseInt(orderString);
 				}
 				catch (final NumberFormatException e)
 				{
-					user.getClient().sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
+					user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
 					return false;
 				}
 				
-				final String msg = command.substring(command.indexOf("" + order) + 1).trim();
+				final String msg = command.substring(command.indexOf(orderString) + 1).trim();
 				if (msg.isEmpty())
 				{
-					user.getClient().sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
+					user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
 					return false;
 				}
 				
@@ -51,7 +52,7 @@ public final class Announce implements IAdminCommandHandler
 			case "deleteAnnounce":
 				if (!st.hasMoreTokens())
 				{
-					user.getClient().sendPacket("Server", "Required syntax: deleteAnnounce <order>");
+					user.sendPacket("Server", "Required syntax: deleteAnnounce <order>");
 					return false;
 				}
 				
@@ -61,7 +62,7 @@ public final class Announce implements IAdminCommandHandler
 				}
 				catch (final NumberFormatException e)
 				{
-					user.getClient().sendPacket("Server", "Required syntax: deleteAnnounce <order>");
+					user.sendPacket("Server", "Required syntax: deleteAnnounce <order>");
 					return false;
 				}
 				

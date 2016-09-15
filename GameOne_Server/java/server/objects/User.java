@@ -24,22 +24,22 @@ public final class User
 	private final int _id;
 	private final String _username;
 	private final String _password;
-	private final boolean _isGM;
 	private final Map<GameId, GameStat> _gameStats;
 	
 	private boolean _isOnline;
+	private AccessLevel _accessLevel;
 	private GameClient _client;
 	private String _ip;
 	private String _mac;
 	
-	public User(final int id, final String username, final String password, final String ip, final String mac, final boolean isGM, final Map<GameId, GameStat> gameStats)
+	public User(final int id, final String username, final String password, final String ip, final String mac, final AccessLevel accessLevel, final Map<GameId, GameStat> gameStats)
 	{
 		_id = id;
 		_username = username;
 		_password = password;
 		_ip = ip;
 		_mac = mac;
-		_isGM = isGM;
+		_accessLevel = accessLevel;
 		_gameStats = gameStats;
 	}
 	
@@ -58,11 +58,6 @@ public final class User
 		return _password;
 	}
 	
-	public boolean isGM()
-	{
-		return _isGM;
-	}
-	
 	public boolean hasGame(final GameId gameId)
 	{
 		return _gameStats.containsKey(gameId);
@@ -71,6 +66,28 @@ public final class User
 	public GameStat getGame(final GameId gameId)
 	{
 		return _gameStats.get(gameId);
+	}
+	
+	public AccessLevel getAccessLevel()
+	{
+		return _accessLevel;
+	}
+	
+	public void setAccessLevel(final AccessLevel accessLevel)
+	{
+		_accessLevel = accessLevel;
+		
+		try (final Connection con = Database.getConnection();
+			final PreparedStatement ps = con.prepareStatement("UPDATE users SET accessLevel=? WHERE id=?"))
+		{
+			ps.setInt(1, _accessLevel.ordinal());
+			ps.setInt(2, _id);
+			ps.execute();
+		}
+		catch (final SQLException e)
+		{
+			LOGGER.log(Level.WARNING, "Failed updating accessLevel: ", e);
+		}
 	}
 	
 	public boolean isOnline()
@@ -122,7 +139,7 @@ public final class User
 		
 		AnnouncementsTable.getInstance().showAnnouncements(_client);
 		
-		if (_isGM)
+		if (_accessLevel == AccessLevel.GM)
 		{
 			sendPacket("Server", "You have admin priviliges.");
 			sendPacket("Server", "Type //list for available commands.");

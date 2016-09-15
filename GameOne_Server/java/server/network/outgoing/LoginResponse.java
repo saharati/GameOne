@@ -14,6 +14,7 @@ public final class LoginResponse extends PacketWriter
 	public static final LoginResponse SERVER_FULL = new LoginResponse((byte) -2);
 	public static final LoginResponse SERVER_ERROR = new LoginResponse((byte) -3);
 	public static final LoginResponse ALREADY_ONLINE = new LoginResponse((byte) -4);
+	public static final LoginResponse USER_BANNED = new LoginResponse((byte) -5);
 	
 	private final byte _result;
 	

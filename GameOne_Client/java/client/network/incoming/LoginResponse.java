@@ -18,6 +18,7 @@ public final class LoginResponse implements IIncomingPacket<Client>
 	private static final byte SERVER_FULL = -2;
 	private static final byte SERVER_ERROR = -3;
 	private static final byte ALREADY_ONLINE = -4;
+	private static final byte USER_BANNED = -5;
 	
 	private byte _result;
 	
@@ -47,6 +48,9 @@ public final class LoginResponse implements IIncomingPacket<Client>
 				break;
 			case ALREADY_ONLINE:
 				JOptionPane.showMessageDialog(null, "User already online, access denied.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+				break;
+			case USER_BANNED:
+				JOptionPane.showMessageDialog(null, "This user is banned, access denied.", "Login Failed", JOptionPane.ERROR_MESSAGE);
 				break;
 		}
 	}

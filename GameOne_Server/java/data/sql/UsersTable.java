@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import server.network.outgoing.LoginResponse;
+import server.objects.AccessLevel;
 import server.objects.GameId;
 import server.objects.GameStat;
 import server.objects.User;
@@ -30,7 +31,7 @@ public final class UsersTable
 	
 	private static final String SELECT_USER = "SELECT * FROM users";
 	private static final String SELECT_STATS = "SELECT gameId, score, wins, loses FROM user_games WHERE userId=?";
-	private static final String INSERT_USER = "INSERT INTO users (username, password, lastIp, lastMac, isGM) VALUES (?, ?, ?, ?, ?)";
+	private static final String INSERT_USER = "INSERT INTO users (username, password, lastIp, lastMac, accessLevel) VALUES (?, ?, ?, ?, ?)";
 	
 	private final Map<Integer, User> _users = new HashMap<>();
 	
@@ -56,7 +57,7 @@ public final class UsersTable
 					}
 				}
 				
-				_users.put(rs.getInt("id"), new User(rs.getInt("id"), rs.getString("username"), rs.getString("password"), rs.getString("lastIp"), rs.getString("lastMac"), rs.getInt("isGM") == 1, gameStats));
+				_users.put(rs.getInt("id"), new User(rs.getInt("id"), rs.getString("username"), rs.getString("password"), rs.getString("lastIp"), rs.getString("lastMac"), AccessLevel.values()[rs.getInt("accessLevel")], gameStats));
 			}
 			
 			LOGGER.info("Loaded " + _users.size() + " users from database.");
@@ -100,18 +101,20 @@ public final class UsersTable
 				try (final Connection con = Database.getConnection();
 					final PreparedStatement ps = con.prepareStatement(INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS))
 				{
+					final AccessLevel access = _users.isEmpty() ? AccessLevel.GM : AccessLevel.NORMAL;
+					
 					ps.setString(1, username);
 					ps.setString(2, password);
 					ps.setString(3, ip);
 					ps.setString(4, mac);
-					ps.setInt(5, _users.isEmpty() ? 1 : 0);
+					ps.setInt(5, access.ordinal());
 					ps.executeUpdate();
 					
 					try (final ResultSet rs = ps.getGeneratedKeys())
 					{
 						if (rs.next())
 						{
-							final User newUser = new User(rs.getInt(1), username, password, ip, mac, _users.isEmpty(), new HashMap<>());
+							final User newUser = new User(rs.getInt(1), username, password, ip, mac, access, new HashMap<>());
 							_users.put(newUser.getId(), newUser);
 							
 							return LoginResponse.LOGIN_OK;
@@ -133,6 +136,8 @@ public final class UsersTable
 		
 		if (!user.getPassword().equals(password))
 			return LoginResponse.LOGIN_FAILED;
+		if (user.getAccessLevel() == AccessLevel.BANNED)
+			return LoginResponse.USER_BANNED;
 		if (user.isOnline())
 			return LoginResponse.ALREADY_ONLINE;
 		

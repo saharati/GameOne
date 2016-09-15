@@ -98,6 +98,8 @@ public final class Login extends JFrame
 	{
 		if (_username.getText().isEmpty())
 			JOptionPane.showMessageDialog(null, "Please enter your username.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+		else if (_username.getText().contains(" "))
+			JOptionPane.showMessageDialog(null, "Usernames are not allowed to have spaces.", "Login Failed", JOptionPane.ERROR_MESSAGE);
 		else if (_password.getPassword().length == 0)
 			JOptionPane.showMessageDialog(null, "Please enter your password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
 		else

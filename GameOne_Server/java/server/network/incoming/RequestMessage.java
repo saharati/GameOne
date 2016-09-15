@@ -6,6 +6,7 @@ import handlers.AdminCommandHandler;
 import handlers.IAdminCommandHandler;
 import network.IIncomingPacket;
 import network.PacketReader;
+import server.objects.AccessLevel;
 import server.objects.GameClient;
 import util.Broadcast;
 import util.StringUtil;
@@ -36,7 +37,7 @@ public final class RequestMessage implements IIncomingPacket<GameClient>
 		if (_message.length() > 40)
 			return;
 		
-		if (client.getUser().isGM() && _message.startsWith("//"))
+		if (client.getUser().getAccessLevel() == AccessLevel.GM && _message.startsWith("//"))
 		{
 			_message = _message.replace("//", "");
 			

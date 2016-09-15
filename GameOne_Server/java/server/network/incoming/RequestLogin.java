@@ -30,10 +30,7 @@ public final class RequestLogin implements IIncomingPacket<GameClient>
 	{
 		if (_username == null || _password == null || _mac == null)
 			return;
-		
-		_username = _username.trim();
-		_password = _password.trim();
-		if (_username.isEmpty() || _password.isEmpty())
+		if (_username.isEmpty() || _username.contains(" ") || _password.isEmpty())
 			return;
 		
 		final LoginResponse response = UsersTable.getInstance().tryToLogin(_username, _password, client.getRemoteAddress().toString(), _mac);

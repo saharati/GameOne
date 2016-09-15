@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(45) CHARACTER SET utf8 NOT NULL,
   `lastIp` varchar(45) CHARACTER SET utf8 NOT NULL,
   `lastMac` varchar(45) CHARACTER SET utf8 NOT NULL,
-  `isGM` tinyint(1) unsigned NOT NULL,
+  `accessLevel` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

@@ -9,9 +9,9 @@ import network.PacketWriter;
  */
 public final class RequestLogin extends PacketWriter
 {
-	private String _username;
-	private String _password;
-	private String _mac;
+	private final String _username;
+	private final String _password;
+	private final String _mac;
 	
 	public RequestLogin(final String username, final String password, final String mac)
 	{

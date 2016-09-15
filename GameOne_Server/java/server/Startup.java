@@ -5,6 +5,8 @@ import java.lang.management.ManagementFactory;
 import java.util.logging.Logger;
 
 import data.sql.AnnouncementsTable;
+import data.sql.MarioTable;
+import data.sql.PacmanTable;
 import data.sql.UsersTable;
 import handlers.AdminCommandHandler;
 import server.network.ConnectionManager;
@@ -39,6 +41,8 @@ public final class Startup
 		Database.load();
 		AnnouncementsTable.getInstance();
 		UsersTable.getInstance();
+		PacmanTable.getInstance();
+		MarioTable.getInstance();
 		
 		StringUtil.printSection("ThreadPool");
 		ThreadPool.load();

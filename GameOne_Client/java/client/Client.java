@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import client.network.PacketInfo;
 import network.BasicClient;
@@ -68,7 +69,9 @@ public final class Client extends BasicClient
 	@Override
 	public void onDisconnect()
 	{
-		// TODO What do we do when we get here as a client?
+		JOptionPane.showMessageDialog(null, "You have been disconnected from the server.", "Server Crashed", JOptionPane.ERROR_MESSAGE);
+		
+		System.exit(0);
 	}
 	
 	private Client() {}

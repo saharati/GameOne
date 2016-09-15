@@ -9,7 +9,7 @@ import network.PacketWriter;
  */
 public final class RequestMessage extends PacketWriter
 {
-	private String _message;
+	private final String _message;
 	
 	public RequestMessage(final String message)
 	{

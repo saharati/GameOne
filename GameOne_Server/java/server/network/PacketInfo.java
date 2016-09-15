@@ -14,7 +14,8 @@ public enum PacketInfo
 {
 	LOGIN(RequestLogin::new, false),
 	MESSAGE(RequestMessage::new, true),
-	LOGOUT(RequestLogout::new, true);
+	LOGOUT(RequestLogout::new, true),
+	GAME(RequestGame::new, true);
 	
 	private final Supplier<IIncomingPacket<GameClient>> _incomingPacketFactory;
 	private final boolean _authed;

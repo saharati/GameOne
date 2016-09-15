@@ -1,5 +1,7 @@
 package server.objects;
 
+import objects.GameId;
+
 /**
  * Class holding records of a certain user.
  * @author Sahar

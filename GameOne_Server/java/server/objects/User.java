@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import data.sql.AnnouncementsTable;
 import network.PacketWriter;
+import objects.GameId;
 import util.Broadcast;
 import util.StringUtil;
 import util.database.Database;
@@ -31,6 +32,7 @@ public final class User
 	private GameClient _client;
 	private String _ip;
 	private String _mac;
+	private GameId _currentGame;
 	
 	public User(final int id, final String username, final String password, final String ip, final String mac, final AccessLevel accessLevel, final Map<GameId, GameStat> gameStats)
 	{
@@ -108,6 +110,16 @@ public final class User
 	public String getMac()
 	{
 		return _mac;
+	}
+	
+	public GameId getCurrentGame()
+	{
+		return _currentGame;
+	}
+	
+	public void setCurrentGame(final GameId currentGame)
+	{
+		_currentGame = currentGame;
 	}
 	
 	public void onLogin(final GameClient client, final String ip, final String mac)

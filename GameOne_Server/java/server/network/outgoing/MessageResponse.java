@@ -4,7 +4,7 @@ import network.PacketWriter;
 import server.network.PacketInfo;
 
 /**
- * Outgoing Login packet implementation.
+ * Outgoing MessageResponse packet implementation.
  * @author Sahar
  */
 public final class MessageResponse extends PacketWriter

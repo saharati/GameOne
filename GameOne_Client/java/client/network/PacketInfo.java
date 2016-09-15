@@ -14,7 +14,8 @@ public enum PacketInfo
 {
 	LOGIN(LoginResponse::new),
 	MESSAGE(MessageResponse::new),
-	LOGOUT(LogoutResponse::new);
+	LOGOUT(LogoutResponse::new),
+	GAME(GameResponse::new);
 	
 	private final Supplier<IIncomingPacket<Client>> _incomingPacketFactory;
 	

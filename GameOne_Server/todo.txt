@@ -1,4 +1,4 @@
 IPConfig - IPv6 support.
 GameClient#onDisconnect - TODO.
-
-on shutdown disconnect all players.
+User#saveGameStat - TODO.
+Shutdown - disconnect all players safely.

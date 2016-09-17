@@ -53,7 +53,7 @@ public final class MarioTable
 			}
 			try (final PreparedStatement ps = con.prepareStatement(INSERT))
 			{
-				for (MarioObject o : objects)
+				for (final MarioObject o : objects)
 				{
 					ps.setInt(1, o.getX());
 					ps.setInt(2, o.getY());

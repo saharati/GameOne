@@ -1,18 +1,17 @@
-package server.network.incoming;
+package network.request;
 
-import network.IIncomingPacket;
 import network.PacketReader;
-import server.network.outgoing.LogoutResponse;
+import network.response.LogoutResponse;
 import server.objects.GameClient;
 
 /**
  * RequestLogout packet implementation.
  * @author Sahar
  */
-public final class RequestLogout implements IIncomingPacket<GameClient>
+public final class RequestLogout extends PacketReader<GameClient>
 {
 	@Override
-	public void read(final GameClient client, final PacketReader packet)
+	public void read(final GameClient client)
 	{
 		
 	}

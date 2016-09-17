@@ -6,9 +6,18 @@ import java.nio.ByteBuffer;
  * A nicer version of ByteBuffer.
  * @author Sahar
  */
-public final class PacketReader
+public abstract class PacketReader<T extends BasicClient>
 {
-	private final ByteBuffer _buf = ByteBuffer.allocateDirect(1024);
+	private ByteBuffer _buf;
+	
+	public abstract void read(final T client);
+	
+	public abstract void run(final T client);
+	
+	public void setBuffer(final ByteBuffer buf)
+	{
+		_buf = buf;
+	}
 	
 	public ByteBuffer getBuffer()
 	{
@@ -20,47 +29,47 @@ public final class PacketReader
 		return _buf.remaining();
 	}
 	
-	public byte readByte()
+	protected byte readByte()
 	{
 		return _buf.get();
 	}
 	
-	public short readShort()
+	protected short readShort()
 	{
 		return _buf.getShort();
 	}
 	
-	public int readInt()
+	protected int readInt()
 	{
 		return _buf.getInt();
 	}
 	
-	public long readLong()
+	protected long readLong()
 	{
 		return _buf.getLong();
 	}
 	
-	public float readFloat()
+	protected float readFloat()
 	{
 		return _buf.getFloat();
 	}
 	
-	public double readDouble()
+	protected double readDouble()
 	{
 		return _buf.getDouble();
 	}
 	
-	public char readChar()
+	protected char readChar()
 	{
 		return _buf.getChar();
 	}
 	
-	public boolean readBoolean()
+	protected boolean readBoolean()
 	{
 		return _buf.get() == 1;
 	}
 	
-	public String readString()
+	protected String readString()
 	{
 		final StringBuilder sb = new StringBuilder();
 		char chr;
@@ -70,7 +79,7 @@ public final class PacketReader
 		return sb.toString();
 	}
 	
-	public byte[] readBytes(final int length)
+	protected byte[] readBytes(final int length)
 	{
 		final byte[] result = new byte[length];
 		_buf.get(result);

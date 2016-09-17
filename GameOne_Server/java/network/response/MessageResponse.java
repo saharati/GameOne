@@ -1,7 +1,7 @@
-package server.network.outgoing;
+package network.response;
 
+import network.PacketInfo;
 import network.PacketWriter;
-import server.network.PacketInfo;
 
 /**
  * Outgoing MessageResponse packet implementation.

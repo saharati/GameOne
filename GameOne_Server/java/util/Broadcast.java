@@ -1,7 +1,7 @@
 package util;
 
 import data.sql.UsersTable;
-import server.network.outgoing.MessageResponse;
+import network.response.MessageResponse;
 import server.objects.User;
 
 /**

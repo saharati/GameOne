@@ -1,23 +1,22 @@
-package server.network.incoming;
+package network.request;
 
-import network.IIncomingPacket;
 import network.PacketReader;
+import network.response.GameResponse;
 import objects.GameId;
-import server.network.outgoing.GameResponse;
 import server.objects.GameClient;
 
 /**
  * RequestMessage packet implementation.
  * @author Sahar
  */
-public final class RequestGame implements IIncomingPacket<GameClient>
+public final class RequestGame extends PacketReader<GameClient>
 {
 	private int _gameId;
 	
 	@Override
-	public void read(final GameClient client, final PacketReader packet)
+	public void read(final GameClient client)
 	{
-		_gameId = packet.readInt();
+		_gameId = readInt();
 	}
 	
 	@Override

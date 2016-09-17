@@ -13,8 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import network.response.LoginResponse;
 import objects.GameId;
-import server.network.outgoing.LoginResponse;
 import server.objects.AccessLevel;
 import server.objects.GameStat;
 import server.objects.User;

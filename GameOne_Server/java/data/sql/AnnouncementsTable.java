@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import server.network.outgoing.MessageResponse;
+import network.response.MessageResponse;
 import server.objects.GameClient;
 import util.StringUtil;
 import util.database.Database;

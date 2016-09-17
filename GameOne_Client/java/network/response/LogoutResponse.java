@@ -1,7 +1,6 @@
-package client.network.incoming;
+package network.response;
 
 import client.Client;
-import network.IIncomingPacket;
 import network.PacketReader;
 import windows.GameSelect;
 import windows.Login;
@@ -10,10 +9,10 @@ import windows.Login;
  * LogoutResponse packet implementation.
  * @author Sahar
  */
-public final class LogoutResponse implements IIncomingPacket<Client>
+public final class LogoutResponse extends PacketReader<Client>
 {
 	@Override
-	public void read(final Client client, final PacketReader packet)
+	public void read(final Client client)
 	{
 		
 	}

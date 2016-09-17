@@ -1,8 +1,8 @@
-package server.network.outgoing;
+package network.response;
 
+import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
-import server.network.PacketInfo;
 
 /**
  * Outgoing GameResponse packet implementation.

@@ -4,7 +4,7 @@ import java.util.Set;
 
 import handlers.AdminCommandHandler;
 import handlers.IAdminCommandHandler;
-import server.network.outgoing.MessageResponse;
+import network.response.MessageResponse;
 import server.objects.User;
 import util.StringUtil;
 

@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import org.xml.sax.SAXException;
 
-import server.network.ConnectionManager;
+import network.ConnectionManager;
 import util.Broadcast;
 import util.StringUtil;
 import util.UPnPService;

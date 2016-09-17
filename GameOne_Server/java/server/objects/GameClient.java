@@ -6,9 +6,9 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.util.logging.Logger;
 
 import network.BasicClient;
-import network.IIncomingPacket;
-import server.network.PacketInfo;
-import server.network.outgoing.MessageResponse;
+import network.PacketInfo;
+import network.PacketReader;
+import network.response.MessageResponse;
 import util.StringUtil;
 
 /**
@@ -65,15 +65,16 @@ public final class GameClient extends BasicClient
 	@Override
 	public void readPacket()
 	{
-		final ByteBuffer buffer = getReader().getBuffer();
+		final ByteBuffer buffer = getReadBuffer();
 		buffer.flip();
 		
 		while (buffer.hasRemaining())
 		{
-			final int opCode = getReader().readInt();
+			final int opCode = buffer.getInt();
 			final PacketInfo inf = PacketInfo.values()[opCode];
-			final IIncomingPacket<GameClient> packet = inf.newIncomingPacket();
-			packet.read(this, getReader());
+			final PacketReader<BasicClient> packet = inf.getReadPacket();
+			packet.setBuffer(buffer);
+			packet.read(this);
 			
 			if (inf.isAuthedState() == isAuthed())
 				packet.run(this);

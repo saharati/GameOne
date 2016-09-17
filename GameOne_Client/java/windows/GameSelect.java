@@ -22,11 +22,11 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.AbstractDocument;
 
 import client.Client;
-import client.network.outgoing.RequestGame;
-import client.network.outgoing.RequestLogout;
-import client.network.outgoing.RequestMessage;
 import configs.Config;
 import gui.SpringUtilities;
+import network.request.RequestGame;
+import network.request.RequestLogout;
+import network.request.RequestMessage;
 import objects.GameId;
 import util.LengthDocumentFilter;
 

@@ -24,9 +24,9 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
 import client.Client;
-import client.network.outgoing.RequestLogin;
 import configs.Config;
 import gui.SpringUtilities;
+import network.request.RequestLogin;
 
 /**
  * Login screen implementation.

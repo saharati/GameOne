@@ -9,7 +9,7 @@ import data.sql.MarioTable;
 import data.sql.PacmanTable;
 import data.sql.UsersTable;
 import handlers.AdminCommandHandler;
-import server.network.ConnectionManager;
+import network.ConnectionManager;
 import util.DeadLockDetector;
 import util.StringUtil;
 import util.UPnPService;

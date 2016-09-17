@@ -12,8 +12,8 @@ import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import client.network.ConnectionManager;
 import configs.Config;
+import network.ConnectionManager;
 import util.StringUtil;
 import util.configs.CommonConfig;
 import util.parsers.xml.XmlFactory;
@@ -43,7 +43,7 @@ public final class Startup extends JFrame
 		final JProgressBar progressBar = new JProgressBar();
 		progressBar.setBounds(5, 40, 300, 30);
 		progressBar.setFont(font);
-		progressBar.setMaximum(3);
+		progressBar.setMaximum(5);
 		add(progressBar);
 		
 		getRootPane().setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -87,6 +87,14 @@ public final class Startup extends JFrame
 		GameSelect.getInstance();
 		
 		progressBar.setValue(4);
+		
+		// Windows
+		currentLoad.setText("Loading Objects...");
+		
+		StringUtil.printSection("Objects");
+		// TODO request objects from server here.
+		
+		progressBar.setValue(5);
 		
 		// Done
 		setVisible(false);

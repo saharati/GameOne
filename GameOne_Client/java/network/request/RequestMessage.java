@@ -1,6 +1,6 @@
-package client.network.outgoing;
+package network.request;
 
-import client.network.PacketInfo;
+import network.PacketInfo;
 import network.PacketWriter;
 
 /**

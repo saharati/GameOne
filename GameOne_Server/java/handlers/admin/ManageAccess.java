@@ -4,7 +4,7 @@ import java.util.StringTokenizer;
 
 import data.sql.UsersTable;
 import handlers.IAdminCommandHandler;
-import server.network.outgoing.LogoutResponse;
+import network.response.LogoutResponse;
 import server.objects.AccessLevel;
 import server.objects.User;
 

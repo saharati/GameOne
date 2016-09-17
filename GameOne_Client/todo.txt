@@ -1,3 +1,5 @@
 add a readme telling that external program is needed to create the exe called launch4j.
 in any case include the already built program in the source.
 add icon.
+
+Make pacman and mario objects load on startup, and in case an admin make changes, broadcast to all available clients.

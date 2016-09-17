@@ -6,9 +6,9 @@ import java.util.prefs.Preferences;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import client.network.PacketInfo;
 import network.BasicClient;
-import network.IIncomingPacket;
+import network.PacketInfo;
+import network.PacketReader;
 import windows.Login;
 
 /**
@@ -50,15 +50,17 @@ public final class Client extends BasicClient
 	@Override
 	public void readPacket()
 	{
-		final ByteBuffer buffer = getReader().getBuffer();
+		final ByteBuffer buffer = getReadBuffer();
 		buffer.flip();
 		
 		while (buffer.hasRemaining())
 		{
-			final int opCode = getReader().readInt();
+			final int opCode = buffer.getInt();
 			final PacketInfo inf = PacketInfo.values()[opCode];
-			final IIncomingPacket<Client> packet = inf.newIncomingPacket();
-			packet.read(this, getReader());
+			final PacketReader<BasicClient> packet = inf.getReadPacket();
+			
+			packet.setBuffer(buffer);
+			packet.read(this);
 			packet.run(this);
 		}
 		buffer.clear();

@@ -20,27 +20,27 @@ public abstract class BasicClient
 {
 	private static final Logger LOGGER = Logger.getLogger(BasicClient.class.getName());
 	
-	private final PacketReader _reader;
 	private final ReadHandler<BasicClient> _readHandler;
 	private final WriteHandler<BasicClient> _writeHandler;
 	private final Queue<PacketWriter> _sendQueue;
 	private final ReentrantLock _writeLock;
+	private final ByteBuffer _readBuffer;
 	
 	private AsynchronousSocketChannel _channel;
 	private boolean _pendingWrite;
 	
 	protected BasicClient()
 	{
-		_reader = new PacketReader();
+		_readBuffer = ByteBuffer.allocateDirect(1024);
 		_readHandler = new ReadHandler<>();
 		_writeHandler = new WriteHandler<>();
 		_sendQueue = new ConcurrentLinkedQueue<>();
 		_writeLock = new ReentrantLock();
 	}
 	
-	public final PacketReader getReader()
+	public ByteBuffer getReadBuffer()
 	{
-		return _reader;
+		return _readBuffer;
 	}
 	
 	public final ReadHandler<BasicClient> getReadHandler()
@@ -66,7 +66,7 @@ public abstract class BasicClient
 			LOGGER.log(Level.WARNING, "Failed setting socket options: ", e);
 		}
 		
-		_channel.read(_reader.getBuffer(), this, _readHandler);
+		_channel.read(_readBuffer, this, _readHandler);
 	}
 	
 	public final AsynchronousSocketChannel getChannel()

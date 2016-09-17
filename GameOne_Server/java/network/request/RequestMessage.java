@@ -1,10 +1,9 @@
-package server.network.incoming;
+package network.request;
 
 import java.util.StringTokenizer;
 
 import handlers.AdminCommandHandler;
 import handlers.IAdminCommandHandler;
-import network.IIncomingPacket;
 import network.PacketReader;
 import server.objects.AccessLevel;
 import server.objects.GameClient;
@@ -15,14 +14,14 @@ import util.StringUtil;
  * RequestMessage packet implementation.
  * @author Sahar
  */
-public final class RequestMessage implements IIncomingPacket<GameClient>
+public final class RequestMessage extends PacketReader<GameClient>
 {
 	private String _message;
 	
 	@Override
-	public void read(final GameClient client, final PacketReader packet)
+	public void read(final GameClient client)
 	{
-		_message = packet.readString();
+		_message = readString();
 	}
 	
 	@Override

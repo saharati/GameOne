@@ -1,9 +1,8 @@
-package client.network.incoming;
+package network.response;
 
 import javax.swing.JOptionPane;
 
 import client.Client;
-import network.IIncomingPacket;
 import network.PacketReader;
 import windows.GameSelect;
 
@@ -11,7 +10,7 @@ import windows.GameSelect;
  * LoginResponse packet implementation.
  * @author Sahar
  */
-public final class LoginResponse implements IIncomingPacket<Client>
+public final class LoginResponse extends PacketReader<Client>
 {
 	private static final byte LOGIN_OK = 1;
 	private static final byte LOGIN_FAILED = -1;
@@ -23,9 +22,9 @@ public final class LoginResponse implements IIncomingPacket<Client>
 	private byte _result;
 	
 	@Override
-	public void read(final Client client, final PacketReader packet)
+	public void read(final Client client)
 	{
-		_result = packet.readByte();
+		_result = readByte();
 	}
 	
 	@Override

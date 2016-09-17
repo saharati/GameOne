@@ -1,7 +1,6 @@
-package client.network.incoming;
+package network.response;
 
 import client.Client;
-import network.IIncomingPacket;
 import network.PacketReader;
 import objects.GameId;
 
@@ -9,14 +8,14 @@ import objects.GameId;
  * GameResponse packet implementation.
  * @author Sahar
  */
-public final class GameResponse implements IIncomingPacket<Client>
+public final class GameResponse extends PacketReader<Client>
 {
 	private int _gameId;
 	
 	@Override
-	public void read(final Client client, final PacketReader packet)
+	public void read(final Client client)
 	{
-		_gameId = packet.readInt();
+		_gameId = readInt();
 	}
 	
 	@Override

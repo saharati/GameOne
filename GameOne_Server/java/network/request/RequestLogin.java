@@ -1,9 +1,8 @@
-package server.network.incoming;
+package network.request;
 
 import data.sql.UsersTable;
-import network.IIncomingPacket;
 import network.PacketReader;
-import server.network.outgoing.LoginResponse;
+import network.response.LoginResponse;
 import server.objects.GameClient;
 import server.objects.User;
 
@@ -11,18 +10,18 @@ import server.objects.User;
  * RequestLogin packet implementation.
  * @author Sahar
  */
-public final class RequestLogin implements IIncomingPacket<GameClient>
+public final class RequestLogin extends PacketReader<GameClient>
 {
 	private String _username;
 	private String _password;
 	private String _mac;
 	
 	@Override
-	public void read(final GameClient client, final PacketReader packet)
+	public void read(final GameClient client)
 	{
-		_username = packet.readString();
-		_password = packet.readString();
-		_mac = packet.readString();
+		_username = readString();
+		_password = readString();
+		_mac = readString();
 	}
 	
 	@Override

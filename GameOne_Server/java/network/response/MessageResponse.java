@@ -19,10 +19,6 @@ public final class MessageResponse extends PacketWriter
 	@Override
 	public void write()
 	{
-		// Broadcast packets should only be written once.
-		if (!getBuffer().hasRemaining())
-			return;
-		
 		writeInt(PacketInfo.MESSAGE.ordinal());
 		
 		writeString(_message);

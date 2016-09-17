@@ -9,6 +9,7 @@ import network.BasicClient;
 import network.PacketInfo;
 import network.PacketReader;
 import network.response.MessageResponse;
+import util.Broadcast;
 import util.StringUtil;
 
 /**
@@ -41,10 +42,16 @@ public final class GameClient extends BasicClient
 	
 	public void setUser(final User user)
 	{
+		final String msg;
 		if (user == null)
-			LOGGER.info("User: " + _user.getUsername() + " has logged off.");
+			msg = _user.getUsername() + " has logged off.";
 		else
-			LOGGER.info("User: " + user.getUsername() + " has logged on.");
+			msg = user.getUsername() + " has logged on.";
+		
+		final String logonMsg = StringUtil.refineBeforeSend("Server", msg);
+		Broadcast.toAllExcept(logonMsg, this);
+		
+		LOGGER.info(msg);
 		
 		_user = user;
 	}
@@ -101,7 +108,8 @@ public final class GameClient extends BasicClient
 			new WaitingRoomInfo(this);
 			 */
 			
-			LOGGER.info("User: " + _user.getUsername() + " has logged off.");
+			_user.onLogout();
+			setUser(null);
 		}
 	}
 }

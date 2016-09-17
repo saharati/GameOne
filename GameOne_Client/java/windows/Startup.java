@@ -88,7 +88,7 @@ public final class Startup extends JFrame
 		
 		progressBar.setValue(4);
 		
-		// Windows
+		// Objects
 		currentLoad.setText("Loading Objects...");
 		
 		StringUtil.printSection("Objects");

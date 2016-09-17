@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 public abstract class PacketWriter
 {
 	private final ByteBuffer _buf = ByteBuffer.allocateDirect(1024);
+	private boolean _packed;
 	
 	public abstract void write();
 	
@@ -22,8 +23,15 @@ public abstract class PacketWriter
 		return _buf.remaining();
 	}
 	
+	public final boolean packed()
+	{
+		return _packed;
+	}
+	
 	public final void pack()
 	{
+		_packed = true;
+		
 		_buf.limit(_buf.position());
 		_buf.rewind();
 		_buf.compact();

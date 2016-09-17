@@ -2,7 +2,7 @@ package util;
 
 import data.sql.UsersTable;
 import network.response.MessageResponse;
-import server.objects.User;
+import server.objects.GameClient;
 
 /**
  * Class responsible to broadcasting packets depending on situation.
@@ -17,10 +17,10 @@ public final class Broadcast
 		UsersTable.getInstance().getOnlineUsers().forEach(u -> u.sendPacket(msg));
 	}
 	
-	public static void toAllUsersExcept(final String text, final User user)
+	public static void toAllExcept(final String text, final GameClient client)
 	{
 		final MessageResponse msg = new MessageResponse(text);
 		
-		UsersTable.getInstance().getOnlineUsers().filter(u -> u != user).forEach(u -> u.sendPacket(msg));
+		UsersTable.getInstance().getOnlineUsers().filter(u -> u.getClient() != client).forEach(u -> u.sendPacket(msg));
 	}
 }

@@ -26,10 +26,6 @@ public final class LoginResponse extends PacketWriter
 	@Override
 	public void write()
 	{
-		// Static packets should be written only once at initialization.
-		if (!getBuffer().hasRemaining())
-			return;
-		
 		writeInt(PacketInfo.LOGIN.ordinal());
 		
 		writeByte(_result);

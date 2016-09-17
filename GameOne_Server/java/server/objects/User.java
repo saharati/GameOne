@@ -10,8 +10,6 @@ import java.util.logging.Logger;
 import data.sql.AnnouncementsTable;
 import network.PacketWriter;
 import objects.GameId;
-import util.Broadcast;
-import util.StringUtil;
 import util.database.Database;
 
 /**
@@ -145,9 +143,6 @@ public final class User
 				LOGGER.log(Level.WARNING, "Failed updating last ip/mac: ", e);
 			}
 		}
-		
-		final String logonMsg = StringUtil.refineBeforeSend("Server", _username + " has logged on.");
-		Broadcast.toAllUsersExcept(logonMsg, this);
 		
 		AnnouncementsTable.getInstance().showAnnouncements(_client);
 		

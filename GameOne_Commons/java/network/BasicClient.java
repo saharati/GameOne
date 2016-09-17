@@ -76,8 +76,11 @@ public abstract class BasicClient
 	
 	public final void sendPacket(final PacketWriter packet)
 	{
-		packet.write();
-		packet.pack();
+		if (!packet.packed())
+		{
+			packet.write();
+			packet.pack();
+		}
 		
 		_sendQueue.add(packet);
 		
@@ -121,7 +124,7 @@ public abstract class BasicClient
 							bytes += packet.getBuffer().limit();
 						final ByteBuffer toSend = ByteBuffer.allocateDirect(bytes);
 						for (final PacketWriter packet : copy)
-							toSend.put(packet.getBuffer());
+							toSend.put(packet.getBuffer().duplicate());
 						toSend.flip();
 						
 						_channel.write(toSend, this, _writeHandler);

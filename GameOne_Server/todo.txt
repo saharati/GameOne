@@ -4,5 +4,4 @@ User#saveGameStat - TODO.
 Shutdown - disconnect all players safely.
 
 request game objects upon client login and wait for response before opening login window
-move PacketInfo classes to commons package and find a way to make it common (I dont want to create a new instance every time, keep a reference and recycle byteBuf).
 Move mario and pacman objects to be enums.

@@ -3,3 +3,4 @@ in any case include the already built program in the source.
 add icon.
 
 Make pacman and mario objects load on startup, and in case an admin make changes, broadcast to all available clients.
+When requesting a game, do not close the window with buttons and chat, just disable buttons, so people can still chat.

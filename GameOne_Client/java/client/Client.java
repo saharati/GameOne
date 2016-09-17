@@ -1,6 +1,8 @@
 package client;
 
 import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
@@ -9,7 +11,8 @@ import javax.swing.JOptionPane;
 import network.BasicClient;
 import network.PacketInfo;
 import network.PacketReader;
-import windows.Login;
+import objects.MarioObject;
+import windows.Startup;
 
 /**
  * Class holding info regarding client such as current socket, records, user etc.
@@ -17,9 +20,18 @@ import windows.Login;
  */
 public final class Client extends BasicClient
 {
+	private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+	
 	private String _username;
 	private String _password;
-	private JFrame _currentWindow = Login.getInstance();
+	private MarioObject[] _marioObjects;
+	private Map<Integer, String[][]> _pacmanMaps;
+	private JFrame _currentWindow;
+	
+	public void setStartupWindow(final Startup startup)
+	{
+		_currentWindow = startup;
+	}
 	
 	public void setLoginDetails(final String username, final String password)
 	{
@@ -33,6 +45,35 @@ public final class Client extends BasicClient
 		
 		prop.put("user_gameOne", _username);
 		prop.put("pass_gameOne", _password);
+	}
+	
+	public void setMarioObjects(final MarioObject[] marioObjects)
+	{
+		_marioObjects = marioObjects;
+		
+		LOGGER.info("Received " + marioObjects.length + " mario objects from server.");
+	}
+	
+	public MarioObject[] getMarioObjects()
+	{
+		return _marioObjects;
+	}
+	
+	public void setPacmanMaps(final Map<Integer, String[][]> pacmanMaps)
+	{
+		_pacmanMaps = pacmanMaps;
+		
+		LOGGER.info("Received " + pacmanMaps.size() + " pacman maps from server.");
+	}
+	
+	public Map<Integer, String[][]> getPacmanMaps()
+	{
+		return _pacmanMaps;
+	}
+	
+	public boolean ready()
+	{
+		return _marioObjects != null && _pacmanMaps != null && _currentWindow instanceof Startup;
 	}
 	
 	public void setCurrentWindow(final JFrame window)

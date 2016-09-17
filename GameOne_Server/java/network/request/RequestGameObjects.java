@@ -1,15 +1,15 @@
 package network.request;
 
 import network.PacketReader;
-import network.response.GameResponse;
+import network.response.GameObjectsResponse;
 import objects.GameId;
 import server.objects.GameClient;
 
 /**
- * RequestGame packet implementation.
+ * RequestGameObjects packet implementation.
  * @author Sahar
  */
-public final class RequestGame extends PacketReader<GameClient>
+public final class RequestGameObjects extends PacketReader<GameClient>
 {
 	private int _gameId;
 	
@@ -26,7 +26,6 @@ public final class RequestGame extends PacketReader<GameClient>
 			return;
 		
 		final GameId gameId = GameId.values()[_gameId];
-		client.getUser().setCurrentGame(gameId);
-		client.sendPacket(new GameResponse(gameId));
+		client.sendPacket(new GameObjectsResponse(gameId));
 	}
 }

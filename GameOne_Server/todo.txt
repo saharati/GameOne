@@ -3,5 +3,4 @@ GameClient#onDisconnect - TODO.
 User#saveGameStat - TODO.
 Shutdown - disconnect all players safely.
 
-request game objects upon client login and wait for response before opening login window
 Move mario and pacman objects to be enums.

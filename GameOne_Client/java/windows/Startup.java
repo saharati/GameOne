@@ -12,8 +12,11 @@ import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import client.Client;
 import configs.Config;
 import network.ConnectionManager;
+import network.request.RequestGameObjects;
+import objects.GameId;
 import util.StringUtil;
 import util.configs.CommonConfig;
 import util.parsers.xml.XmlFactory;
@@ -92,14 +95,11 @@ public final class Startup extends JFrame
 		currentLoad.setText("Loading Objects...");
 		
 		StringUtil.printSection("Objects");
-		// TODO request objects from server here.
+		Client.getInstance().setStartupWindow(this);
+		Client.getInstance().sendPacket(new RequestGameObjects(GameId.MARIO));
+		Client.getInstance().sendPacket(new RequestGameObjects(GameId.PACMAN));
 		
 		progressBar.setValue(5);
-		
-		// Done
-		setVisible(false);
-		
-		Login.getInstance().setVisible(true);
 	}
 	
 	public static void main(final String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, SecurityException, URISyntaxException, IOException

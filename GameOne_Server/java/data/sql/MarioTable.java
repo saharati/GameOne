@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import data.sql.objects.MarioObject;
+import objects.MarioObject;
 import util.database.Database;
 
 /**
@@ -33,7 +33,7 @@ public final class MarioTable
 			final ResultSet rs = ps.executeQuery())
 		{
 			while (rs.next())
-				_objects.add(new MarioObject(rs.getString("type"), rs.getInt("x"), rs.getInt("y")));
+				_objects.add(new MarioObject(rs.getInt("x"), rs.getInt("y"), rs.getString("type")));
 			
 			LOGGER.info("Loaded " + _objects.size() + " mario objects from database.");
 		}

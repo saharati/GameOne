@@ -13,7 +13,8 @@ public enum PacketInfo
 	LOGIN("RequestLogin", "LoginResponse", false),
 	MESSAGE("RequestMessage", "MessageResponse", true),
 	LOGOUT("RequestLogout", "LogoutResponse", true),
-	GAME("RequestGame", "GameResponse", true);
+	GAME("RequestGame", "GameResponse", true),
+	OBJECTS("RequestGameObjects", "GameObjectsResponse", false);
 	
 	private static final String REQUEST_PACKAGE = "network.request";
 	private static final String RESPONSE_PACKAGE = "network.response";

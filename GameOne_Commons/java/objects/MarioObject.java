@@ -1,4 +1,4 @@
-package data.sql.objects;
+package objects;
 
 /**
  * Class representing a single mario object.
@@ -6,20 +6,15 @@ package data.sql.objects;
  */
 public final class MarioObject
 {
-	private final String _type;
 	private final int _x;
 	private final int _y;
+	private final String _type;
 	
-	public MarioObject(final String type, final int x, final int y)
+	public MarioObject(final int x, final int y, final String type)
 	{
-		_type = type;
 		_x = x;
 		_y = y;
-	}
-	
-	public String getType()
-	{
-		return _type;
+		_type = type;
 	}
 	
 	public int getX()
@@ -30,5 +25,10 @@ public final class MarioObject
 	public int getY()
 	{
 		return _y;
+	}
+	
+	public String getType()
+	{
+		return _type;
 	}
 }

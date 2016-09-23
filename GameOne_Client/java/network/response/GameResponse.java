@@ -7,7 +7,7 @@ import pacman.MapBuilder;
 import windows.GameSelect;
 
 /**
- * GameResponse packet implementation.
+ * Packet responsible for carrying out actions on a specific game request.
  * @author Sahar
  */
 public final class GameResponse extends PacketReader<Client>
@@ -15,7 +15,7 @@ public final class GameResponse extends PacketReader<Client>
 	private int _gameId;
 	
 	@Override
-	public void read(final Client client)
+	public void read()
 	{
 		_gameId = readInt();
 	}

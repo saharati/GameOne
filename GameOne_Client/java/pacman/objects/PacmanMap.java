@@ -1,6 +1,8 @@
 package pacman.objects;
 
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.concurrent.ScheduledFuture;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import client.Client;
+import network.request.RequestUpdateGameScore;
 import objects.pacman.PacmanObject;
 import pacman.MapBuilder;
 import pacman.objects.MapObject;
@@ -53,31 +57,53 @@ public final class PacmanMap extends JFrame
 		_objects = objects;
 		_totalStars = getStars().size();
 		
+		setLayout(new GridBagLayout());
+		
+		final GridBagConstraints gc = new GridBagConstraints();
 		for (int i = 0;i < _objects.length;i++)
 		{
 			for (int j = 0;j < _objects[i].length;j++)
 			{
+				gc.gridx = i + 1;
+				gc.gridy = j + 1;
+				
 				if (_objects[i][j].getType().isPlayer())
 					_player = _objects[i][j];
 				else if (_objects[i][j].getType().isMonster())
 					_mobs.put(_objects[i][j], '0');
 				
-				add(_objects[i][j]);
+				add(_objects[i][j], gc);
 			}
 		}
 		
-		int pos = 0;
-		getContentPane().setComponentZOrder(_player, pos++);
-		for (final MapObject mob : _mobs.keySet())
-			getContentPane().setComponentZOrder(mob, pos++);
-		
+		_mobs.keySet().forEach(mob -> getContentPane().setComponentZOrder(mob, 1));
+		getContentPane().setComponentZOrder(_player, 0);
 		getContentPane().setBackground(Color.BLACK);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1030, 795);
-		setLocationRelativeTo(null);
-		setLayout(null);
+		
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
+		pack();
+		setLocationRelativeTo(null);
 		addKeyListener(new Movement());
+	}
+	
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+		
+		for (final ScheduledFuture<?> future : _schedules)
+			if (future != null)
+				future.cancel(false);
+		
+		MapBuilder.getInstance().addScore(_totalStars - getStars().size());
+		
+		final boolean isWin = MapBuilder.getInstance().getCurrentMap() == null;
+		final int totalScore = MapBuilder.getInstance().getCurrentScore();
+		
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin, totalScore));
+		
+		MapBuilder.getInstance().reset();
 	}
 	
 	public MapObject[][] getObjects()
@@ -115,7 +141,7 @@ public final class PacmanMap extends JFrame
 	{
 		for (int i = 0;i < _objects.length;i++)
 			for (int j = 0;j < _objects[i].length;j++)
-				if (isWithin(x, y, _objects[i][j].getX(), _objects[i][j].getY()))
+				if (!_objects[i][j].getType().isEmpty() && isWithin(x, y, _objects[i][j].getX(), _objects[i][j].getY()))
 					return _objects[i][j];
 		
 		return MapObject.EMPTY;
@@ -123,39 +149,77 @@ public final class PacmanMap extends JFrame
 	
 	private boolean isWithin(final int x, final int y, final int objX, final int objY)
 	{
-		return x > objX && x < objX + 64 && y > objY && y < objY + 64;
+		return x > objX && x < objX + MapBuilder.BLOCK_SIZE && y > objY && y < objY + MapBuilder.BLOCK_SIZE;
+	}
+	
+	private char getOppositeDirection()
+	{
+		switch (_nextMoves[1])
+		{
+			case 'w':
+				return 's';
+			case 'a':
+				return 'd';
+			case 's':
+				return 'w';
+			case 'd':
+				return 'a';
+		}
+		
+		return 0;
 	}
 	
 	private void checkForDirectionChange(final int x, final int y)
 	{
+		// If we don't have any next moves planned, ignore.
 		if (_nextMoves[1] == 0)
 			return;
+		// If we are trying to go opposite direction, change instantly.
+		final char oppositeDirection = getOppositeDirection();
+		if (oppositeDirection == _nextMoves[0])
+		{
+			_nextMoves[0] = _nextMoves[1];
+			_nextMoves[1] = 0;
+			return;
+		}
+		// If we are not in a place that allows turning, ignore.
+		if (x % MapBuilder.BLOCK_SIZE != 0 || y % MapBuilder.BLOCK_SIZE != 0)
+			return;
+		// If we are out of bounds, don't change direction even if possible.
+		if (x < 0 || y < 0 || x + MapBuilder.BLOCK_SIZE > getContentPane().getWidth() || y + MapBuilder.BLOCK_SIZE > getContentPane().getHeight())
+			return;
 		
+		// Finally try to change direction...
+		// Cover corner cases.
 		switch (_nextMoves[1])
 		{
 			case 'w':
-				if ((x % 64 == 0 && y % 64 == 0 || _nextMoves[0] == 's') && !getObjectAt(x + 1, y - 1 % 64 == 0 ? y - 2 : y - 1).getType().isWall() && !getObjectAt(x + 63, y - 1 % 64 == 0 ? y - 2 : y - 1).getType().isWall())
+				final int upY = y - 1 < 0 ? getContentPane().getHeight() - 1 : y - 1;
+				if (!getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, upY).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 'w';
 				}
 				break;
-			case 's':
-				if ((x % 64 == 0 && y % 64 == 0 || _nextMoves[0] == 'w') && !getObjectAt(x + 1, y + 65 % 64 == 0 ? y + 66 : y + 65).getType().isWall() && !getObjectAt(x + 63, y + 65 % 64 == 0 ? y + 66 : y + 65).getType().isWall())
-				{
-					_nextMoves[1] = 0;
-					_nextMoves[0] = 's';
-				}
-				break;
 			case 'a':
-				if ((x % 64 == 0 && y % 64 == 0 || _nextMoves[0] == 'd') && !getObjectAt(x - 1 % 64 == 0 ? x - 2 : x - 1, y + 1).getType().isWall() && !getObjectAt(x - 1 % 64 == 0 ? x - 2 : x - 1, y + 63).getType().isWall())
+				final int leftX = x - 1 < 0 ? getContentPane().getWidth() - 1 : x - 1;
+				if (!getObjectAt(leftX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 'a';
 				}
 				break;
+			case 's':
+				final int downY = y + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : y + MapBuilder.BLOCK_SIZE + 1;
+				if (!getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, downY).getType().isWall())
+				{
+					_nextMoves[1] = 0;
+					_nextMoves[0] = 's';
+				}
+				break;
 			case 'd':
-				if ((x % 64 == 0 && y % 64 == 0 || _nextMoves[0] == 'a') && !getObjectAt(x + 65 % 64 == 0 ? x + 66 : x + 65, y + 1).getType().isWall() && !getObjectAt(x + 65 % 64 == 0 ? x + 66 : x + 65, y + 63).getType().isWall())
+				final int rightX = x + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : x + MapBuilder.BLOCK_SIZE + 1;
+				if (!getObjectAt(rightX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 'd';
@@ -166,31 +230,73 @@ public final class PacmanMap extends JFrame
 	
 	private char getRandomDirectionChange(final int x, final int y, final char direction)
 	{
-		if (x % 64 != 0 || y % 64 != 0 || Rnd.nextBoolean())
+		// If we are not in a place that allows turning, ignore.
+		if (x % MapBuilder.BLOCK_SIZE != 0 || y % MapBuilder.BLOCK_SIZE != 0)
+			return direction;
+		// We shouldn't always change direction when available.
+		if (Rnd.nextBoolean())
+			return direction;
+		// If we are out of bounds, don't change direction even if possible.
+		if (x < 0 || y < 0 || x + MapBuilder.BLOCK_SIZE > getContentPane().getWidth() || y + MapBuilder.BLOCK_SIZE > getContentPane().getHeight())
 			return direction;
 		
+		// Finally try to change direction...
+		// Cover corner cases.
 		switch (direction)
 		{
+			// If currently going up or down.
 			case 'w':
 			case 's':
-				final boolean canGoLeft = !getObjectAt(x - 1 % 64 == 0 ? x - 2 : x - 1, y + 1).getType().isWall() && !getObjectAt(x - 1 % 64 == 0 ? x - 2 : x - 1, y + 63).getType().isWall();
-				final boolean canGoRight = !getObjectAt(x + 65 % 64 == 0 ? x + 66 : x + 65, y + 1).getType().isWall() && !getObjectAt(x + 65 % 64 == 0 ? x + 66 : x + 65, y + 63).getType().isWall();
-				if (canGoLeft && !canGoRight || canGoLeft && canGoRight && Rnd.nextBoolean())
-					return 'a';
-				if (canGoRight)
+				// Check if can change direction to left or right.
+				final int leftX = x - 1 < 0 ? getContentPane().getWidth() - 1 : x - 1;
+				final int rightX = x + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : x + MapBuilder.BLOCK_SIZE + 1;
+				final boolean canGoLeft = !getObjectAt(leftX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall();
+				final boolean canGoRight = !getObjectAt(rightX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall();
+				// If we can only go to one direction, just pick that direction.
+				if (canGoLeft != canGoRight)
+				{
+					if (canGoLeft)
+						return 'a';
+					
 					return 'd';
+				}
+				// Else if we can go both directions, pick randomly.
+				if (canGoLeft && canGoRight)
+				{
+					if (Rnd.nextBoolean())
+						return 'a';
+					
+					return 'd';
+				}
 				break;
+			// If currently going left or right.
 			case 'a':
 			case 'd':
-				final boolean canGoUp = !getObjectAt(x + 1, y - 1 % 64 == 0 ? y - 2 : y - 1).getType().isWall() && !getObjectAt(x + 63, y - 1 % 64 == 0 ? y - 2 : y - 1).getType().isWall();
-				final boolean canGoDown = !getObjectAt(x + 1, y + 65 % 64 == 0 ? y + 66 : y + 65).getType().isWall() && !getObjectAt(x + 63, y + 65 % 64 == 0 ? y + 66 : y + 65).getType().isWall();
-				if (canGoUp && !canGoDown || canGoUp && canGoDown && Rnd.nextBoolean())
-					return 'w';
-				if (canGoDown)
+				// Check if can change direction to up or down.
+				final int upY = y - 1 < 0 ? getContentPane().getHeight() - 1 : y - 1;
+				final int downY = y + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : y + MapBuilder.BLOCK_SIZE + 1;
+				final boolean canGoUp = !getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, upY).getType().isWall();
+				final boolean canGoDown = !getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, downY).getType().isWall();
+				// If we can only go to one direction, just pick that direction.
+				if (canGoUp != canGoDown)
+				{
+					if (canGoUp)
+						return 'w';
+					
 					return 's';
+				}
+				// Else if we can go both directions, pick randomly.
+				if (canGoUp && canGoDown)
+				{
+					if (Rnd.nextBoolean())
+						return 'w';
+					
+					return 's';
+				}
 				break;
 		}
 		
+		// No new direction found.
 		return direction;
 	}
 	
@@ -198,24 +304,6 @@ public final class PacmanMap extends JFrame
 	{
 		_slowTime = 1500;
 		_slow = true;
-	}
-	
-	private MapObject getTarget(final MapObject target1, final MapObject target2)
-	{
-		if (target1.getType().isWall())
-			return target1;
-		if (target2.getType().isWall())
-			return target2;
-		if (target1.getType().isMonster())
-			return target1;
-		if (target2.getType().isMonster())
-			return target2;
-		if (target1.getType().isFood() || target1.getType().isStar())
-			return target1;
-		if (target2.getType().isFood() || target2.getType().isStar())
-			return target2;
-		
-		return target1;
 	}
 	
 	private class Movement extends KeyAdapter
@@ -234,13 +322,13 @@ public final class PacmanMap extends JFrame
 				case KeyEvent.VK_A:
 					ch = 'a';
 					break;
-				case KeyEvent.VK_RIGHT:
-				case KeyEvent.VK_D:
-					ch = 'd';
-					break;
 				case KeyEvent.VK_DOWN:
 				case KeyEvent.VK_S:
 					ch = 's';
+					break;
+				case KeyEvent.VK_RIGHT:
+				case KeyEvent.VK_D:
+					ch = 'd';
 					break;
 				default:
 					return;
@@ -285,88 +373,107 @@ public final class PacmanMap extends JFrame
 			MapObject finalTarget = null;
 			switch (_nextMoves[0])
 			{
-				case 'a':
-					finalTarget = getTarget(getObjectAt(toX - 1 % 64 == 0 ? toX - 2 : toX - 1, toY + 1), getObjectAt(toX - 1 % 64 == 0 ? toX - 2 : toX - 1, toY + 63));
-					toX--;
-					break;
 				case 'w':
-					finalTarget = getTarget(getObjectAt(toX + 1, toY - 1 % 64 == 0 ? toY - 2 : toY - 1), getObjectAt(toX + 63, toY - 1 % 64 == 0 ? toY - 2 : toY - 1));
+					final int upY = toY - 1 < 0 ? getContentPane().getHeight() - 1 : toY - 1;
+					finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, upY);
 					toY--;
 					break;
+				case 'a':
+					final int leftX = toX - 1 < 0 ? getContentPane().getWidth() - 1 : toX - 1;
+					finalTarget = getObjectAt(leftX, toY + MapBuilder.BLOCK_SIZE / 2);
+					toX--;
+					break;
 				case 's':
-					finalTarget = getTarget(getObjectAt(toX + 1, toY + 65 % 64 == 0 ? toY + 66 : toY + 65), getObjectAt(toX + 63, toY + 65 % 64 == 0 ? toY + 66 : toY + 65));
+					final int downY = toY + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : toY + MapBuilder.BLOCK_SIZE + 1;
+					finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, downY);
 					toY++;
 					break;
 				case 'd':
-					finalTarget = getTarget(getObjectAt(toX + 65 % 64 == 0 ? toX + 66 : toX + 65, toY + 1), getObjectAt(toX + 65 % 64 == 0 ? toX + 66 : toX + 65, toY + 63));
+					final int rightX = toX + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + MapBuilder.BLOCK_SIZE + 1;
+					finalTarget = getObjectAt(rightX, toY + MapBuilder.BLOCK_SIZE / 2);
 					toX++;
 					break;
 			}
 			
-			if (toX > -63 && toX < 1023 && toY > -63 && toY < 767)
+			// If inside map bounds.
+			if (toX > -MapBuilder.BLOCK_SIZE && toX < getContentPane().getWidth() && toY > -MapBuilder.BLOCK_SIZE && toY < getContentPane().getHeight())
 			{
+				// If the target isn't a wall.
 				if (!finalTarget.getType().isWall())
 				{
+					// If its a star.
 					if (finalTarget.getType().isStar())
 					{
+						// Consume it.
 						finalTarget.setType(PacmanObject.EMPTY);
 						
+						// If no more stars on map, finish this map.
 						if (getStars().isEmpty())
 						{
 							for (final ScheduledFuture<?> future : _schedules)
 								future.cancel(false);
 							
-							MapBuilder.getInstance().addScore(_totalStars);
-							
 							JOptionPane.showMessageDialog(null, "You won!", "Pazam!", JOptionPane.INFORMATION_MESSAGE);
-							setVisible(false);
 							
 							final PacmanMap next = MapBuilder.getInstance().getNextMap();
 							if (next != null)
+							{
+								MapBuilder.getInstance().addScore(_totalStars);
+								
+								setVisible(false);
 								next.setVisible(true);
+							}
 							else
-								MapBuilder.getInstance().reset();
+								dispose();
 						}
 					}
+					// If its food.
 					else if (finalTarget.getType().isFood())
 					{
+						// Consume it.
 						finalTarget.setType(PacmanObject.EMPTY);
 						
+						// Activate slow on mobs.
 						setSlow();
 					}
+					// If its a mob.
 					else if (finalTarget.getType().isMonster())
 					{
+						// If its in slow mode, consume it.
 						if (_slow)
 							finalTarget.setType(PacmanObject.EMPTY);
+						// Otherwise player lose, end map.
 						else
 						{
 							for (final ScheduledFuture<?> future : _schedules)
 								future.cancel(false);
 							
-							MapBuilder.getInstance().addScore(_totalStars);
+							dispose();
 							
 							JOptionPane.showMessageDialog(null, "You lost!", "Noob", JOptionPane.INFORMATION_MESSAGE);
-							setVisible(false);
-							MapBuilder.getInstance().reset();
 						}
 					}
 					
+					// Finally if all ok, set location to new location.
 					_player.setLocation(toX, toY);
 					if (_player.getType() != PacmanObject.PLAYER_NORMAL)
 						_player.setType(PacmanObject.getObjectForDirection(_nextMoves[0]));
 				}
 			}
+			// If player out of map bounds.
 			else
 			{
-				if (toX == -64)
-					toX = 1023;
-				else if (toX == 1024)
-					toX = -63;
-				else if (toY == -64)
-					toY = 767;
-				else if (toY == 768)
-					toY = -63;
+				// Move the player to the opposite side of the screen.
+				if (toX == -MapBuilder.BLOCK_SIZE)
+					toX = getContentPane().getWidth();
+				else if (toX == getContentPane().getWidth())
+					toX = -MapBuilder.BLOCK_SIZE;
+				else if (toY == -MapBuilder.BLOCK_SIZE)
+					toY = getContentPane().getHeight();
+				else if (toY == getContentPane().getHeight())
+					toY = -MapBuilder.BLOCK_SIZE;
 				
+				// Update location.
 				_player.setLocation(toX, toY);
 				if (_player.getType() != PacmanObject.PLAYER_NORMAL)
 					_player.setType(PacmanObject.getObjectForDirection(_nextMoves[0]));
@@ -393,10 +500,10 @@ public final class PacmanMap extends JFrame
 				{
 					for (final Entry<MapObject, Character> entry : _mobs.entrySet())
 					{
-						if (entry.getKey().getType() == PacmanObject.EMPTY)
+						if (entry.getKey().getType().isEmpty())
 							continue;
 						
-						if (entry.getKey().getType() == PacmanObject.MOB_SLOW)
+						if (entry.getKey().getType().isSlow())
 							entry.getKey().setType(entry.getKey().getReservedType());
 						else
 							entry.getKey().setType(PacmanObject.MOB_SLOW);
@@ -406,10 +513,9 @@ public final class PacmanMap extends JFrame
 				_slow = --_slowTime != 0;
 			}
 			
-			MapObject finalTarget = null;
 			for (final Entry<MapObject, Character> entry : _mobs.entrySet())
 			{
-				if (entry.getKey().getType() == PacmanObject.EMPTY)
+				if (entry.getKey().getType().isEmpty())
 					continue;
 				
 				if (_slowTime > 500)
@@ -419,10 +525,10 @@ public final class PacmanMap extends JFrame
 						if (entry.getKey().getType() != PacmanObject.MOB_SLOW)
 							entry.getKey().setType(PacmanObject.MOB_SLOW);
 					}
-					else if (entry.getKey().getType() == PacmanObject.MOB_SLOW)
+					else if (entry.getKey().getType().isSlow())
 						entry.getKey().setType(entry.getKey().getReservedType());
 				}
-				else if (_slowTime == 0 && entry.getKey().getType() == PacmanObject.MOB_SLOW)
+				else if (_slowTime == 0 && entry.getKey().getType().isSlow())
 					entry.getKey().setType(entry.getKey().getReservedType());
 				
 				int toX = entry.getKey().getX();
@@ -431,26 +537,32 @@ public final class PacmanMap extends JFrame
 				if (entry.getValue() == '0')
 					entry.setValue(DIRECTIONS.get(Rnd.get(DIRECTIONS.size())));
 				
+				MapObject finalTarget = null;
 				switch (entry.getValue())
 				{
-					case 'a':
-						finalTarget = getTarget(getObjectAt(toX - 1 % 64 == 0 ? toX - 2 : toX - 1, toY + 1), getObjectAt(toX - 1 % 64 == 0 ? toX - 2 : toX - 1, toY + 63));
-						toX--;
-						break;
 					case 'w':
-						finalTarget = getTarget(getObjectAt(toX + 1, toY - 1 % 64 == 0 ? toY - 2 : toY - 1), getObjectAt(toX + 63, toY - 1 % 64 == 0 ? toY - 2 : toY - 1));
+						final int upY = toY - 1 < 0 ? getContentPane().getHeight() - 1 : toY - 1;
+						finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, upY);
 						toY--;
 						break;
+					case 'a':
+						final int leftX = toX - 1 < 0 ? getContentPane().getWidth() - 1 : toX - 1;
+						finalTarget = getObjectAt(leftX, toY + MapBuilder.BLOCK_SIZE / 2);
+						toX--;
+						break;
 					case 's':
-						finalTarget = getTarget(getObjectAt(toX + 1, toY + 65 % 64 == 0 ? toY + 66 : toY + 65), getObjectAt(toX + 63, toY + 65 % 64 == 0 ? toY + 66 : toY + 65));
+						final int downY = toY + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : toY + MapBuilder.BLOCK_SIZE + 1;
+						finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, downY);
 						toY++;
 						break;
 					case 'd':
-						finalTarget = getTarget(getObjectAt(toX + 65 % 64 == 0 ? toX + 66 : toX + 65, toY + 1), getObjectAt(toX + 65 % 64 == 0 ? toX + 66 : toX + 65, toY + 63));
+						final int rightX = toX + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + MapBuilder.BLOCK_SIZE + 1;
+						finalTarget = getObjectAt(rightX, toY + MapBuilder.BLOCK_SIZE / 2);
 						toX++;
 						break;
 				}
-				if (toX > -63 && toX < 1023 && toY > -63 && toY < 767)
+				
+				if (toX > -MapBuilder.BLOCK_SIZE && toX < getContentPane().getWidth() && toY > -MapBuilder.BLOCK_SIZE && toY < getContentPane().getHeight())
 				{
 					if (!finalTarget.getType().isWall())
 					{
@@ -461,16 +573,13 @@ public final class PacmanMap extends JFrame
 								entry.getKey().setType(PacmanObject.EMPTY);
 								break;
 							}
-							else
-							{
-								for (final ScheduledFuture<?> future : _schedules)
-									future.cancel(false);
-								
-								MapBuilder.getInstance().addScore(_totalStars - getStars().size());
-								JOptionPane.showMessageDialog(null, "You lost!", "Noob", JOptionPane.INFORMATION_MESSAGE);
-								setVisible(false);
-								MapBuilder.getInstance().reset();
-							}
+							
+							for (final ScheduledFuture<?> future : _schedules)
+								future.cancel(false);
+							
+							dispose();
+							
+							JOptionPane.showMessageDialog(null, "You lost!", "Noob", JOptionPane.INFORMATION_MESSAGE);
 						}
 						
 						entry.getKey().setLocation(toX, toY);
@@ -480,14 +589,14 @@ public final class PacmanMap extends JFrame
 				}
 				else
 				{
-					if (toX == -64)
-						toX = 1023;
-					else if (toX == 1024)
-						toX = -63;
-					else if (toY == -64)
-						toY = 767;
-					else if (toY == 768)
-						toY = -63;
+					if (toX == -MapBuilder.BLOCK_SIZE)
+						toX = getContentPane().getWidth();
+					else if (toX == getContentPane().getWidth())
+						toX = -MapBuilder.BLOCK_SIZE;
+					else if (toY == -MapBuilder.BLOCK_SIZE)
+						toY = getContentPane().getHeight();
+					else if (toY == getContentPane().getHeight())
+						toY = -MapBuilder.BLOCK_SIZE;
 					
 					entry.getKey().setLocation(toX, toY);
 				}

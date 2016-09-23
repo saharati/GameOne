@@ -4,7 +4,7 @@ import network.PacketInfo;
 import network.PacketWriter;
 
 /**
- * Outgoing LogoutResponse packet implementation.
+ * Packet responsible for logging out the user.
  * @author Sahar
  */
 public final class LogoutResponse extends PacketWriter

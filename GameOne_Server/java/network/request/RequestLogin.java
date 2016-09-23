@@ -7,7 +7,7 @@ import server.objects.GameClient;
 import server.objects.User;
 
 /**
- * RequestLogin packet implementation.
+ * Packet responsible for handling a login request.
  * @author Sahar
  */
 public final class RequestLogin extends PacketReader<GameClient>
@@ -17,7 +17,7 @@ public final class RequestLogin extends PacketReader<GameClient>
 	private String _mac;
 	
 	@Override
-	public void read(final GameClient client)
+	public void read()
 	{
 		_username = readString();
 		_password = readString();

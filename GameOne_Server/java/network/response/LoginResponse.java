@@ -4,7 +4,7 @@ import network.PacketInfo;
 import network.PacketWriter;
 
 /**
- * Outgoing Login packet implementation.
+ * Packet responsible for telling the client the login status.
  * @author Sahar
  */
 public final class LoginResponse extends PacketWriter

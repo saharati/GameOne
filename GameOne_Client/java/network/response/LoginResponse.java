@@ -7,7 +7,7 @@ import network.PacketReader;
 import windows.GameSelect;
 
 /**
- * LoginResponse packet implementation.
+ * Packet holding the response for a login request.
  * @author Sahar
  */
 public final class LoginResponse extends PacketReader<Client>
@@ -22,7 +22,7 @@ public final class LoginResponse extends PacketReader<Client>
 	private byte _result;
 	
 	@Override
-	public void read(final Client client)
+	public void read()
 	{
 		_result = readByte();
 	}

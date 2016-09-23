@@ -6,13 +6,13 @@ import windows.GameSelect;
 import windows.Login;
 
 /**
- * LogoutResponse packet implementation.
+ * Packet indicates that logging out succeed.
  * @author Sahar
  */
 public final class LogoutResponse extends PacketReader<Client>
 {
 	@Override
-	public void read(final Client client)
+	public void read()
 	{
 		
 	}

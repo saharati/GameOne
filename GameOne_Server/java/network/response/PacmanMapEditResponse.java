@@ -4,12 +4,13 @@ import network.PacketInfo;
 import network.PacketWriter;
 
 /**
- * Outgoing PacmanMapEditResponse packet implementation.
+ * Packet responsible for telling the result of a specific map edit request.
  * @author Sahar
  */
 public final class PacmanMapEditResponse extends PacketWriter
 {
 	public static final PacmanMapEditResponse NO_PERMISSION = new PacmanMapEditResponse((byte) -1);
+	public static final PacmanMapEditResponse FAIL = new PacmanMapEditResponse((byte) -2);
 	public static final PacmanMapEditResponse SUCCESS = new PacmanMapEditResponse((byte) 1);
 	
 	private final byte _result;

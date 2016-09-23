@@ -19,11 +19,12 @@ import util.database.Database;
 public final class PacmanTable
 {
 	private static final Logger LOGGER = Logger.getLogger(PacmanTable.class.getName());
-	
 	private static final String SELECT_MAPS = "SELECT DISTINCT mapId FROM pacman";
 	private static final String SELECT_MAP = "SELECT i, j, type FROM pacman WHERE mapId=?";
 	private static final String INSERT_OBJECT = "INSERT INTO pacman VALUES (?, ?, ?, ?)";
 	private static final String DELETE_MAP = "DELETE FROM pacman WHERE mapId=?";
+	
+	public static final int[] ARRAY_DIMENSIONS = {16, 12};
 	
 	private final Map<Integer, PacmanObject[][]> _maps = new ConcurrentHashMap<>();
 	
@@ -37,7 +38,7 @@ public final class PacmanTable
 			while (rs.next())
 			{
 				final int mapId = rs.getInt("mapId");
-				final PacmanObject[][] objects = new PacmanObject[16][12];
+				final PacmanObject[][] objects = new PacmanObject[ARRAY_DIMENSIONS[0]][ARRAY_DIMENSIONS[1]];
 				try (final PreparedStatement ps2 = con.prepareStatement(SELECT_MAP))
 				{
 					ps2.setInt(1, mapId);

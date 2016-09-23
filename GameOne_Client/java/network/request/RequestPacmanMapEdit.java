@@ -5,7 +5,7 @@ import network.PacketWriter;
 import pacman.PacmanButton;
 
 /**
- * RequestPacmanMapEdit used to save edited or new maps.
+ * Packet sending a map edit request to the server.
  * @author Sahar
  */
 public final class RequestPacmanMapEdit extends PacketWriter

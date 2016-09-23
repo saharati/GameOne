@@ -4,7 +4,7 @@ import network.PacketInfo;
 import network.PacketWriter;
 
 /**
- * Outgoing MessageResponse packet implementation.
+ * Packet responsible for sending chat messages.
  * @author Sahar
  */
 public final class MessageResponse extends PacketWriter

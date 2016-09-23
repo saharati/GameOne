@@ -39,7 +39,7 @@ public final class SelectionPanel extends JPanel
 		final JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
 		for (final Entry<PacmanObject, Image> entry : builder.getPacmanObjects().entrySet())
 		{
-			if (entry.getKey().isPlayer() && entry.getKey() != PacmanObject.PLAYER_NORMAL || entry.getKey() == PacmanObject.MOB_SLOW)
+			if (entry.getKey().isPlayer() && entry.getKey() != PacmanObject.PLAYER_NORMAL || entry.getKey().isSlow())
 				continue;
 			
 			final PacmanButton b = new PacmanButton(entry);

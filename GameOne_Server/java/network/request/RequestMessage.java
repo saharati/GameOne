@@ -11,7 +11,7 @@ import util.Broadcast;
 import util.StringUtil;
 
 /**
- * RequestMessage packet implementation.
+ * Incoming chat message packet implementation.
  * @author Sahar
  */
 public final class RequestMessage extends PacketReader<GameClient>
@@ -19,7 +19,7 @@ public final class RequestMessage extends PacketReader<GameClient>
 	private String _message;
 	
 	@Override
-	public void read(final GameClient client)
+	public void read()
 	{
 		_message = readString();
 	}

@@ -11,16 +11,16 @@ import server.objects.GameClient;
 import util.Broadcast;
 
 /**
- * RequestPacmanMapEdit packet implementation.
+ * Packet responsible for editing or adding new maps.
  * @author Sahar
  */
 public final class RequestPacmanMapEdit extends PacketReader<GameClient>
 {
 	private int _mapId;
-	private PacmanObject[][] _objects = new PacmanObject[16][12];
+	private PacmanObject[][] _objects = new PacmanObject[PacmanTable.ARRAY_DIMENSIONS[0]][PacmanTable.ARRAY_DIMENSIONS[1]];
 	
 	@Override
-	public void read(final GameClient client)
+	public void read()
 	{
 		final PacmanObject[] values = PacmanObject.values();
 		
@@ -37,11 +37,29 @@ public final class RequestPacmanMapEdit extends PacketReader<GameClient>
 			client.sendPacket(PacmanMapEditResponse.NO_PERMISSION);
 		else
 		{
-			PacmanTable.getInstance().updateMap(_mapId, _objects);
+			boolean hasPlayer = false;
+			boolean hasAtLeastOneStar = false;
+			for (int i = 0;i < _objects.length;i++)
+			{
+				for (int j = 0;j < _objects[i].length;j++)
+				{
+					if (_objects[i][j].isPlayer())
+						hasPlayer = true;
+					else if (_objects[i][j].isStar())
+						hasAtLeastOneStar = true;
+				}
+			}
 			
-			client.sendPacket(PacmanMapEditResponse.SUCCESS);
-			
-			Broadcast.toAllUsers(new GameObjectsResponse(GameId.PACMAN));
+			if (!hasPlayer || !hasAtLeastOneStar)
+				client.sendPacket(PacmanMapEditResponse.FAIL);
+			else
+			{
+				PacmanTable.getInstance().updateMap(_mapId, _objects);
+				
+				client.sendPacket(PacmanMapEditResponse.SUCCESS);
+				
+				Broadcast.toAllUsers(new GameObjectsResponse(GameId.PACMAN));
+			}
 		}
 	}
 }

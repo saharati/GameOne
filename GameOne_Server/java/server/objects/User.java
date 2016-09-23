@@ -171,36 +171,38 @@ public final class User
 	
 	public void saveGameStat(final GameStat stat)
 	{
-		// TODO
-		/*try
+		try (final Connection con = Database.getConnection())
 		{
-			final PreparedStatement s = Database.getInstance().getConnection().prepareStatement("INSERT INTO status VALUES (?, ?, ?, ?, ?)");
-			s.setInt(1, userId);
-			s.setInt(2, stats.getGameId().ordinal());
-			s.setInt(3, stats.getScore());
-			s.setInt(4, stats.getWins());
-			s.setInt(5, stats.getLoses());
-			s.execute();
-			s.close();
+			if (_gameStats.containsKey(stat.getGameId()))
+			{
+				try (final PreparedStatement ps = con.prepareStatement("UPDATE user_games SET score=?, wins=?, loses=? WHERE gameId=? AND userId=?"))
+				{
+					ps.setInt(1, stat.getScore());
+					ps.setInt(2, stat.getWins());
+					ps.setInt(3, stat.getLoses());
+					ps.setInt(4, stat.getGameId().ordinal());
+					ps.setInt(5, _id);
+					ps.execute();
+				}
+			}
+			else
+			{
+				try (final PreparedStatement ps = con.prepareStatement("INSERT INTO user_games VALUES (?, ?, ?, ?, ?)"))
+				{
+					ps.setInt(1, _id);
+					ps.setInt(2, stat.getGameId().ordinal());
+					ps.setInt(3, stat.getScore());
+					ps.setInt(4, stat.getWins());
+					ps.setInt(5, stat.getLoses());
+					ps.execute();
+					
+					_gameStats.put(stat.getGameId(), stat);
+				}
+			}
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
-			try
-			{
-				final PreparedStatement s = Database.getInstance().getConnection().prepareStatement("UPDATE status SET score=?, wins=?, loses=? WHERE gameId=? AND userId=?");
-				s.setInt(1, stats.getScore());
-				s.setInt(2, stats.getWins());
-				s.setInt(3, stats.getLoses());
-				s.setInt(4, stats.getGameId().ordinal());
-				s.setInt(5, userId);
-				s.execute();
-				s.close();
-			}
-			catch (SQLException e1)
-			{
-				System.out.println("Failed saving game data for userId " + userId + " and gameId " + stats.getGameId() + "!!!");
-				e1.printStackTrace();
-			}
-		}*/
+			LOGGER.log(Level.WARNING, "Failed saving game data for userId " + _id + " and gameId " + stat.getGameId() + ": ", e);
+		}
 	}
 }

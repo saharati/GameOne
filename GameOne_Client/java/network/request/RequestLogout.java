@@ -4,7 +4,7 @@ import network.PacketInfo;
 import network.PacketWriter;
 
 /**
- * RequestLogout packet implementation.
+ * Requesting to logout from the server.
  * @author Sahar
  */
 public final class RequestLogout extends PacketWriter

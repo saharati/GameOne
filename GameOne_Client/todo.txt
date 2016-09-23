@@ -4,13 +4,3 @@ add icon.
 
 Make pacman and mario objects load on startup, and in case an admin make changes, broadcast to all available clients.
 When requesting a game, do not close the window with buttons and chat, just disable buttons, so people can still chat.
-add images directory to build.xml
-add close listener to pacman frames, dispose the frame, enable gameselect buttons and setcurrentgame to null in server.
-replace all listeners with lambdas.
-
-use reloadComboBox() when an admin make changes to maps.
-call Save when admin wants to save a certain map.
-
-Use SelectionPanel#reloadComboBox() when adding/editing/removing a map.
-SelectionPanel#Save check for permission and save.
-MapBuilder#reset() save player's score and show toplist.

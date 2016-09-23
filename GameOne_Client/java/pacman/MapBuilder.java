@@ -34,7 +34,8 @@ public final class MapBuilder extends JFrame
 	private static final String IMAGE_PATH = "./images/pacman/";
 	
 	public static final int[] ARRAY_DIMENSIONS = {16, 12};
-	public static final Dimension PIXEL_DIMENSIONS = new Dimension(64, 64);
+	public static final int BLOCK_SIZE = 64;
+	public static final Dimension PIXEL_DIMENSIONS = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
 	
 	private final Map<PacmanObject, Image> _pacmanObjects = new LinkedHashMap<>();
 	private final PacmanButton[][] _buttons = new PacmanButton[ARRAY_DIMENSIONS[0]][ARRAY_DIMENSIONS[1]];
@@ -46,7 +47,7 @@ public final class MapBuilder extends JFrame
 	
 	private MapBuilder()
 	{
-		super("Pacman Map Builder");
+		super("GameOne Client - Pacman");
 		
 		for (final PacmanObject obj : PacmanObject.values())
 			_pacmanObjects.put(obj, new ImageIcon(IMAGE_PATH + obj.getImage()).getImage());
@@ -112,6 +113,11 @@ public final class MapBuilder extends JFrame
 		return _currentScore;
 	}
 	
+	public PacmanMap getCurrentMap()
+	{
+		return Client.getInstance().getPacmanMaps().get(_currentMap);
+	}
+	
 	public PacmanMap getNextMap()
 	{
 		return Client.getInstance().getPacmanMaps().get(++_currentMap);
@@ -157,9 +163,6 @@ public final class MapBuilder extends JFrame
 		
 		Client.getInstance().getPacmanMaps().values().forEach(m -> m.reset());
 		GameSelect.getInstance().enableAllButtons();
-		
-		// TODO
-		//_client.getConnection().saveUserStatus(Math.max(_currentScore, _client.getScore()), Math.max(_currentMap, _client.getWins()), 0);
 	}
 	
 	@Override

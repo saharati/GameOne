@@ -4,7 +4,7 @@ import network.PacketInfo;
 import network.PacketWriter;
 
 /**
- * RequestMessage packet implementation.
+ * Chat message send request.
  * @author Sahar
  */
 public final class RequestMessage extends PacketWriter

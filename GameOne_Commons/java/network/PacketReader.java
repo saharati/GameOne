@@ -10,7 +10,7 @@ public abstract class PacketReader<T extends BasicClient>
 {
 	private ByteBuffer _buf;
 	
-	public abstract void read(final T client);
+	public abstract void read();
 	
 	public abstract void run(final T client);
 	

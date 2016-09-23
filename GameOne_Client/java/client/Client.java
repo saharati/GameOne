@@ -102,7 +102,7 @@ public final class Client extends BasicClient
 			final PacketReader<BasicClient> packet = inf.getReadPacket();
 			
 			packet.setBuffer(buffer);
-			packet.read(this);
+			packet.read();
 			packet.run(this);
 		}
 		buffer.clear();

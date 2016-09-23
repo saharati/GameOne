@@ -1,6 +1,5 @@
 IPConfig - IPv6 support.
 GameClient#onDisconnect - TODO.
-User#saveGameStat - TODO.
 Shutdown - disconnect all players safely.
 
 Move mario and pacman objects to be enums.

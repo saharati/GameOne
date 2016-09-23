@@ -5,7 +5,7 @@ import network.PacketReader;
 import windows.GameSelect;
 
 /**
- * MessageResponse packet implementation.
+ * Incoming chat message from the server.
  * @author Sahar
  */
 public final class MessageResponse extends PacketReader<Client>
@@ -13,7 +13,7 @@ public final class MessageResponse extends PacketReader<Client>
 	private String _message;
 	
 	@Override
-	public void read(final Client client)
+	public void read()
 	{
 		_message = readString();
 	}

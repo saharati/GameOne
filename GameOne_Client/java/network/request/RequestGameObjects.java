@@ -5,7 +5,7 @@ import network.PacketWriter;
 import objects.GameId;
 
 /**
- * RequestGameObjects packet implementation.
+ * Request a specific game objects from the server.
  * @author Sahar
  */
 public final class RequestGameObjects extends PacketWriter

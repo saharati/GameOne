@@ -81,7 +81,7 @@ public final class GameClient extends BasicClient
 			final PacketInfo inf = PacketInfo.values()[opCode];
 			final PacketReader<BasicClient> packet = inf.getReadPacket();
 			packet.setBuffer(buffer);
-			packet.read(this);
+			packet.read();
 			
 			if (inf.isAuthedState() == isAuthed())
 				packet.run(this);

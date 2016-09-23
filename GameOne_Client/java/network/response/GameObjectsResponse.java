@@ -14,7 +14,7 @@ import pacman.objects.PacmanMap;
 import windows.Startup;
 
 /**
- * GameObjectsResponse packet implementation.
+ * Packet collecting objects from the server for specific games upon client login.
  * @author Sahar
  */
 public final class GameObjectsResponse extends PacketReader<Client>
@@ -22,7 +22,7 @@ public final class GameObjectsResponse extends PacketReader<Client>
 	private int _gameId;
 	
 	@Override
-	public void read(final Client client)
+	public void read()
 	{
 		_gameId = readInt();
 	}
@@ -47,10 +47,10 @@ public final class GameObjectsResponse extends PacketReader<Client>
 				for (int i = 0;i < mapAmount;i++)
 				{
 					final int key = readInt();
-					final MapObject[][] objects = new MapObject[16][12];
+					final MapObject[][] objects = new MapObject[MapBuilder.ARRAY_DIMENSIONS[0]][MapBuilder.ARRAY_DIMENSIONS[1]];
 					for (int x = 0;x < objects.length;x++)
 						for (int y = 0;y < objects[x].length;y++)
-							objects[x][y] = new MapObject(x * 64, y * 64, pacmanValues[readInt()]);
+							objects[x][y] = new MapObject(pacmanValues[readInt()]);
 					
 					pacmanMaps.put(key, new PacmanMap(objects));
 				}

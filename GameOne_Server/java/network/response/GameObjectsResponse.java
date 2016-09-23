@@ -11,7 +11,7 @@ import objects.mario.MarioObject;
 import objects.pacman.PacmanObject;
 
 /**
- * Outgoing GameObjectsResponse packet implementation.
+ * Packet responsible for delivering game specific objects to the client.
  * @author Sahar
  */
 public final class GameObjectsResponse extends PacketWriter

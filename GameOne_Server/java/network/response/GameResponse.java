@@ -5,7 +5,7 @@ import network.PacketWriter;
 import objects.GameId;
 
 /**
- * Outgoing GameResponse packet implementation.
+ * Packet responsible for opening a game on the client.
  * @author Sahar
  */
 public final class GameResponse extends PacketWriter

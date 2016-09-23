@@ -6,7 +6,7 @@ import objects.GameId;
 import server.objects.GameClient;
 
 /**
- * RequestGameObjects packet implementation.
+ * Packet requested upon client login to get game specific objects.
  * @author Sahar
  */
 public final class RequestGameObjects extends PacketReader<GameClient>
@@ -14,7 +14,7 @@ public final class RequestGameObjects extends PacketReader<GameClient>
 	private int _gameId;
 	
 	@Override
-	public void read(final GameClient client)
+	public void read()
 	{
 		_gameId = readInt();
 	}

@@ -1,72 +1,94 @@
 package pacman;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import client.Client;
+import network.request.RequestPacmanMapEdit;
 import objects.pacman.PacmanObject;
 
+/**
+ * The panel with all controls needed to play around with maps.
+ * @author Sahar
+ */
 public final class SelectionPanel extends JPanel
 {
 	private static final long serialVersionUID = -7219243836284960529L;
 	
+	private static final Dimension ACTION_DIMENSION = new Dimension(MapBuilder.PIXEL_DIMENSIONS.width * 2, MapBuilder.PIXEL_DIMENSIONS.height / 2);
+	private static final int TOP_GAP = ACTION_DIMENSION.height / 2;
+	
 	private final JComboBox<Integer> _mapIds = new JComboBox<>();
 	
-	public SelectionPanel(final MapBuilder builder)
+	public SelectionPanel(final MapBuilder builder, final int amount)
 	{
-		setLayout(null);
 		setBackground(Color.BLACK);
-		setBounds(0, 0, 1024, 64);
+		setLayout(new BorderLayout());
 		
-		int x = 0;
+		final JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
 		for (final Entry<PacmanObject, Image> entry : builder.getPacmanObjects().entrySet())
 		{
 			if (entry.getKey().isPlayer() && entry.getKey() != PacmanObject.PLAYER_NORMAL || entry.getKey() == PacmanObject.MOB_SLOW)
 				continue;
 			
-			final PacmanButton b = new PacmanButton(entry, x, 0);
+			final PacmanButton b = new PacmanButton(entry);
 			b.addActionListener(a -> builder.setSelectedEntry(entry));
-			add(b);
-			
-			x += 64;
+			imagePanel.add(b);
 		}
-		x += 64;
+		add(imagePanel, BorderLayout.WEST);
 		
+		final JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING, 10, TOP_GAP));
+		actionPanel.setOpaque(false);
 		final JButton play = new JButton("Play");
-		play.setBounds(x, 16, 64, 32);
+		play.setPreferredSize(ACTION_DIMENSION);
 		play.addMouseListener(new Play());
-		add(play);
-		
-		x += 128;
-		
+		actionPanel.add(play);
 		final JButton save = new JButton("Save");
-		save.setBounds(x, 16, 64, 32);
+		save.setPreferredSize(ACTION_DIMENSION);
 		save.addMouseListener(new Save());
-		add(save);
-		
-		x += 128;
-		
+		actionPanel.add(save);
 		for (final int id : Client.getInstance().getPacmanMaps().keySet())
 			_mapIds.addItem(id);
-		_mapIds.setBounds(x, 16, 64, 32);
+		_mapIds.setPreferredSize(ACTION_DIMENSION);
 		_mapIds.addActionListener(a -> MapBuilder.getInstance().setEditingMapId(_mapIds.getItemAt(_mapIds.getSelectedIndex())));
-		add(_mapIds);
+		actionPanel.add(_mapIds);
+		add(actionPanel, BorderLayout.EAST);
 	}
 	
-	// TODO when to use this method?
+	public void reset()
+	{
+		_mapIds.setSelectedIndex(0);
+	}
+	
 	public void reloadComboBox()
 	{
+		final ActionListener listener = _mapIds.getActionListeners()[0];
+		
+		_mapIds.removeActionListener(listener);
 		_mapIds.removeAllItems();
 		for (final int id : Client.getInstance().getPacmanMaps().keySet())
 			_mapIds.addItem(id);
+		_mapIds.addActionListener(listener);
+	}
+	
+	private class Save extends MouseAdapter
+	{
+		@Override
+		public void mousePressed(final MouseEvent e)
+		{
+			Client.getInstance().sendPacket(new RequestPacmanMapEdit(MapBuilder.getInstance().getEditingMapId(), MapBuilder.getInstance().getButtons()));
+		}
 	}
 	
 	private class Play extends MouseAdapter
@@ -76,22 +98,6 @@ public final class SelectionPanel extends JPanel
 		{
 			MapBuilder.getInstance().setVisible(false);
 			MapBuilder.getInstance().getNextMap().setVisible(true);
-		}
-	}
-	
-	private class Save extends MouseAdapter
-	{
-		@Override
-		public void mousePressed(final MouseEvent e)
-		{
-			if (!System.getProperty("user.name").equals("s5866872"))
-				JOptionPane.showMessageDialog(null, "You do not have permissions to save new maps.", "Fail", JOptionPane.ERROR_MESSAGE);
-			else
-			{
-				// TODO
-				//_client.getConnection().requestMaps(((Builder) _client.getCurrentWindow()).getId(), ((Builder) _client.getCurrentWindow()).getObjects());
-				JOptionPane.showMessageDialog(null, "Map saved.", "Success", JOptionPane.INFORMATION_MESSAGE);
-			}
 		}
 	}
 }

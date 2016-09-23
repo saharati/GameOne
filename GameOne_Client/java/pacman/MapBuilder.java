@@ -1,5 +1,9 @@
 package pacman;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,6 +14,7 @@ import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import client.Client;
 import objects.pacman.PacmanObject;
@@ -17,6 +22,10 @@ import pacman.objects.PacmanMap;
 import pacman.objects.MapObject;
 import windows.GameSelect;
 
+/**
+ * Map builder window for pacman.
+ * @author Sahar
+ */
 public final class MapBuilder extends JFrame
 {
 	private static final long serialVersionUID = 1815790049829742350L;
@@ -24,14 +33,14 @@ public final class MapBuilder extends JFrame
 	private static final Logger LOGGER = Logger.getLogger(MapBuilder.class.getName());
 	private static final String IMAGE_PATH = "./images/pacman/";
 	
-	// Map editor settings.
+	public static final int[] ARRAY_DIMENSIONS = {16, 12};
+	public static final Dimension PIXEL_DIMENSIONS = new Dimension(64, 64);
+	
 	private final Map<PacmanObject, Image> _pacmanObjects = new LinkedHashMap<>();
-	private final PacmanButton[][] _buttons = new PacmanButton[16][12];
+	private final PacmanButton[][] _buttons = new PacmanButton[ARRAY_DIMENSIONS[0]][ARRAY_DIMENSIONS[1]];
 	private final SelectionPanel _selectionPanel;
 	private Entry<PacmanObject, Image> _selectedEntry;
 	private int _editingMapId = -1;
-	
-	// Game settings.
 	private int _currentMap = -1;
 	private int _currentScore;
 	
@@ -41,27 +50,34 @@ public final class MapBuilder extends JFrame
 		
 		for (final PacmanObject obj : PacmanObject.values())
 			_pacmanObjects.put(obj, new ImageIcon(IMAGE_PATH + obj.getImage()).getImage());
-		
 		_selectedEntry = _pacmanObjects.entrySet().iterator().next();
 		
-		_selectionPanel = new SelectionPanel(this);
-		add(_selectionPanel);
+		setLayout(new BorderLayout());
 		
+		final JPanel map = new JPanel(new GridBagLayout());
+		final GridBagConstraints gc = new GridBagConstraints();
 		for (int i = 0;i < _buttons.length;i++)
 		{
 			for (int j = 0;j < _buttons[i].length;j++)
 			{
-				_buttons[i][j] = new PacmanButton(_selectedEntry, i * 64, j * 64 + 64);
+				gc.gridx = i + 1;
+				gc.gridy = j + 1;
+				
+				_buttons[i][j] = new PacmanButton(_selectedEntry);
 				_buttons[i][j].addMouseListener(new PutIn(i, j));
-				add(_buttons[i][j]);
+				
+				map.add(_buttons[i][j], gc);
 			}
 		}
+		add(map, BorderLayout.NORTH);
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1030, 860);
-		setLocationRelativeTo(null);
-		setLayout(null);
+		_selectionPanel = new SelectionPanel(this, _pacmanObjects.size());
+		add(_selectionPanel, BorderLayout.SOUTH);
+		
 		setResizable(false);
+		pack();
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
 		
 		LOGGER.info("Pacman map builder loaded.");
 	}
@@ -132,6 +148,10 @@ public final class MapBuilder extends JFrame
 	
 	public void reset()
 	{
+		_selectionPanel.reset();
+		
+		setEditingMapId(-1);
+		
 		_currentMap = -1;
 		_currentScore = 0;
 		
@@ -142,17 +162,25 @@ public final class MapBuilder extends JFrame
 		//_client.getConnection().saveUserStatus(Math.max(_currentScore, _client.getScore()), Math.max(_currentMap, _client.getWins()), 0);
 	}
 	
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+		
+		reset();
+	}
+	
 	private class PutIn extends MouseAdapter
 	{
 		private final int _i;
 		private final int _j;
-
+		
 		private PutIn(final int i, final int j)
 		{
 			_i = i;
 			_j = j;
 		}
-
+		
 		@Override
 		public void mousePressed(final MouseEvent e)
 		{

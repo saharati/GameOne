@@ -53,9 +53,9 @@ public final class Startup extends JFrame
 		getContentPane().setBackground(Config.UI_COLOR);
 		setUndecorated(true);
 		setLayout(null);
+		setResizable(false);
 		setSize(312, 77);
 		setLocationRelativeTo(null);
-		setResizable(false);
 		setVisible(true);
 		
 		// Network

@@ -8,6 +8,7 @@ import network.PacketReader;
 import objects.GameId;
 import objects.mario.MarioObject;
 import objects.pacman.PacmanObject;
+import pacman.MapBuilder;
 import pacman.objects.MapObject;
 import pacman.objects.PacmanMap;
 import windows.Startup;
@@ -55,6 +56,7 @@ public final class GameObjectsResponse extends PacketReader<Client>
 				}
 				
 				Client.getInstance().setPacmanMaps(pacmanMaps);
+				MapBuilder.getInstance().getSelectionPanel().reloadComboBox();
 				break;
 		}
 		

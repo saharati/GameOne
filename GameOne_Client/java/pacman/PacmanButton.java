@@ -20,14 +20,12 @@ public final class PacmanButton extends JButton
 	private PacmanObject _key;
 	private Image _value;
 	
-	public PacmanButton(final Entry<PacmanObject, Image> entry, final int x, final int y)
+	public PacmanButton(final Entry<PacmanObject, Image> entry)
 	{
 		_key = entry.getKey();
 		_value = entry.getValue();
 		
-		setLayout(null);
-		setBounds(x, y, 64, 64);
-		setOpaque(true);
+		setPreferredSize(MapBuilder.PIXEL_DIMENSIONS);
 	}
 	
 	public void setEntry(final PacmanObject key, final Image value)
@@ -64,6 +62,6 @@ public final class PacmanButton extends JButton
 	{
 		super.paintComponent(g);
 		
-		g.drawImage(_value, 0, 0, getWidth(), getHeight(), null);
+		g.drawImage(_value, 0, 0, getWidth(), getHeight(), this);
 	}
 }

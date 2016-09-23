@@ -76,7 +76,7 @@ public final class PacmanTable
 		try (final Connection con = Database.getConnection();
 			final PreparedStatement ps = con.prepareStatement(INSERT_OBJECT))
 		{
-			ps.setInt(1, id);
+			ps.setInt(1, newId);
 			for (int i = 0;i < objects.length;i++)
 			{
 				for (int j = 0;j < objects[i].length;j++)
@@ -89,7 +89,7 @@ public final class PacmanTable
 			}
 			ps.executeBatch();
 			
-			_maps.put(id, objects);
+			_maps.put(newId, objects);
 		}
 		catch (final SQLException e)
 		{

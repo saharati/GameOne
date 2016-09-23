@@ -124,9 +124,9 @@ public final class GameSelect extends JFrame
 		
 		getContentPane().setBackground(Config.UI_COLOR);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
-		setResizable(false);
 		
 		LOGGER.info("GameSelect screen loaded.");
 	}

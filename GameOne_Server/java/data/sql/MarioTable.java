@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import objects.MarioObject;
+import objects.mario.MarioObject;
 import util.database.Database;
 
 /**

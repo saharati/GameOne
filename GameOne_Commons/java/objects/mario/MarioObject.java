@@ -1,4 +1,4 @@
-package objects;
+package objects.mario;
 
 /**
  * Class representing a single mario object.

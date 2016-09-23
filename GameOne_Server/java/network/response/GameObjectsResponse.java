@@ -7,7 +7,8 @@ import data.sql.PacmanTable;
 import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
-import objects.MarioObject;
+import objects.mario.MarioObject;
+import objects.pacman.PacmanObject;
 
 /**
  * Outgoing GameObjectsResponse packet implementation.
@@ -42,14 +43,14 @@ public final class GameObjectsResponse extends PacketWriter
 				break;
 			case PACMAN:
 				writeInt(PacmanTable.getInstance().getMaps().size());
-				for (Entry<Integer, String[][]> entry : PacmanTable.getInstance().getMaps().entrySet())
+				for (Entry<Integer, PacmanObject[][]> entry : PacmanTable.getInstance().getMaps().entrySet())
 				{
 					writeInt(entry.getKey());
 					
-					final String[][] objects = entry.getValue();
+					final PacmanObject[][] objects = entry.getValue();
 					for (int i = 0;i < objects.length;i++)
 						for (int j = 0;j < objects[i].length;j++)
-							writeString(objects[i][j]);
+							writeInt(objects[i][j].ordinal());
 				}
 				break;
 		}

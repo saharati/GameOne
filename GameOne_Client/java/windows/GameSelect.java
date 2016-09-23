@@ -1,11 +1,10 @@
 package windows;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
@@ -44,8 +43,9 @@ public final class GameSelect extends JFrame
 		DUMMY.setVisible(false);
 	}
 	
-	private JTextField _sender = new JTextField(20);
-	private JTextArea _chat = new JTextArea(10, 10);
+	private final JTextField _sender = new JTextField(20);
+	private final JTextArea _chat = new JTextArea(10, 10);
+	private final JPanel _buttonsPanel = new JPanel(new SpringLayout());
 	
 	private GameSelect()
 	{
@@ -68,37 +68,36 @@ public final class GameSelect extends JFrame
 		add(selectGame, BorderLayout.PAGE_START);
 		
 		// Create the buttons panel next, using SpringLayout.
-		final JPanel buttonsPanel = new JPanel(new SpringLayout());
 		final JButton spPacman = new JButton("Pacman (SP)");
-		spPacman.addMouseListener(new MouseGameSelectListener(GameId.PACMAN));
-		buttonsPanel.add(spPacman);
+		spPacman.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.PACMAN)));
+		_buttonsPanel.add(spPacman);
 		final JButton mpChess = new JButton("Chess (MP)");
-		mpChess.addMouseListener(new MouseGameSelectListener(GameId.CHESS));
-		buttonsPanel.add(mpChess);
+		mpChess.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.CHESS)));
+		_buttonsPanel.add(mpChess);
 		final JButton spTetris = new JButton("Tetris (SP)");
-		spTetris.addMouseListener(new MouseGameSelectListener(GameId.TETRIS));
-		buttonsPanel.add(spTetris);
+		spTetris.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.TETRIS)));
+		_buttonsPanel.add(spTetris);
 		final JButton mpSal = new JButton("Slide a Lama (MP)");
-		mpSal.addMouseListener(new MouseGameSelectListener(GameId.LAMA));
-		buttonsPanel.add(mpSal);
+		mpSal.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.LAMA)));
+		_buttonsPanel.add(mpSal);
 		final JButton spSnake = new JButton("Snake (SP)");
-		spSnake.addMouseListener(new MouseGameSelectListener(GameId.SNAKE));
-		buttonsPanel.add(spSnake);
+		spSnake.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.SNAKE)));
+		_buttonsPanel.add(spSnake);
 		final JButton mpCheckers = new JButton("Checkers (MP)");
-		mpCheckers.addMouseListener(new MouseGameSelectListener(GameId.CHECKERS));
-		buttonsPanel.add(mpCheckers);
+		mpCheckers.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.CHECKERS)));
+		_buttonsPanel.add(mpCheckers);
 		final JButton mario = new JButton("Super Mario (SP)");
-		mario.addMouseListener(new MouseGameSelectListener(GameId.MARIO));
-		buttonsPanel.add(mario);
+		mario.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.MARIO)));
+		_buttonsPanel.add(mario);
 		final JButton s2048 = new JButton("2048 (SP)");
-		s2048.addMouseListener(new MouseGameSelectListener(GameId.G2048));
-		buttonsPanel.add(s2048);
-		buttonsPanel.add(DUMMY);
+		s2048.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.G2048)));
+		_buttonsPanel.add(s2048);
+		_buttonsPanel.add(DUMMY);
 		
-		SpringUtilities.makeCompactGrid(buttonsPanel, 3, 3, 10, 10, 10, 10);
+		SpringUtilities.makeCompactGrid(_buttonsPanel, 3, 3, 10, 10, 10, 10);
 		
-		buttonsPanel.setBackground(Config.UI_COLOR);
-		add(buttonsPanel, BorderLayout.CENTER);
+		_buttonsPanel.setBackground(Config.UI_COLOR);
+		add(_buttonsPanel, BorderLayout.CENTER);
 		
 		// Finally, create the chat panel, also using BorderLayout.
 		final JPanel chatPanel = new JPanel(new BorderLayout(5, 5));
@@ -153,20 +152,16 @@ public final class GameSelect extends JFrame
 		_sender.setText("");
 	}
 	
-	private class MouseGameSelectListener extends MouseAdapter
+	public void enableAllButtons()
 	{
-		private final GameId _gameId;
-		
-		private MouseGameSelectListener(final GameId gameId)
-		{
-			_gameId = gameId;
-		}
-		
-		@Override
-		public void mousePressed(final MouseEvent me)
-		{
-			Client.getInstance().sendPacket(new RequestGame(_gameId));
-		}
+		for (final Component c : _buttonsPanel.getComponents())
+			c.setEnabled(true);
+	}
+	
+	public void disableAllButtons()
+	{
+		for (final Component c : _buttonsPanel.getComponents())
+			c.setEnabled(false);
 	}
 	
 	private class KeyboardChatSendListener extends KeyAdapter

@@ -3,6 +3,8 @@ package network.response;
 import client.Client;
 import network.PacketReader;
 import objects.GameId;
+import pacman.MapBuilder;
+import windows.GameSelect;
 
 /**
  * GameResponse packet implementation.
@@ -37,6 +39,8 @@ public final class GameResponse extends PacketReader<Client>
 			case MARIO:
 				break;
 			case PACMAN:
+				GameSelect.getInstance().disableAllButtons();
+				MapBuilder.getInstance().setVisible(true);
 				break;
 			case SNAKE:
 				break;

@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import objects.pacman.PacmanObject;
 import util.database.Database;
 
 /**
@@ -24,7 +25,7 @@ public final class PacmanTable
 	private static final String INSERT_OBJECT = "INSERT INTO pacman VALUES (?, ?, ?, ?)";
 	private static final String DELETE_MAP = "DELETE FROM pacman WHERE mapId=?";
 	
-	private final Map<Integer, String[][]> _maps = new ConcurrentHashMap<>();
+	private final Map<Integer, PacmanObject[][]> _maps = new ConcurrentHashMap<>();
 	
 	private PacmanTable()
 	{
@@ -32,17 +33,18 @@ public final class PacmanTable
 			final PreparedStatement ps = con.prepareStatement(SELECT_MAPS);
 			final ResultSet rs = ps.executeQuery())
 		{
+			final PacmanObject[] pacmanValues = PacmanObject.values();
 			while (rs.next())
 			{
 				final int mapId = rs.getInt("mapId");
-				final String[][] objects = new String[16][12];
+				final PacmanObject[][] objects = new PacmanObject[16][12];
 				try (final PreparedStatement ps2 = con.prepareStatement(SELECT_MAP))
 				{
 					ps2.setInt(1, mapId);
 					try (final ResultSet rs2 = ps2.executeQuery())
 					{
 						while (rs2.next())
-							objects[rs2.getInt("i")][rs2.getInt("j")] = rs2.getString("type");
+							objects[rs2.getInt("i")][rs2.getInt("j")] = pacmanValues[rs2.getInt("type")];
 						
 						_maps.put(mapId, objects);
 					}
@@ -57,7 +59,7 @@ public final class PacmanTable
 		}
 	}
 	
-	public void addMap(final int id, final String[][] objects)
+	public void addMap(final int id, final PacmanObject[][] objects)
 	{
 		int newId = 0;
 		if (id == -1)
@@ -81,7 +83,7 @@ public final class PacmanTable
 				{
 					ps.setInt(2, i);
 					ps.setInt(3, j);
-					ps.setString(4, objects[i][j]);
+					ps.setInt(4, objects[i][j].ordinal());
 					ps.addBatch();
 				}
 			}
@@ -111,13 +113,13 @@ public final class PacmanTable
 		}
 	}
 	
-	public void updateMap(final int id, final String[][] objects)
+	public void updateMap(final int id, final PacmanObject[][] objects)
 	{
 		removeMap(id);
 		addMap(id, objects);
 	}
 	
-	public Map<Integer, String[][]> getMaps()
+	public Map<Integer, PacmanObject[][]> getMaps()
 	{
 		return _maps;
 	}

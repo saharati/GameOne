@@ -6,8 +6,11 @@ import java.util.Map;
 import client.Client;
 import network.PacketReader;
 import objects.GameId;
-import objects.MarioObject;
-import windows.Login;
+import objects.mario.MarioObject;
+import objects.pacman.PacmanObject;
+import pacman.objects.MapObject;
+import pacman.objects.PacmanMap;
+import windows.Startup;
 
 /**
  * GameObjectsResponse packet implementation.
@@ -37,17 +40,18 @@ public final class GameObjectsResponse extends PacketReader<Client>
 				Client.getInstance().setMarioObjects(marioObjects);
 				break;
 			case PACMAN:
-				final Map<Integer, String[][]> pacmanMaps = new HashMap<>();
+				final PacmanObject[] pacmanValues = PacmanObject.values();
+				final Map<Integer, PacmanMap> pacmanMaps = new HashMap<>();
 				final int mapAmount = readInt();
 				for (int i = 0;i < mapAmount;i++)
 				{
 					final int key = readInt();
-					final String[][] objects = new String[16][12];
+					final MapObject[][] objects = new MapObject[16][12];
 					for (int x = 0;x < objects.length;x++)
 						for (int y = 0;y < objects[x].length;y++)
-							objects[x][y] = readString();
+							objects[x][y] = new MapObject(x * 64, y * 64, pacmanValues[readInt()]);
 					
-					pacmanMaps.put(key, objects);
+					pacmanMaps.put(key, new PacmanMap(objects));
 				}
 				
 				Client.getInstance().setPacmanMaps(pacmanMaps);
@@ -55,6 +59,6 @@ public final class GameObjectsResponse extends PacketReader<Client>
 		}
 		
 		if (Client.getInstance().ready())
-			Client.getInstance().setCurrentWindow(Login.getInstance());
+			((Startup) Client.getInstance().getCurrentWindow()).progress();
 	}
 }

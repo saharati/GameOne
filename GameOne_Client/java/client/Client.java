@@ -11,7 +11,8 @@ import javax.swing.JOptionPane;
 import network.BasicClient;
 import network.PacketInfo;
 import network.PacketReader;
-import objects.MarioObject;
+import objects.mario.MarioObject;
+import pacman.objects.PacmanMap;
 import windows.Startup;
 
 /**
@@ -25,7 +26,7 @@ public final class Client extends BasicClient
 	private String _username;
 	private String _password;
 	private MarioObject[] _marioObjects;
-	private Map<Integer, String[][]> _pacmanMaps;
+	private Map<Integer, PacmanMap> _pacmanMaps;
 	private JFrame _currentWindow;
 	
 	public void setStartupWindow(final Startup startup)
@@ -59,14 +60,14 @@ public final class Client extends BasicClient
 		return _marioObjects;
 	}
 	
-	public void setPacmanMaps(final Map<Integer, String[][]> pacmanMaps)
+	public void setPacmanMaps(final Map<Integer, PacmanMap> pacmanMaps)
 	{
 		_pacmanMaps = pacmanMaps;
 		
 		LOGGER.info("Received " + pacmanMaps.size() + " pacman maps from server.");
 	}
 	
-	public Map<Integer, String[][]> getPacmanMaps()
+	public Map<Integer, PacmanMap> getPacmanMaps()
 	{
 		return _pacmanMaps;
 	}

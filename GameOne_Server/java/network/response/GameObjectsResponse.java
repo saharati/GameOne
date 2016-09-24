@@ -38,7 +38,7 @@ public final class GameObjectsResponse extends PacketWriter
 				{
 					writeInt(obj.getX());
 					writeInt(obj.getY());
-					writeString(obj.getType());
+					writeInt(obj.getType().ordinal());
 				}
 				break;
 			case PACMAN:

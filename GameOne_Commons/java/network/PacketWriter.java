@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
  */
 public abstract class PacketWriter
 {
-	private final ByteBuffer _buf = ByteBuffer.allocateDirect(65536);
+	private final ByteBuffer _buf = ByteBuffer.allocateDirect(32768);
 	private boolean _packed;
 	
 	public abstract void write();

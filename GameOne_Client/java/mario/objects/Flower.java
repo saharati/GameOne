@@ -1,0 +1,73 @@
+package mario.objects;
+
+import mario.MarioScreen;
+import mario.TaskManager;
+import mario.prototypes.Direction;
+import objects.mario.MarioType;
+
+/**
+ * A flower that comes out of an entrance cube.
+ * @author Sahar
+ */
+public final class Flower extends AbstractObject
+{
+	private static final long serialVersionUID = -1352175284717660778L;
+	
+	private final int _initialY;
+	private int _count;
+	private int _delay;
+	private boolean _direction;
+	
+	protected Flower(final int x, final int y)
+	{
+		super(x, y, MarioType.FLOWER, MarioType.FLOWER2);
+		
+		_initialY = y;
+		
+		TaskManager.getInstance().add(this);
+	}
+	
+	@Override
+	public void notifyTimeOut()
+	{
+		_count++;
+		if (_count == 105)
+		{
+			if (getIcon() == getImages()[0])
+				setIcon(getImages()[1]);
+			else
+				setIcon(getImages()[0]);
+			
+			_count = 0;
+		}
+		if (_delay > 0)
+		{
+			_delay--;
+			return;
+		}
+		if (_direction)
+		{
+			if (getY() == _initialY)
+			{
+				_direction = !_direction;
+				_delay = 1000;
+			}
+		}
+		else if (getY() == _initialY - 105)
+		{
+			_direction = !_direction;
+			_delay = 1000;
+		}
+		if (_count % 10 == 0)
+			setLocation(getX(), getY() + (_direction ? 1 : -1));
+	}
+	
+	@Override
+	protected void onMeetObject(final Direction dir)
+	{
+		if (dir == null)
+			deleteMe();
+		else
+			MarioScreen.getInstance().getPlayer().levelDown();
+	}
+}

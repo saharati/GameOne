@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 
 import client.Client;
 import network.PacketReader;
-import pacman.MapBuilder;
+import pacman.PacmanBuilder;
 
 /**
  * Response from the server about a map edit request.
@@ -34,7 +34,7 @@ public final class PacmanMapEditResponse extends PacketReader<Client>
 			case 1:
 				JOptionPane.showMessageDialog(null, "Map saved.", "Success", JOptionPane.INFORMATION_MESSAGE);
 				
-				MapBuilder.getInstance().reset();
+				PacmanBuilder.getInstance().reset();
 				break;
 		}
 	}

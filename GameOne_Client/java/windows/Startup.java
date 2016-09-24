@@ -12,10 +12,13 @@ import javax.swing.JProgressBar;
 
 import client.Client;
 import configs.Config;
+import mario.MarioBuilder;
+import mario.MarioScreen;
+import mario.TaskManager;
 import network.ConnectionManager;
 import network.request.RequestGameObjects;
 import objects.GameId;
-import pacman.MapBuilder;
+import pacman.PacmanBuilder;
 import util.StringUtil;
 import util.configs.CommonConfig;
 import util.parsers.xml.XmlFactory;
@@ -79,6 +82,7 @@ public final class Startup extends JFrame
 		
 		StringUtil.printSection("ThreadPool");
 		ThreadPool.load();
+		TaskManager.getInstance();
 		
 		_progressBar.setValue(3);
 		
@@ -101,7 +105,9 @@ public final class Startup extends JFrame
 		StringUtil.printSection("Windows");
 		Login.getInstance();
 		GameSelect.getInstance();
-		MapBuilder.getInstance();
+		PacmanBuilder.getInstance();
+		MarioBuilder.getInstance();
+		MarioScreen.getInstance();
 		
 		_progressBar.setValue(5);
 		

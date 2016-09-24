@@ -1,9 +1,10 @@
 package network.response;
 
 import client.Client;
+import mario.MarioBuilder;
 import network.PacketReader;
 import objects.GameId;
-import pacman.MapBuilder;
+import pacman.PacmanBuilder;
 import windows.GameSelect;
 
 /**
@@ -23,6 +24,8 @@ public final class GameResponse extends PacketReader<Client>
 	@Override
 	public void run(final Client client)
 	{
+		GameSelect.getInstance().disableAllButtons();
+		
 		final GameId gameId = GameId.values()[_gameId];
 		switch (gameId)
 		{
@@ -37,10 +40,10 @@ public final class GameResponse extends PacketReader<Client>
 			case LOBBY:
 				break;
 			case MARIO:
+				MarioBuilder.getInstance().setVisible(true);
 				break;
 			case PACMAN:
-				GameSelect.getInstance().disableAllButtons();
-				MapBuilder.getInstance().setVisible(true);
+				PacmanBuilder.getInstance().setVisible(true);
 				break;
 			case SNAKE:
 				break;

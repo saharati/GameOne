@@ -8,9 +8,9 @@ public final class MarioObject
 {
 	private final int _x;
 	private final int _y;
-	private final String _type;
+	private final MarioType _type;
 	
-	public MarioObject(final int x, final int y, final String type)
+	public MarioObject(final int x, final int y, final MarioType type)
 	{
 		_x = x;
 		_y = y;
@@ -27,7 +27,7 @@ public final class MarioObject
 		return _y;
 	}
 	
-	public String getType()
+	public MarioType getType()
 	{
 		return _type;
 	}

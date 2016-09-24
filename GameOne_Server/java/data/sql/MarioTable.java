@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import objects.mario.MarioObject;
+import objects.mario.MarioType;
 import util.database.Database;
 
 /**
@@ -32,8 +33,9 @@ public final class MarioTable
 			final PreparedStatement ps = con.prepareStatement(SELECT);
 			final ResultSet rs = ps.executeQuery())
 		{
+			final MarioType[] values = MarioType.values();
 			while (rs.next())
-				_objects.add(new MarioObject(rs.getInt("x"), rs.getInt("y"), rs.getString("type")));
+				_objects.add(new MarioObject(rs.getInt("x"), rs.getInt("y"), values[rs.getInt("type")]));
 			
 			LOGGER.info("Loaded " + _objects.size() + " mario objects from database.");
 		}
@@ -57,7 +59,7 @@ public final class MarioTable
 				{
 					ps.setInt(1, o.getX());
 					ps.setInt(2, o.getY());
-					ps.setString(3, o.getType());
+					ps.setInt(3, o.getType().ordinal());
 					ps.addBatch();
 				}
 				ps.executeBatch();

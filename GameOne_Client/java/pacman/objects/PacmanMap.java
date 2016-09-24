@@ -18,8 +18,8 @@ import javax.swing.JOptionPane;
 import client.Client;
 import network.request.RequestUpdateGameScore;
 import objects.pacman.PacmanObject;
-import pacman.MapBuilder;
-import pacman.objects.MapObject;
+import pacman.PacmanBuilder;
+import pacman.objects.PacmanMapObject;
 import util.random.Rnd;
 import util.threadpool.ThreadPool;
 
@@ -41,16 +41,16 @@ public final class PacmanMap extends JFrame
 	}
 	
 	private final ScheduledFuture<?>[] _schedules = new ScheduledFuture<?>[3];
-	private final Map<MapObject, Character> _mobs = new ConcurrentHashMap<>();
+	private final Map<PacmanMapObject, Character> _mobs = new ConcurrentHashMap<>();
 	private final char[] _nextMoves = new char[2];
-	private final MapObject[][] _objects;
+	private final PacmanMapObject[][] _objects;
 	private final int _totalStars;
 	
-	private MapObject _player;
+	private PacmanMapObject _player;
 	private boolean _slow;
 	private int _slowTime;
 	
-	public PacmanMap(final MapObject[][] objects)
+	public PacmanMap(final PacmanMapObject[][] objects)
 	{
 		super("GameOne Client - Pacman");
 		
@@ -96,17 +96,17 @@ public final class PacmanMap extends JFrame
 			if (future != null)
 				future.cancel(false);
 		
-		MapBuilder.getInstance().addScore(_totalStars - getStars().size());
+		PacmanBuilder.getInstance().addScore(_totalStars - getStars().size());
 		
-		final boolean isWin = MapBuilder.getInstance().getCurrentMap() == null;
-		final int totalScore = MapBuilder.getInstance().getCurrentScore();
+		final boolean isWin = PacmanBuilder.getInstance().getCurrentMap() == null;
+		final int totalScore = PacmanBuilder.getInstance().getCurrentScore();
 		
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin, totalScore));
 		
-		MapBuilder.getInstance().reset();
+		PacmanBuilder.getInstance().reset();
 	}
 	
-	public MapObject[][] getObjects()
+	public PacmanMapObject[][] getObjects()
 	{
 		return _objects;
 	}
@@ -126,9 +126,9 @@ public final class PacmanMap extends JFrame
 		_slowTime = 0;
 	}
 	
-	private List<MapObject> getStars()
+	private List<PacmanMapObject> getStars()
 	{
-		final List<MapObject> stars = new ArrayList<>();
+		final List<PacmanMapObject> stars = new ArrayList<>();
 		for (int i = 0;i < _objects.length;i++)
 			for (int j = 0;j < _objects[i].length;j++)
 				if (_objects[i][j].getType().isStar())
@@ -137,19 +137,19 @@ public final class PacmanMap extends JFrame
 		return stars;
 	}
 	
-	private MapObject getObjectAt(final int x, final int y)
+	private PacmanMapObject getObjectAt(final int x, final int y)
 	{
 		for (int i = 0;i < _objects.length;i++)
 			for (int j = 0;j < _objects[i].length;j++)
 				if (!_objects[i][j].getType().isEmpty() && isWithin(x, y, _objects[i][j].getX(), _objects[i][j].getY()))
 					return _objects[i][j];
 		
-		return MapObject.EMPTY;
+		return PacmanMapObject.EMPTY;
 	}
 	
 	private boolean isWithin(final int x, final int y, final int objX, final int objY)
 	{
-		return x > objX && x < objX + MapBuilder.BLOCK_SIZE && y > objY && y < objY + MapBuilder.BLOCK_SIZE;
+		return x > objX && x < objX + PacmanBuilder.BLOCK_SIZE && y > objY && y < objY + PacmanBuilder.BLOCK_SIZE;
 	}
 	
 	private char getOppositeDirection()
@@ -183,10 +183,10 @@ public final class PacmanMap extends JFrame
 			return;
 		}
 		// If we are not in a place that allows turning, ignore.
-		if (x % MapBuilder.BLOCK_SIZE != 0 || y % MapBuilder.BLOCK_SIZE != 0)
+		if (x % PacmanBuilder.BLOCK_SIZE != 0 || y % PacmanBuilder.BLOCK_SIZE != 0)
 			return;
 		// If we are out of bounds, don't change direction even if possible.
-		if (x < 0 || y < 0 || x + MapBuilder.BLOCK_SIZE > getContentPane().getWidth() || y + MapBuilder.BLOCK_SIZE > getContentPane().getHeight())
+		if (x < 0 || y < 0 || x + PacmanBuilder.BLOCK_SIZE > getContentPane().getWidth() || y + PacmanBuilder.BLOCK_SIZE > getContentPane().getHeight())
 			return;
 		
 		// Finally try to change direction...
@@ -195,7 +195,7 @@ public final class PacmanMap extends JFrame
 		{
 			case 'w':
 				final int upY = y - 1 < 0 ? getContentPane().getHeight() - 1 : y - 1;
-				if (!getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, upY).getType().isWall())
+				if (!getObjectAt(x + PacmanBuilder.BLOCK_SIZE / 2, upY).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 'w';
@@ -203,23 +203,23 @@ public final class PacmanMap extends JFrame
 				break;
 			case 'a':
 				final int leftX = x - 1 < 0 ? getContentPane().getWidth() - 1 : x - 1;
-				if (!getObjectAt(leftX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall())
+				if (!getObjectAt(leftX, y + PacmanBuilder.BLOCK_SIZE / 2).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 'a';
 				}
 				break;
 			case 's':
-				final int downY = y + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : y + MapBuilder.BLOCK_SIZE + 1;
-				if (!getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, downY).getType().isWall())
+				final int downY = y + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : y + PacmanBuilder.BLOCK_SIZE + 1;
+				if (!getObjectAt(x + PacmanBuilder.BLOCK_SIZE / 2, downY).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 's';
 				}
 				break;
 			case 'd':
-				final int rightX = x + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : x + MapBuilder.BLOCK_SIZE + 1;
-				if (!getObjectAt(rightX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall())
+				final int rightX = x + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : x + PacmanBuilder.BLOCK_SIZE + 1;
+				if (!getObjectAt(rightX, y + PacmanBuilder.BLOCK_SIZE / 2).getType().isWall())
 				{
 					_nextMoves[1] = 0;
 					_nextMoves[0] = 'd';
@@ -231,13 +231,13 @@ public final class PacmanMap extends JFrame
 	private char getRandomDirectionChange(final int x, final int y, final char direction)
 	{
 		// If we are not in a place that allows turning, ignore.
-		if (x % MapBuilder.BLOCK_SIZE != 0 || y % MapBuilder.BLOCK_SIZE != 0)
+		if (x % PacmanBuilder.BLOCK_SIZE != 0 || y % PacmanBuilder.BLOCK_SIZE != 0)
 			return direction;
 		// We shouldn't always change direction when available.
 		if (Rnd.nextBoolean())
 			return direction;
 		// If we are out of bounds, don't change direction even if possible.
-		if (x < 0 || y < 0 || x + MapBuilder.BLOCK_SIZE > getContentPane().getWidth() || y + MapBuilder.BLOCK_SIZE > getContentPane().getHeight())
+		if (x < 0 || y < 0 || x + PacmanBuilder.BLOCK_SIZE > getContentPane().getWidth() || y + PacmanBuilder.BLOCK_SIZE > getContentPane().getHeight())
 			return direction;
 		
 		// Finally try to change direction...
@@ -249,9 +249,9 @@ public final class PacmanMap extends JFrame
 			case 's':
 				// Check if can change direction to left or right.
 				final int leftX = x - 1 < 0 ? getContentPane().getWidth() - 1 : x - 1;
-				final int rightX = x + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : x + MapBuilder.BLOCK_SIZE + 1;
-				final boolean canGoLeft = !getObjectAt(leftX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall();
-				final boolean canGoRight = !getObjectAt(rightX, y + MapBuilder.BLOCK_SIZE / 2).getType().isWall();
+				final int rightX = x + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : x + PacmanBuilder.BLOCK_SIZE + 1;
+				final boolean canGoLeft = !getObjectAt(leftX, y + PacmanBuilder.BLOCK_SIZE / 2).getType().isWall();
+				final boolean canGoRight = !getObjectAt(rightX, y + PacmanBuilder.BLOCK_SIZE / 2).getType().isWall();
 				// If we can only go to one direction, just pick that direction.
 				if (canGoLeft != canGoRight)
 				{
@@ -274,9 +274,9 @@ public final class PacmanMap extends JFrame
 			case 'd':
 				// Check if can change direction to up or down.
 				final int upY = y - 1 < 0 ? getContentPane().getHeight() - 1 : y - 1;
-				final int downY = y + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : y + MapBuilder.BLOCK_SIZE + 1;
-				final boolean canGoUp = !getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, upY).getType().isWall();
-				final boolean canGoDown = !getObjectAt(x + MapBuilder.BLOCK_SIZE / 2, downY).getType().isWall();
+				final int downY = y + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : y + PacmanBuilder.BLOCK_SIZE + 1;
+				final boolean canGoUp = !getObjectAt(x + PacmanBuilder.BLOCK_SIZE / 2, upY).getType().isWall();
+				final boolean canGoDown = !getObjectAt(x + PacmanBuilder.BLOCK_SIZE / 2, downY).getType().isWall();
 				// If we can only go to one direction, just pick that direction.
 				if (canGoUp != canGoDown)
 				{
@@ -370,33 +370,33 @@ public final class PacmanMap extends JFrame
 			int toY = _player.getY();
 			checkForDirectionChange(toX, toY);
 			
-			MapObject finalTarget = null;
+			PacmanMapObject finalTarget = null;
 			switch (_nextMoves[0])
 			{
 				case 'w':
 					final int upY = toY - 1 < 0 ? getContentPane().getHeight() - 1 : toY - 1;
-					finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, upY);
+					finalTarget = getObjectAt(toX + PacmanBuilder.BLOCK_SIZE / 2, upY);
 					toY--;
 					break;
 				case 'a':
 					final int leftX = toX - 1 < 0 ? getContentPane().getWidth() - 1 : toX - 1;
-					finalTarget = getObjectAt(leftX, toY + MapBuilder.BLOCK_SIZE / 2);
+					finalTarget = getObjectAt(leftX, toY + PacmanBuilder.BLOCK_SIZE / 2);
 					toX--;
 					break;
 				case 's':
-					final int downY = toY + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : toY + MapBuilder.BLOCK_SIZE + 1;
-					finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, downY);
+					final int downY = toY + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : toY + PacmanBuilder.BLOCK_SIZE + 1;
+					finalTarget = getObjectAt(toX + PacmanBuilder.BLOCK_SIZE / 2, downY);
 					toY++;
 					break;
 				case 'd':
-					final int rightX = toX + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + MapBuilder.BLOCK_SIZE + 1;
-					finalTarget = getObjectAt(rightX, toY + MapBuilder.BLOCK_SIZE / 2);
+					final int rightX = toX + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + PacmanBuilder.BLOCK_SIZE + 1;
+					finalTarget = getObjectAt(rightX, toY + PacmanBuilder.BLOCK_SIZE / 2);
 					toX++;
 					break;
 			}
 			
 			// If inside map bounds.
-			if (toX > -MapBuilder.BLOCK_SIZE && toX < getContentPane().getWidth() && toY > -MapBuilder.BLOCK_SIZE && toY < getContentPane().getHeight())
+			if (toX > -PacmanBuilder.BLOCK_SIZE && toX < getContentPane().getWidth() && toY > -PacmanBuilder.BLOCK_SIZE && toY < getContentPane().getHeight())
 			{
 				// If the target isn't a wall.
 				if (!finalTarget.getType().isWall())
@@ -415,10 +415,10 @@ public final class PacmanMap extends JFrame
 							
 							JOptionPane.showMessageDialog(null, "You won!", "Pazam!", JOptionPane.INFORMATION_MESSAGE);
 							
-							final PacmanMap next = MapBuilder.getInstance().getNextMap();
+							final PacmanMap next = PacmanBuilder.getInstance().getNextMap();
 							if (next != null)
 							{
-								MapBuilder.getInstance().addScore(_totalStars);
+								PacmanBuilder.getInstance().addScore(_totalStars);
 								
 								setVisible(false);
 								next.setVisible(true);
@@ -445,9 +445,6 @@ public final class PacmanMap extends JFrame
 						// Otherwise player lose, end map.
 						else
 						{
-							for (final ScheduledFuture<?> future : _schedules)
-								future.cancel(false);
-							
 							dispose();
 							
 							JOptionPane.showMessageDialog(null, "You lost!", "Noob", JOptionPane.INFORMATION_MESSAGE);
@@ -464,14 +461,14 @@ public final class PacmanMap extends JFrame
 			else
 			{
 				// Move the player to the opposite side of the screen.
-				if (toX == -MapBuilder.BLOCK_SIZE)
+				if (toX == -PacmanBuilder.BLOCK_SIZE)
 					toX = getContentPane().getWidth();
 				else if (toX == getContentPane().getWidth())
-					toX = -MapBuilder.BLOCK_SIZE;
-				else if (toY == -MapBuilder.BLOCK_SIZE)
+					toX = -PacmanBuilder.BLOCK_SIZE;
+				else if (toY == -PacmanBuilder.BLOCK_SIZE)
 					toY = getContentPane().getHeight();
 				else if (toY == getContentPane().getHeight())
-					toY = -MapBuilder.BLOCK_SIZE;
+					toY = -PacmanBuilder.BLOCK_SIZE;
 				
 				// Update location.
 				_player.setLocation(toX, toY);
@@ -498,7 +495,7 @@ public final class PacmanMap extends JFrame
 				// Start the flashing animation when remaining time < 501.
 				if (_slowTime < 501 && _slowTime % 50 == 0)
 				{
-					for (final Entry<MapObject, Character> entry : _mobs.entrySet())
+					for (final Entry<PacmanMapObject, Character> entry : _mobs.entrySet())
 					{
 						if (entry.getKey().getType().isEmpty())
 							continue;
@@ -513,7 +510,7 @@ public final class PacmanMap extends JFrame
 				_slow = --_slowTime != 0;
 			}
 			
-			for (final Entry<MapObject, Character> entry : _mobs.entrySet())
+			for (final Entry<PacmanMapObject, Character> entry : _mobs.entrySet())
 			{
 				if (entry.getKey().getType().isEmpty())
 					continue;
@@ -537,32 +534,32 @@ public final class PacmanMap extends JFrame
 				if (entry.getValue() == '0')
 					entry.setValue(DIRECTIONS.get(Rnd.get(DIRECTIONS.size())));
 				
-				MapObject finalTarget = null;
+				PacmanMapObject finalTarget = null;
 				switch (entry.getValue())
 				{
 					case 'w':
 						final int upY = toY - 1 < 0 ? getContentPane().getHeight() - 1 : toY - 1;
-						finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, upY);
+						finalTarget = getObjectAt(toX + PacmanBuilder.BLOCK_SIZE / 2, upY);
 						toY--;
 						break;
 					case 'a':
 						final int leftX = toX - 1 < 0 ? getContentPane().getWidth() - 1 : toX - 1;
-						finalTarget = getObjectAt(leftX, toY + MapBuilder.BLOCK_SIZE / 2);
+						finalTarget = getObjectAt(leftX, toY + PacmanBuilder.BLOCK_SIZE / 2);
 						toX--;
 						break;
 					case 's':
-						final int downY = toY + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : toY + MapBuilder.BLOCK_SIZE + 1;
-						finalTarget = getObjectAt(toX + MapBuilder.BLOCK_SIZE / 2, downY);
+						final int downY = toY + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getHeight() ? 1 : toY + PacmanBuilder.BLOCK_SIZE + 1;
+						finalTarget = getObjectAt(toX + PacmanBuilder.BLOCK_SIZE / 2, downY);
 						toY++;
 						break;
 					case 'd':
-						final int rightX = toX + MapBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + MapBuilder.BLOCK_SIZE + 1;
-						finalTarget = getObjectAt(rightX, toY + MapBuilder.BLOCK_SIZE / 2);
+						final int rightX = toX + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + PacmanBuilder.BLOCK_SIZE + 1;
+						finalTarget = getObjectAt(rightX, toY + PacmanBuilder.BLOCK_SIZE / 2);
 						toX++;
 						break;
 				}
 				
-				if (toX > -MapBuilder.BLOCK_SIZE && toX < getContentPane().getWidth() && toY > -MapBuilder.BLOCK_SIZE && toY < getContentPane().getHeight())
+				if (toX > -PacmanBuilder.BLOCK_SIZE && toX < getContentPane().getWidth() && toY > -PacmanBuilder.BLOCK_SIZE && toY < getContentPane().getHeight())
 				{
 					if (!finalTarget.getType().isWall())
 					{
@@ -573,9 +570,6 @@ public final class PacmanMap extends JFrame
 								entry.getKey().setType(PacmanObject.EMPTY);
 								break;
 							}
-							
-							for (final ScheduledFuture<?> future : _schedules)
-								future.cancel(false);
 							
 							dispose();
 							
@@ -589,14 +583,14 @@ public final class PacmanMap extends JFrame
 				}
 				else
 				{
-					if (toX == -MapBuilder.BLOCK_SIZE)
+					if (toX == -PacmanBuilder.BLOCK_SIZE)
 						toX = getContentPane().getWidth();
 					else if (toX == getContentPane().getWidth())
-						toX = -MapBuilder.BLOCK_SIZE;
-					else if (toY == -MapBuilder.BLOCK_SIZE)
+						toX = -PacmanBuilder.BLOCK_SIZE;
+					else if (toY == -PacmanBuilder.BLOCK_SIZE)
 						toY = getContentPane().getHeight();
 					else if (toY == getContentPane().getHeight())
-						toY = -MapBuilder.BLOCK_SIZE;
+						toY = -PacmanBuilder.BLOCK_SIZE;
 					
 					entry.getKey().setLocation(toX, toY);
 				}

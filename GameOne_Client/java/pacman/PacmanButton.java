@@ -25,7 +25,7 @@ public final class PacmanButton extends JButton
 		_key = entry.getKey();
 		_value = entry.getValue();
 		
-		setPreferredSize(MapBuilder.PIXEL_DIMENSIONS);
+		setPreferredSize(PacmanBuilder.PIXEL_DIMENSIONS);
 	}
 	
 	public void setEntry(final PacmanObject key, final Image value)

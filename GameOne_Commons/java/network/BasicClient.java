@@ -31,7 +31,7 @@ public abstract class BasicClient
 	
 	protected BasicClient()
 	{
-		_readBuffer = ByteBuffer.allocateDirect(65536);
+		_readBuffer = ByteBuffer.allocateDirect(32768);
 		_readHandler = new ReadHandler<>();
 		_writeHandler = new WriteHandler<>();
 		_sendQueue = new ConcurrentLinkedQueue<>();

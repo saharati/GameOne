@@ -34,7 +34,7 @@ import network.request.RequestLogin;
  */
 public final class Login extends JFrame
 {
-	private static final Logger LOGGER = Logger.getLogger(Login.class.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(Login.class.getName());
 	private static final long serialVersionUID = 5594699723429753388L;
 	
 	private final JTextField _username;

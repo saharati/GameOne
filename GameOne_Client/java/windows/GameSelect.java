@@ -36,7 +36,7 @@ import util.LengthDocumentFilter;
 public final class GameSelect extends JFrame
 {
 	private static final long serialVersionUID = 4663554734276386234L;
-	private static final Logger LOGGER = Logger.getLogger(GameSelect.class.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(GameSelect.class.getName());
 	private static final JButton DUMMY = new JButton();
 	static
 	{

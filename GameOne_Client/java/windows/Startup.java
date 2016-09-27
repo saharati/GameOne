@@ -18,6 +18,7 @@ import network.ConnectionManager;
 import network.request.RequestGameObjects;
 import objects.GameId;
 import pacman.PacmanBuilder;
+import snake.SnakeScreen;
 import tetris.TetrisScreen;
 import util.StringUtil;
 import util.configs.CommonConfig;
@@ -108,6 +109,7 @@ public final class Startup extends JFrame
 		PacmanBuilder.getInstance();
 		SuperMario.getInstance();
 		TetrisScreen.getInstance();
+		SnakeScreen.getInstance();
 		
 		_progressBar.setValue(5);
 		

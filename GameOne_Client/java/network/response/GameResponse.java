@@ -5,6 +5,7 @@ import mario.SuperMario;
 import network.PacketReader;
 import objects.GameId;
 import pacman.PacmanBuilder;
+import snake.SnakeScreen;
 import tetris.TetrisScreen;
 import windows.GameSelect;
 
@@ -47,6 +48,7 @@ public final class GameResponse extends PacketReader<Client>
 				PacmanBuilder.getInstance().setVisible(true);
 				break;
 			case SNAKE:
+				SnakeScreen.getInstance().start();
 				break;
 			case TETRIS:
 				TetrisScreen.getInstance().start();

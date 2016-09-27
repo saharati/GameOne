@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.Map;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 import util.random.Rnd;
@@ -25,7 +25,7 @@ public final class FallingCube extends AbstractObject
 	{
 		super(FALL_STARTPOINT + Rnd.get(FALL_OFFSET), 0, MarioType.CUBE);
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -37,9 +37,9 @@ public final class FallingCube extends AbstractObject
 		if (!objects.get(Direction.BELOW).isEmpty())
 		{
 			if (objects.get(Direction.BELOW).get(0) instanceof Player)
-				MarioScreen.getInstance().getPlayer().deleteMe();
+				SuperMario.getInstance().getPlayer().deleteMe();
 			else
-				TaskManager.getInstance().remove(this);
+				MarioTaskManager.getInstance().remove(this);
 		}
 	}
 }

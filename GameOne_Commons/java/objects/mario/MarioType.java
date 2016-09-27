@@ -1,5 +1,12 @@
 package objects.mario;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+
 /**
  * Class representing all mario object types.
  * @author Sahar
@@ -45,18 +52,23 @@ public enum MarioType
 	TUBE2("tube2.png", "TubeExit"),
 	WALL("wall.png", "Wall");
 	
-	private final String _image;
+	private static final String IMAGE_PATH = "./images/mario/";
+	
+	private final String _url;
 	private final String _className;
 	
-	private MarioType(final String image, final String className)
+	private ImageIcon _icon;
+	private ImageIcon _flippedIcon;
+	
+	private MarioType(final String url, final String className)
 	{
-		_image = image;
+		_url = url;
 		_className = className;
 	}
 	
-	public String getImage()
+	public String getUrl()
 	{
-		return _image;
+		return _url;
 	}
 	
 	public String getClassName()
@@ -67,5 +79,50 @@ public enum MarioType
 	public boolean appearsOnMapBuilder()
 	{
 		return _className != null;
+	}
+	
+	public ImageIcon getIcon()
+	{
+		return _icon;
+	}
+	
+	public ImageIcon getFlippedIcon()
+	{
+		return _flippedIcon;
+	}
+	
+	public void initializeImageIcon()
+	{
+		_icon = new ImageIcon(IMAGE_PATH + _url);
+		
+		switch (this)
+		{
+			case PLAYER:
+			case PLAYER2:
+			case MARIO:
+			case MARIO2:
+			case SUPERMARIO:
+			case SUPERMARIO2:
+				BufferedImage flippedImage = new BufferedImage(_icon.getIconWidth(), _icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+				final Graphics2D g2d = (Graphics2D) flippedImage.getGraphics();
+				
+				_icon.paintIcon(null, g2d, 0, 0);
+				g2d.dispose();
+				
+				AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+				tx.translate(0, -flippedImage.getHeight());
+				
+				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				flippedImage = op.filter(flippedImage, null);
+				
+				tx = AffineTransform.getScaleInstance(-1, -1);
+				tx.translate(-flippedImage.getWidth(), -flippedImage.getHeight());
+				
+				op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				flippedImage = op.filter(flippedImage, null);
+				
+				_flippedIcon = new ImageIcon(flippedImage);
+				break;
+		}
 	}
 }

@@ -1,19 +1,13 @@
 package mario.objects;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import mario.MarioBuilder;
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import mario.prototypes.JumpType;
 import objects.mario.MarioType;
@@ -33,7 +27,7 @@ public final class Player extends AbstractObject
 		{MarioType.MARIO, MarioType.MARIO2},
 		{MarioType.SUPERMARIO, MarioType.SUPERMARIO2}
 	};
-	private static final ImageIcon[][] FLIPPED_IMAGES = new ImageIcon[3][2];
+	private static final int LEVEL_OFFSET = 11;
 	
 	private int _level;
 	private int _jumpCount;
@@ -46,36 +40,28 @@ public final class Player extends AbstractObject
 	public Player(final int x, final int y)
 	{
 		super(x, y, MarioType.PLAYER, MarioType.PLAYER2);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		for (int i = 0;i < TYPES_PER_LEVEL.length;i++)
-		{
-			for (int j = 0;j < TYPES_PER_LEVEL[i].length;j++)
-			{
-				final ImageIcon originalImage = MarioBuilder.getInstance().getAllImages().get(TYPES_PER_LEVEL[i][j].getImage());
-				
-				BufferedImage flippedImage = new BufferedImage(originalImage.getIconWidth(), originalImage.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-				final Graphics2D g2d = (Graphics2D) flippedImage.getGraphics();
-				
-				originalImage.paintIcon(null, g2d, 0, 0);
-				g2d.dispose();
-				
-				AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
-				tx.translate(0, -flippedImage.getHeight());
-				
-				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-				flippedImage = op.filter(flippedImage, null);
-				
-				tx = AffineTransform.getScaleInstance(-1, -1);
-				tx.translate(-flippedImage.getWidth(), -flippedImage.getHeight());
-				
-				op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-				flippedImage = op.filter(flippedImage, null);
-				
-				FLIPPED_IMAGES[i][j] = new ImageIcon(flippedImage);
-			}
-		}
+		MarioTaskManager.getInstance().add(this);
+	}
+	
+	@Override
+	public void onEnd()
+	{
+		super.onEnd();
 		
-		TaskManager.getInstance().add(this);
+		_level = 0;
+		_jumpCount = 0;
+		_invisCount = 0;
+		_swallowCount = 0;
+		_delay = 0;
+		_dir = null;
+		_jumpType = JumpType.NONE;
 	}
 	
 	public void levelUp()
@@ -85,8 +71,8 @@ public final class Player extends AbstractObject
 		
 		_level++;
 		
-		setImages(TYPES_PER_LEVEL[_level]);
-		setBounds(getX(), getY(), getWidth(), getHeight());
+		setTypes(TYPES_PER_LEVEL[_level]);
+		setBounds(getX(), (_level == 1 ? getY() - LEVEL_OFFSET : getY()), getIcon().getIconWidth(), getIcon().getIconHeight());
 	}
 	
 	public void levelDown()
@@ -103,8 +89,8 @@ public final class Player extends AbstractObject
 			return;
 		}
 		
-		setImages(TYPES_PER_LEVEL[_level]);
-		setBounds(getX(), getY(), getWidth(), getHeight());
+		setTypes(TYPES_PER_LEVEL[_level]);
+		setBounds(getX(), (_level == 1 ? getY() - LEVEL_OFFSET : getY()), getIcon().getIconWidth(), getIcon().getIconHeight());
 	}
 	
 	public void jump(final JumpType type)
@@ -147,7 +133,7 @@ public final class Player extends AbstractObject
 	{
 		_delay = 500;
 		
-		MarioScreen.getInstance().add(new Shoot((dir == Direction.RIGHT ? (int) getBounds().getMaxX() + 1 : getX() - 1), (int) getBounds().getCenterY(), getY(), dir));
+		SuperMario.getInstance().addObject(new Shoot((dir == Direction.RIGHT ? (int) getBounds().getMaxX() + 1 : getX() - 1), (int) getBounds().getCenterY(), getY(), dir), true);
 	}
 	
 	@Override
@@ -164,7 +150,7 @@ public final class Player extends AbstractObject
 				
 				if (_swallowCount == 0)
 				{
-					final TubeExit rnd = MarioScreen.getInstance().getExitTubes().get(Rnd.get(MarioScreen.getInstance().getExitTubes().size()));
+					final TubeExit rnd = SuperMario.getInstance().getExitTubes().get(Rnd.get(SuperMario.getInstance().getExitTubes().size()));
 					
 					setLocation(rnd.getX() + (rnd.getWidth() - getWidth()) / 2, rnd.getY() + rnd.getHeight() - getHeight());
 					
@@ -177,10 +163,10 @@ public final class Player extends AbstractObject
 				_swallowCount++;
 			}
 			
-			if (getX() > MarioBuilder.SCREEN_MOVING_POINT)
-				MarioScreen.getInstance().getBg().setLocation(-(getX() - MarioBuilder.SCREEN_MOVING_POINT), MarioScreen.getInstance().getBg().getY());
+			if (getX() > SuperMario.SCREEN_MOVING_POINT)
+				SuperMario.getInstance().getMapHolder().setLocation(-(getX() - SuperMario.SCREEN_MOVING_POINT), SuperMario.getInstance().getMapHolder().getY());
 			else
-				MarioScreen.getInstance().getBg().setLocation(0, MarioScreen.getInstance().getBg().getY());
+				SuperMario.getInstance().getMapHolder().setLocation(0, SuperMario.getInstance().getMapHolder().getY());
 		}
 		else
 		{
@@ -205,10 +191,10 @@ public final class Player extends AbstractObject
 						}
 					}
 					
-					if (getIcon() == FLIPPED_IMAGES[_level][0])
-						setIcon(FLIPPED_IMAGES[_level][1]);
+					if (getIcon() == TYPES_PER_LEVEL[_level][0].getFlippedIcon())
+						setIcon(TYPES_PER_LEVEL[_level][1].getFlippedIcon());
 					else
-						setIcon(FLIPPED_IMAGES[_level][0]);
+						setIcon(TYPES_PER_LEVEL[_level][0].getFlippedIcon());
 				}
 				else
 				{
@@ -225,14 +211,14 @@ public final class Player extends AbstractObject
 							setLocation(getX() + 1, getY());
 					}
 					
-					if (getIcon() == getImages()[0])
-						setIcon(getImages()[1]);
+					if (getIcon() == getTypes()[0].getIcon())
+						setIcon(getTypes()[1].getIcon());
 					else
-						setIcon(getImages()[0]);
+						setIcon(getTypes()[0].getIcon());
 				}
 				
-				if (getX() > MarioBuilder.SCREEN_MOVING_POINT)
-					MarioScreen.getInstance().getBg().setLocation(-(getX() - MarioBuilder.SCREEN_MOVING_POINT), MarioScreen.getInstance().getBg().getY());
+				if (getX() > SuperMario.SCREEN_MOVING_POINT)
+					SuperMario.getInstance().getMapHolder().setLocation(-(getX() - SuperMario.SCREEN_MOVING_POINT), SuperMario.getInstance().getMapHolder().getY());
 			}
 			
 			if (_invisCount > 0)
@@ -291,7 +277,7 @@ public final class Player extends AbstractObject
 					setLocation(getX(), getY() + 1);
 			}
 			
-			if (getY() > MarioBuilder.SCREEN_SIZE.height)
+			if (getY() > SuperMario.SCREEN_SIZE.height)
 				deleteMe();
 			else
 				for (final Entry<Direction, List<AbstractObject>> os : objects.entrySet())
@@ -305,8 +291,8 @@ public final class Player extends AbstractObject
 	{
 		super.deleteMe();
 		
-		TaskManager.getInstance().stop();
-		JOptionPane.showMessageDialog(null, "אתה אפס...", "לה לה לה", JOptionPane.INFORMATION_MESSAGE);
-		MarioScreen.getInstance().endGame();
+		MarioTaskManager.getInstance().stop();
+		JOptionPane.showMessageDialog(null, "Try better next time.", "You lost!", JOptionPane.INFORMATION_MESSAGE);
+		SuperMario.getInstance().onEnd();
 	}
 }

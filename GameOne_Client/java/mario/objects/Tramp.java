@@ -1,7 +1,7 @@
 package mario.objects;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import mario.prototypes.JumpType;
 import objects.mario.MarioType;
@@ -24,12 +24,20 @@ public final class Tramp extends AbstractObject
 	}
 	
 	@Override
+	public void onEnd()
+	{
+		super.onEnd();
+		
+		_delay = 0;
+	}
+	
+	@Override
 	public void notifyTimeOut()
 	{
 		if (_delay-- > 0)
 			return;
 		
-		TaskManager.getInstance().remove(this);
+		MarioTaskManager.getInstance().remove(this);
 		setLocation(getX(), getY() - ON_JUMP_OFFSET);
 	}
 	
@@ -42,8 +50,8 @@ public final class Tramp extends AbstractObject
 			
 			setLocation(getX(), getY() + ON_JUMP_OFFSET);
 			
-			TaskManager.getInstance().add(this);
-			MarioScreen.getInstance().getPlayer().jump(JumpType.FLY);
+			MarioTaskManager.getInstance().add(this);
+			SuperMario.getInstance().getPlayer().jump(JumpType.FLY);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package network.response;
 
 import client.Client;
-import mario.MarioBuilder;
+import mario.SuperMario;
 import network.PacketReader;
 import objects.GameId;
 import pacman.PacmanBuilder;
@@ -40,7 +40,7 @@ public final class GameResponse extends PacketReader<Client>
 			case LOBBY:
 				break;
 			case MARIO:
-				MarioBuilder.getInstance().setVisible(true);
+				SuperMario.getInstance().setVisible(true);
 				break;
 			case PACMAN:
 				PacmanBuilder.getInstance().setVisible(true);

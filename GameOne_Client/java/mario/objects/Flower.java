@@ -1,7 +1,7 @@
 package mario.objects;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -24,7 +24,7 @@ public final class Flower extends AbstractObject
 		
 		_initialY = y;
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -33,10 +33,10 @@ public final class Flower extends AbstractObject
 		_count++;
 		if (_count == 105)
 		{
-			if (getIcon() == getImages()[0])
-				setIcon(getImages()[1]);
+			if (getIcon() == getTypes()[0].getIcon())
+				setIcon(getTypes()[1].getIcon());
 			else
-				setIcon(getImages()[0]);
+				setIcon(getTypes()[0].getIcon());
 			
 			_count = 0;
 		}
@@ -68,6 +68,6 @@ public final class Flower extends AbstractObject
 		if (dir == null)
 			deleteMe();
 		else
-			MarioScreen.getInstance().getPlayer().levelDown();
+			SuperMario.getInstance().getPlayer().levelDown();
 	}
 }

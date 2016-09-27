@@ -1,19 +1,19 @@
-package mario.gui;
+package mario.resources;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Map.Entry;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import mario.MarioBuilder;
-import mario.MarioScreen;
+import mario.SuperMario;
+import objects.mario.MarioType;
 import util.threadpool.ThreadPool;
 
 /**
@@ -29,22 +29,31 @@ public final class SelectionPanel extends JPanel
 	private static final Dimension ACTION_SIZE2 = new Dimension(50, 32);
 	private static final int TOP_GAP = (BUTTON_SIZE.height - ACTION_SIZE.height) / 2;
 	
-	private String _selectedType;
-	private int _totalMovement;
+	private JLabel _selectedItem;
 	
-	public SelectionPanel(final MarioBuilder builder)
+	public SelectionPanel()
 	{
 		super(new BorderLayout());
 		
 		final JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
-		for (final Entry<String, ImageIcon> entry : builder.getMapEditImages().entrySet())
-			imagePanel.add(createMarioButton(entry.getKey(), entry.getValue()));
+		for (final MarioType type : MarioType.values())
+		{
+			if (type.appearsOnMapBuilder())
+			{
+				final ImageIcon icon = type.getIcon();
+				final JButton btn = new JButton(icon);
+				btn.setPreferredSize(BUTTON_SIZE);
+				btn.addActionListener(a -> onChangeItem(icon, type.getClassName()));
+				
+				imagePanel.add(btn);
+			}
+		}
 		add(imagePanel, BorderLayout.WEST);
 		
 		final JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING, 10, TOP_GAP));
 		final JButton play = new JButton("Play");
 		play.setPreferredSize(ACTION_SIZE);
-		play.addActionListener(a -> MarioScreen.getInstance().onStart());
+		play.addActionListener(a -> SuperMario.getInstance().onStart());
 		actionPanel.add(play);
 		final JButton save = new JButton("Save");
 		save.setPreferredSize(ACTION_SIZE);
@@ -61,23 +70,33 @@ public final class SelectionPanel extends JPanel
 		add(actionPanel, BorderLayout.EAST);
 	}
 	
-	private JButton createMarioButton(final String type, final ImageIcon image)
+	public JLabel getSelectedItem()
 	{
-		final JButton btn = new JButton(image);
-		btn.setPreferredSize(BUTTON_SIZE);
-		btn.addActionListener(a -> _selectedType = type);
+		return _selectedItem;
+	}
+	
+	public void removeSelectedItem()
+	{
+		if (_selectedItem != null)
+		{
+			SuperMario.getInstance().getMapHolder().remove(_selectedItem);
+			
+			_selectedItem = null;
+		}
+	}
+	
+	private void onChangeItem(final ImageIcon icon, final String className)
+	{
+		if (_selectedItem != null)
+			SuperMario.getInstance().getMapHolder().remove(_selectedItem);
 		
-		return btn;
-	}
-	
-	public String getSelectedType()
-	{
-		return _selectedType;
-	}
-	
-	public int getTotalMovement()
-	{
-		return _totalMovement;
+		final JLabel label = new JLabel(icon);
+		label.setName(className);
+		label.setBounds(-Integer.MAX_VALUE, -Integer.MAX_VALUE, icon.getIconWidth(), icon.getIconHeight());
+		
+		_selectedItem = label;
+		
+		SuperMario.getInstance().getMapHolder().add(_selectedItem);
 	}
 	
 	private class Move extends MouseAdapter implements Runnable
@@ -105,11 +124,9 @@ public final class SelectionPanel extends JPanel
 		@Override
 		public void run()
 		{
-			final JPanel p = MarioBuilder.getInstance().getMapHolder();
+			final JPanel p = SuperMario.getInstance().getMapHolder();
 			if (p.getX() + _directionSpeed > 0)
 				return;
-			
-			_totalMovement -= _directionSpeed;
 			
 			p.setLocation(p.getX() + _directionSpeed, p.getY());
 		}

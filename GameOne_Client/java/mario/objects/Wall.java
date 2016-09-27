@@ -1,6 +1,6 @@
 package mario.objects;
 
-import mario.TaskManager;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -19,6 +19,15 @@ public final class Wall extends AbstractObject
 	public Wall(final int x, final int y)
 	{
 		super(x, y, MarioType.WALL);
+	}
+	
+	@Override
+	public void onEnd()
+	{
+		super.onEnd();
+		
+		_count = 0;
+		_total = 0;
 	}
 	
 	@Override
@@ -41,11 +50,11 @@ public final class Wall extends AbstractObject
 	@Override
 	protected void onMeetObject(final Direction dir)
 	{
-		if (TaskManager.getInstance().contains(this))
+		if (MarioTaskManager.getInstance().contains(this))
 			return;
 		if (dir != Direction.ABOVE)
 			return;
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 }

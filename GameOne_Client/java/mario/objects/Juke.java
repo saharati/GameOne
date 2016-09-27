@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.Map;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import mario.prototypes.JumpType;
 import objects.mario.MarioType;
@@ -25,8 +25,23 @@ public final class Juke extends AbstractObject
 	public Juke(final int x, final int y)
 	{
 		super(x, y + 1, MarioType.JUKE, MarioType.JUKE2, MarioType.JUKE3);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
+	}
+	
+	@Override
+	public void onEnd()
+	{
+		super.onEnd();
+		
+		_count = 0;
+		_isDead = false;
 	}
 	
 	@Override
@@ -50,10 +65,10 @@ public final class Juke extends AbstractObject
 			
 			if (_count == 80)
 			{
-				if (getIcon() == getImages()[0])
-					setIcon(getImages()[1]);
+				if (getIcon() == getTypes()[0].getIcon())
+					setIcon(getTypes()[1].getIcon());
 				else
-					setIcon(getImages()[0]);
+					setIcon(getTypes()[0].getIcon());
 				
 				_count = 0;
 			}
@@ -112,22 +127,19 @@ public final class Juke extends AbstractObject
 	@Override
 	protected void onMeetObject(final Direction dir)
 	{
-		if (_isDead)
-			return;
-		
 		if (dir == null)
 		{
 			_isDead = true;
-			setIcon(getImages()[2]);
+			setIcon(getTypes()[2].getIcon());
 		}
 		else if (dir == Direction.BELOW)
 		{
 			_isDead = true;
-			setIcon(getImages()[2]);
-			MarioScreen.getInstance().getPlayer().jump(JumpType.JUMP);
+			setIcon(getTypes()[2].getIcon());
+			SuperMario.getInstance().getPlayer().jump(JumpType.JUMP);
 		}
 		else
-			MarioScreen.getInstance().getPlayer().levelDown();
+			SuperMario.getInstance().getPlayer().levelDown();
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 package mario.objects;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -19,13 +19,21 @@ public final class Coin extends AbstractObject
 	public Coin(final int x, final int y)
 	{
 		super(x, y, MarioType.COIN, MarioType.COIN2);
-		
-		TaskManager.getInstance().add(this);
 	}
 	
 	public void animate()
 	{
 		_count = 50;
+		
+		MarioTaskManager.getInstance().add(this);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -39,17 +47,17 @@ public final class Coin extends AbstractObject
 			if (_count == 0)
 				deleteMe();
 			
-			if (getIcon() == getImages()[0])
-				setIcon(getImages()[1]);
+			if (getIcon() == getTypes()[0].getIcon())
+				setIcon(getTypes()[1].getIcon());
 			else
-				setIcon(getImages()[0]);
+				setIcon(getTypes()[0].getIcon());
 		}
 		else if (_regCount == 100)
 		{
-			if (getIcon() == getImages()[0])
-				setIcon(getImages()[1]);
+			if (getIcon() == getTypes()[0].getIcon())
+				setIcon(getTypes()[1].getIcon());
 			else
-				setIcon(getImages()[0]);
+				setIcon(getTypes()[0].getIcon());
 			
 			_regCount = 0;
 		}
@@ -69,7 +77,7 @@ public final class Coin extends AbstractObject
 	{
 		super.deleteMe();
 		
-		MarioScreen.getInstance().increaseScore();
+		SuperMario.getInstance().increaseScore();
 	}
 	
 	@Override

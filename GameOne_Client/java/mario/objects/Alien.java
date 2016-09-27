@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.Map;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -24,8 +24,23 @@ public final class Alien extends AbstractObject
 	public Alien(final int x, final int y)
 	{
 		super(x, y + 1, MarioType.ALIEN, MarioType.ALIEN2);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
+	}
+	
+	@Override
+	public void onEnd()
+	{
+		super.onEnd();
+		
+		_count = 0;
+		_isDead = false;
 	}
 	
 	@Override
@@ -94,18 +109,15 @@ public final class Alien extends AbstractObject
 	@Override
 	protected void onMeetObject(final Direction dir)
 	{
-		if (_isDead)
-			return;
-		
 		if (dir == null)
 		{
 			_isDead = true;
 			_count = 0;
 			
-			setIcon(getImages()[1]);
+			setIcon(getTypes()[1].getIcon());
 		}
 		else
-			MarioScreen.getInstance().getPlayer().levelDown();
+			SuperMario.getInstance().getPlayer().levelDown();
 	}
 	
 	@Override

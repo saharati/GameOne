@@ -3,8 +3,8 @@ package mario.objects;
 import java.util.List;
 import java.util.Map;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -23,7 +23,7 @@ public final class Ball extends AbstractObject
 	{
 		super(x, y, MarioType.BALL);
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -48,7 +48,7 @@ public final class Ball extends AbstractObject
 			deleteMe();
 			
 			if (obj.get(Direction.LEFT).get(0) instanceof Player)
-				MarioScreen.getInstance().getPlayer().levelDown();
+				SuperMario.getInstance().getPlayer().levelDown();
 		}
 	}
 }

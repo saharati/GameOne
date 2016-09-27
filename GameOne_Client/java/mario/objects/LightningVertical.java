@@ -1,7 +1,7 @@
 package mario.objects;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -18,8 +18,14 @@ public final class LightningVertical extends AbstractObject
 	public LightningVertical(final int x, final int y)
 	{
 		super(x, y, MarioType.LIGHTNING2);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -36,13 +42,7 @@ public final class LightningVertical extends AbstractObject
 	@Override
 	protected void onMeetObject(final Direction dir)
 	{
-		if (dir != null && isVisible())
-			MarioScreen.getInstance().getPlayer().levelDown();
-	}
-	
-	@Override
-	protected boolean canGoThrough()
-	{
-		return !isVisible();
+		if (dir != null)
+			SuperMario.getInstance().getPlayer().levelDown();
 	}
 }

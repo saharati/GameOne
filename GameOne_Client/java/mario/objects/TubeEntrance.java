@@ -1,8 +1,6 @@
 package mario.objects;
 
-import javax.swing.SwingUtilities;
-
-import mario.MarioScreen;
+import mario.SuperMario;
 import objects.mario.MarioType;
 
 /**
@@ -21,7 +19,13 @@ public final class TubeEntrance extends AbstractObject
 	public TubeEntrance(final int x, final int y)
 	{
 		super(x, y, MarioType.TUBE);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		SwingUtilities.invokeLater(() -> MarioScreen.getInstance().add(new Flower(getX() + X_OFFSET, getY() + Y_OFFSET)));
+		SuperMario.getInstance().addObject(new Flower(getX() + X_OFFSET, getY() + Y_OFFSET), true);
 	}
 }

@@ -3,7 +3,7 @@ package mario.objects;
 import java.util.List;
 import java.util.Map;
 
-import mario.TaskManager;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -28,7 +28,7 @@ public final class Shoot extends AbstractObject
 		_topY = topY;
 		_horizontalDirection = horizontalDirection;
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override

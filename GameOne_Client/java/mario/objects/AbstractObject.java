@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import mario.MarioBuilder;
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -23,17 +21,21 @@ public abstract class AbstractObject extends JLabel
 {
 	private static final long serialVersionUID = 4977156251835827143L;
 	
-	private ImageIcon[] _images;
+	private final MarioType[] _initialTypes;
+	private final int _initialX;
+	private final int _initialY;
+	
+	private MarioType[] _types;
 	
 	protected AbstractObject(final int x, final int y, final MarioType... types)
 	{
-		setImages(types);
-		setBounds(x, y, _images[0].getIconWidth(), _images[0].getIconHeight());
-	}
-	
-	public final ImageIcon[] getImages()
-	{
-		return _images;
+		_initialTypes = types;
+		_initialX = x;
+		_initialY = y;
+		
+		setTypes(_initialTypes);
+		setBounds(_initialX, _initialY, _types[0].getIcon().getIconWidth(), _types[0].getIcon().getIconHeight());
+		setDoubleBuffered(true);
 	}
 	
 	public final Map<Direction, List<AbstractObject>> getNearbyObjects(final Rectangle bounds)
@@ -44,7 +46,7 @@ public abstract class AbstractObject extends JLabel
 		res.put(Direction.RIGHT, new ArrayList<>());
 		res.put(Direction.LEFT, new ArrayList<>());
 		
-		for (final AbstractObject target : MarioScreen.getInstance().getObjects())
+		for (final AbstractObject target : SuperMario.getInstance().getObjects())
 		{
 			if (target == this)
 				continue;
@@ -82,37 +84,57 @@ public abstract class AbstractObject extends JLabel
 		return res;
 	}
 	
+	protected final MarioType[] getTypes()
+	{
+		return _types;
+	}
+	
+	protected final void setTypes(final MarioType... types)
+	{
+		_types = types;
+		
+		setIcon(_types[0].getIcon());
+	}
+	
+	/**
+	 * Runs when user clicks the Play button on SelectionPanel.
+	 */
+	public void onStart()
+	{
+		// Nothing
+	}
+	
+	/**
+	 * Runs when player dies.
+	 */
+	public void onEnd()
+	{
+		setTypes(_initialTypes);
+		setBounds(_initialX, _initialY, _types[0].getIcon().getIconWidth(), _types[0].getIcon().getIconHeight());
+		
+		if (!isVisible())
+			setVisible(true);
+	}
+	
 	public void notifyTimeOut()
 	{
 		// Nothing
 	}
 	
-	protected final void setImages(final MarioType... types)
-	{
-		_images = new ImageIcon[types.length];
-		for (int i = 0;i < types.length;i++)
-			_images[i] = MarioBuilder.getInstance().getAllImages().get(types[i].getImage());
-		
-		setIcon(_images[0]);
-	}
-	
-	protected final void setImages(final ImageIcon... images)
-	{
-		_images = new ImageIcon[images.length];
-		for (int i = 0;i < images.length;i++)
-			_images[i] = images[i];
-		
-		setIcon(_images[0]);
-	}
-	
+	/**
+	 * @return {@code true} if this object should be treated like it doesn't even exist on the map, {@code false} otherwise.
+	 */
 	protected boolean skip()
 	{
-		return false;
+		return !isVisible();
 	}
 	
+	/**
+	 * @return {@code true} if this object should not stop another object's movement upon collision, {@code false} otherwise.
+	 */
 	protected boolean canGoThrough()
 	{
-		return false;
+		return !isVisible();
 	}
 	
 	protected void onMeetObject(final Direction dir)
@@ -122,8 +144,9 @@ public abstract class AbstractObject extends JLabel
 	
 	protected void deleteMe()
 	{
-		MarioScreen.getInstance().getObjects().remove(this);
-		TaskManager.getInstance().remove(this);
+		MarioTaskManager.getInstance().remove(this);
+		
+		setVisible(false);
 	}
 	
 	private boolean isLeft(final AbstractObject target)

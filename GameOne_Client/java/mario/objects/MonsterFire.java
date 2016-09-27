@@ -3,7 +3,7 @@ package mario.objects;
 import java.util.List;
 import java.util.Map;
 
-import mario.TaskManager;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 import util.random.Rnd;
@@ -32,7 +32,7 @@ public final class MonsterFire extends AbstractObject
 				_verticalDirection = Rnd.nextBoolean() ? Direction.ABOVE : null;
 		} while (_horizontalDirection == null);
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 package mario.objects;
 
-import mario.MarioScreen;
+import mario.SuperMario;
 import objects.mario.MarioType;
 
 /**
@@ -14,7 +14,13 @@ public final class Ground extends AbstractObject
 	public Ground(final int x, final int y)
 	{
 		super(x, y, MarioType.GROUND);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		MarioScreen.getInstance().add(new GroundAbove(x, y - 13));
+		SuperMario.getInstance().addObject(new GroundAbove(getX(), getY() - 13), true);
 	}
 }

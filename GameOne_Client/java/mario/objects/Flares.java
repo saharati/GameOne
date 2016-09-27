@@ -3,8 +3,8 @@ package mario.objects;
 import java.util.LinkedList;
 import java.util.List;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import objects.mario.MarioType;
 
 /**
@@ -17,7 +17,7 @@ public final class Flares extends AbstractObject
 	
 	private static final int FLAMES_NUMBER = 80;
 	
-	private List<Flames> _flames = new LinkedList<>();
+	private final List<Flames> _flames = new LinkedList<>();
 	private Flames _topFlame;
 	private int _posDelay = 1000;
 	private int _negDelay = 1000;
@@ -25,19 +25,32 @@ public final class Flares extends AbstractObject
 	public Flares(final int x, final int y)
 	{
 		super(x, y, MarioType.FLARES);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		_topFlame = new Flames(x, y, MarioType.FLAME, MarioType.FLAME2);
-		MarioScreen.getInstance().add(_topFlame);
-		
+		_topFlame = new Flames(getX(), getY(), MarioType.FLAME, MarioType.FLAME2);
 		for (int i = 0;i < FLAMES_NUMBER;i++)
-		{
-			final Flames f = new Flames(x, y - i, MarioType.FLAME3);
-			
-			_flames.add(f);
-			MarioScreen.getInstance().add(f);
-		}
+			_flames.add(new Flames(getX(), getY() - i, MarioType.FLAME3));
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
+		
+		SuperMario.getInstance().addObject(_topFlame, true);
+		_flames.forEach(f -> SuperMario.getInstance().addObject(f, true));
+	}
+	
+	@Override
+	public void onEnd()
+	{
+		super.onEnd();
+		
+		_flames.clear();
+		_topFlame = null;
+		_posDelay = 1000;
+		_negDelay = 1000;
 	}
 	
 	@Override

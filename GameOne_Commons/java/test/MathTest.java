@@ -6,7 +6,7 @@ package test;
  * @author Sahar
  * TODO Continue this class (finals etc).
  */
-public class MathTest
+public final class MathTest
 {
 	public static void main(String[] args)
 	{

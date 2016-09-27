@@ -2,4 +2,6 @@ IPConfig - IPv6 support.
 GameClient#onDisconnect - TODO.
 Shutdown - disconnect all players safely.
 
-Move mario and pacman objects to be enums.
+games to add:
+* fish hunt
+* yu gi oh

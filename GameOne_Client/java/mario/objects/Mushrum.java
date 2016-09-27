@@ -3,8 +3,7 @@ package mario.objects;
 import java.util.List;
 import java.util.Map;
 
-import mario.MarioBuilder;
-import mario.MarioScreen;
+import mario.SuperMario;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -51,7 +50,7 @@ public final class Mushrum extends AbstractObject
 			else
 				_direction = false;
 			
-			if (getX() < -getWidth() || getY() > MarioBuilder.SCREEN_SIZE.height)
+			if (getX() < -getWidth() || getY() > SuperMario.SCREEN_SIZE.height)
 				deleteMe();
 		}
 	}
@@ -62,7 +61,7 @@ public final class Mushrum extends AbstractObject
 		if (dir != null)
 		{
 			deleteMe();
-			MarioScreen.getInstance().getPlayer().levelUp();
+			SuperMario.getInstance().getPlayer().levelUp();
 		}
 	}
 	

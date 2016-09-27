@@ -1,7 +1,7 @@
 package mario.objects;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import mario.prototypes.Direction;
 import objects.mario.MarioType;
 
@@ -14,7 +14,7 @@ public final class Flames extends AbstractObject
 	private static final long serialVersionUID = 4105154943435385601L;
 	
 	private int _regCount;
-
+	
 	public Flames(final int x, final int y, final MarioType... types)
 	{
 		super(x, y, types);
@@ -22,7 +22,7 @@ public final class Flames extends AbstractObject
 		setVisible(false);
 		
 		if (types.length > 1)
-			TaskManager.getInstance().add(this);
+			MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -30,10 +30,10 @@ public final class Flames extends AbstractObject
 	{
 		if (_regCount == 50)
 		{
-			if (getIcon() == getImages()[0])
-				setIcon(getImages()[1]);
+			if (getIcon() == getTypes()[0].getIcon())
+				setIcon(getTypes()[1].getIcon());
 			else
-				setIcon(getImages()[0]);
+				setIcon(getTypes()[0].getIcon());
 			
 			_regCount = 0;
 		}
@@ -44,13 +44,7 @@ public final class Flames extends AbstractObject
 	@Override
 	protected void onMeetObject(final Direction dir)
 	{
-		if (dir != null && isVisible())
-			MarioScreen.getInstance().getPlayer().levelDown();
-	}
-	
-	@Override
-	protected boolean canGoThrough()
-	{
-		return !isVisible();
+		if (dir != null)
+			SuperMario.getInstance().getPlayer().levelDown();
 	}
 }

@@ -1,7 +1,7 @@
 package mario.objects;
 
-import mario.MarioScreen;
-import mario.TaskManager;
+import mario.SuperMario;
+import mario.MarioTaskManager;
 import objects.mario.MarioType;
 
 /**
@@ -17,8 +17,14 @@ public final class Cannon extends AbstractObject
 	public Cannon(final int x, final int y)
 	{
 		super(x, y, MarioType.CANNON);
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 		
-		TaskManager.getInstance().add(this);
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -28,7 +34,7 @@ public final class Cannon extends AbstractObject
 		if (_count < 600)
 			return;
 		
-		MarioScreen.getInstance().add(new Ball(getX(), getY()));
+		SuperMario.getInstance().addObject(new Ball(getX(), getY()), true);
 		
 		_count = 0;
 	}

@@ -292,23 +292,12 @@ public final class TetrisScreen extends JFrame implements Runnable
 	
 	private boolean isBoardEmpty()
 	{
-		boolean empty = true;
 		for (final TetrisPanel[] line : _board)
-		{
-			if (!empty)
-				break;
-			
 			for (final TetrisPanel l : line)
-			{
 				if (l.isTaken())
-				{
-					empty = false;
-					break;
-				}
-			}
-		}
+					return false;
 		
-		return empty;
+		return true;
 	}
 	
 	private void tryMoveToSide(int movement)

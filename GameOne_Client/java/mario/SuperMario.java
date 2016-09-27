@@ -93,7 +93,7 @@ public final class SuperMario extends JFrame implements Runnable
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addKeyListener(new Movement());
 		
-		LOGGER.info("MarioBuilder screen loaded.");
+		LOGGER.info("SuperMario screen loaded.");
 	}
 	
 	@Override

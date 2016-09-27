@@ -117,23 +117,12 @@ public final class SnakeScreen extends JFrame implements Runnable
 	
 	private boolean isFull()
 	{
-		boolean full = true;
 		for (int i = 0;i < SCREEN_SIZE;i++)
-		{
-			if (!full)
-				break;
-			
 			for (int j = 0;j < SCREEN_SIZE;j++)
-			{
 				if (_board[i][j].getBackground() == Color.LIGHT_GRAY)
-				{
-					full = false;
-					break;
-				}
-			}
-		}
+					return false;
 		
-		return full;
+		return true;
 	}
 	
 	private void makeFood()

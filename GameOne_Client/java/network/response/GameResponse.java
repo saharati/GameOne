@@ -5,6 +5,7 @@ import mario.SuperMario;
 import network.PacketReader;
 import objects.GameId;
 import pacman.PacmanBuilder;
+import s2048.S2048;
 import snake.SnakeScreen;
 import tetris.TetrisScreen;
 import windows.GameSelect;
@@ -36,6 +37,7 @@ public final class GameResponse extends PacketReader<Client>
 			case CHESS:
 				break;
 			case G2048:
+				S2048.getInstance().start();
 				break;
 			case LAMA:
 				break;

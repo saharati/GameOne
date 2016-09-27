@@ -46,6 +46,7 @@ public final class RequestUpdateGameScore extends PacketReader<GameClient>
 				case MARIO:
 				case TETRIS:
 				case SNAKE:
+				case G2048:
 					gs.setScore(Math.max(_totalScore, gs.getScore()));
 					break;
 			}

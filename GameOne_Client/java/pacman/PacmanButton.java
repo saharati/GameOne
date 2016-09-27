@@ -62,6 +62,6 @@ public final class PacmanButton extends JButton
 	{
 		super.paintComponent(g);
 		
-		g.drawImage(_value, 0, 0, getWidth(), getHeight(), this);
+		g.drawImage(_value, 0, 0, getWidth(), getHeight(), null);
 	}
 }

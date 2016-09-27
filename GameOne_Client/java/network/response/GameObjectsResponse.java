@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import client.Client;
+import mario.SuperMario;
 import network.PacketReader;
 import objects.GameId;
 import objects.mario.MarioObject;
@@ -41,6 +42,7 @@ public final class GameObjectsResponse extends PacketReader<Client>
 					marioObjects[i] = new MarioObject(readInt(), readInt(), marioTypes[readInt()]);
 				
 				Client.getInstance().setMarioObjects(marioObjects);
+				SuperMario.getInstance().reset();
 				break;
 			case PACMAN:
 				final PacmanObject[] pacmanValues = PacmanObject.values();

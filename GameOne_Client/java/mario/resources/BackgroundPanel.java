@@ -41,6 +41,6 @@ public final class BackgroundPanel extends JPanel
 	{
 		super.paintComponent(g);
 		
-		g.drawImage(_currentBackground.getImage(), 0, 0, _currentBackground.getIconWidth(), _currentBackground.getIconHeight(), this);
+		g.drawImage(_currentBackground.getImage(), 0, 0, _currentBackground.getIconWidth(), _currentBackground.getIconHeight(), null);
 	}
 }

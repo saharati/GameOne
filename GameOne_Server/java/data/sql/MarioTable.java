@@ -45,7 +45,7 @@ public final class MarioTable
 		}
 	}
 
-	public void updateObjects(final List<MarioObject> objects)
+	public boolean updateDatabase(final List<MarioObject> objects)
 	{
 		try (final Connection con = Database.getConnection())
 		{
@@ -67,10 +67,12 @@ public final class MarioTable
 			
 			_objects.clear();
 			_objects.addAll(objects);
+			return true;
 		}
 		catch (final SQLException e)
 		{
 			LOGGER.log(Level.WARNING, "Failed updating MarioTable: ", e);
+			return false;
 		}
 	}
 	

@@ -24,13 +24,18 @@ public final class Juke extends AbstractObject
 	
 	public Juke(final int x, final int y)
 	{
-		super(x, y + 1, MarioType.JUKE, MarioType.JUKE2, MarioType.JUKE3);
+		super(x, y, MarioType.JUKE, MarioType.JUKE2, MarioType.JUKE3);
 	}
 	
 	@Override
 	public void onStart()
 	{
 		super.onStart();
+		
+		do
+		{
+			setLocation(getX(), getY() + 1);
+		} while (getNearbyObjects(new Rectangle(getX() - getWidth(), getY(), getWidth(), getHeight())).get(Direction.BELOW).isEmpty());
 		
 		MarioTaskManager.getInstance().add(this);
 	}
@@ -65,10 +70,10 @@ public final class Juke extends AbstractObject
 			
 			if (_count == 80)
 			{
-				if (getIcon() == getTypes()[0].getIcon())
-					setIcon(getTypes()[1].getIcon());
+				if (getCurrentImage() == getImages()[0])
+					setCurrentImage(getImages()[1]);
 				else
-					setIcon(getTypes()[0].getIcon());
+					setCurrentImage(getImages()[0]);
 				
 				_count = 0;
 			}
@@ -130,12 +135,12 @@ public final class Juke extends AbstractObject
 		if (dir == null)
 		{
 			_isDead = true;
-			setIcon(getTypes()[2].getIcon());
+			setCurrentImage(getImages()[2]);
 		}
 		else if (dir == Direction.BELOW)
 		{
 			_isDead = true;
-			setIcon(getTypes()[2].getIcon());
+			setCurrentImage(getImages()[2]);
 			SuperMario.getInstance().getPlayer().jump(JumpType.JUMP);
 		}
 		else

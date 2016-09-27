@@ -13,7 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import client.Client;
-import network.request.RequestPacmanMapEdit;
+import network.request.RequestGameEdit;
 import objects.pacman.PacmanObject;
 
 /**
@@ -57,7 +57,7 @@ public final class PacmanPanel extends JPanel
 		actionPanel.add(play);
 		final JButton save = new JButton("Save");
 		save.setPreferredSize(ACTION_DIMENSION);
-		save.addActionListener(a -> Client.getInstance().sendPacket(new RequestPacmanMapEdit(PacmanBuilder.getInstance().getEditingMapId(), PacmanBuilder.getInstance().getButtons())));
+		save.addActionListener(a -> Client.getInstance().sendPacket(new RequestGameEdit(PacmanBuilder.getInstance().getEditingMapId(), PacmanBuilder.getInstance().getButtons())));
 		actionPanel.add(save);
 		for (final int id : Client.getInstance().getPacmanMaps().keySet())
 			_mapIds.addItem(id);

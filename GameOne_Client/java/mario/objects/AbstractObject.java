@@ -1,12 +1,14 @@
 package mario.objects;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import mario.SuperMario;
 import mario.MarioTaskManager;
@@ -17,7 +19,7 @@ import objects.mario.MarioType;
  * Abstract class for every mario object.
  * @author Sahar
  */
-public abstract class AbstractObject extends JLabel
+public abstract class AbstractObject extends JPanel
 {
 	private static final long serialVersionUID = 4977156251835827143L;
 	
@@ -25,7 +27,8 @@ public abstract class AbstractObject extends JLabel
 	private final int _initialX;
 	private final int _initialY;
 	
-	private MarioType[] _types;
+	private Image[] _images;
+	private Image _currentImage;
 	
 	protected AbstractObject(final int x, final int y, final MarioType... types)
 	{
@@ -33,9 +36,24 @@ public abstract class AbstractObject extends JLabel
 		_initialX = x;
 		_initialY = y;
 		
-		setTypes(_initialTypes);
-		setBounds(_initialX, _initialY, _types[0].getIcon().getIconWidth(), _types[0].getIcon().getIconHeight());
-		setDoubleBuffered(true);
+		setImages(_initialTypes);
+		setBounds(_initialX, _initialY, _currentImage.getWidth(null), _currentImage.getHeight(null));
+		setOpaque(false);
+	}
+	
+	public final MarioType getInitialType()
+	{
+		return _initialTypes[0];
+	}
+	
+	public final int getInitialX()
+	{
+		return _initialX;
+	}
+	
+	public final int getInitialY()
+	{
+		return _initialY;
 	}
 	
 	public final Map<Direction, List<AbstractObject>> getNearbyObjects(final Rectangle bounds)
@@ -84,16 +102,30 @@ public abstract class AbstractObject extends JLabel
 		return res;
 	}
 	
-	protected final MarioType[] getTypes()
+	protected final Image[] getImages()
 	{
-		return _types;
+		return _images;
 	}
 	
-	protected final void setTypes(final MarioType... types)
+	protected final void setImages(final MarioType... types)
 	{
-		_types = types;
+		_images = new Image[types.length];
+		for (int i = 0;i < types.length;i++)
+			_images[i] = types[i].getIcon().getImage();
 		
-		setIcon(_types[0].getIcon());
+		setCurrentImage(_images[0]);
+	}
+	
+	protected final Image getCurrentImage()
+	{
+		return _currentImage;
+	}
+	
+	protected final void setCurrentImage(final Image image)
+	{
+		_currentImage = image;
+		
+		repaint();
 	}
 	
 	/**
@@ -109,8 +141,8 @@ public abstract class AbstractObject extends JLabel
 	 */
 	public void onEnd()
 	{
-		setTypes(_initialTypes);
-		setBounds(_initialX, _initialY, _types[0].getIcon().getIconWidth(), _types[0].getIcon().getIconHeight());
+		setImages(_initialTypes);
+		setBounds(_initialX, _initialY, _currentImage.getWidth(null), _currentImage.getHeight(null));
 		
 		if (!isVisible())
 			setVisible(true);
@@ -167,5 +199,13 @@ public abstract class AbstractObject extends JLabel
 	private boolean isBelow(final AbstractObject target)
 	{
 		return target.getBounds().getMaxY() - 2 < getY();
+	}
+	
+	@Override
+	protected void paintComponent(final Graphics g)
+	{
+		super.paintComponent(g);
+		
+		g.drawImage(_currentImage, 0, 0, _currentImage.getWidth(null), _currentImage.getHeight(null), null);
 	}
 }

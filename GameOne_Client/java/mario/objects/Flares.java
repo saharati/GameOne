@@ -36,10 +36,10 @@ public final class Flares extends AbstractObject
 		for (int i = 0;i < FLAMES_NUMBER;i++)
 			_flames.add(new Flames(getX(), getY() - i, MarioType.FLAME3));
 		
-		MarioTaskManager.getInstance().add(this);
-		
 		SuperMario.getInstance().addObject(_topFlame, true);
 		_flames.forEach(f -> SuperMario.getInstance().addObject(f, true));
+		
+		MarioTaskManager.getInstance().add(this);
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public final class Flares extends AbstractObject
 			if (_posDelay > 0)
 			{
 				_flames.get(FLAMES_NUMBER - _posDelay).setVisible(true);
-				_topFlame.setLocation(_topFlame.getX(), _flames.get(FLAMES_NUMBER - _posDelay).getY() - getHeight() + 1);
+				_topFlame.setLocation(_topFlame.getX(), _flames.get(FLAMES_NUMBER - _posDelay).getY() - _topFlame.getHeight());
 			}
 		}
 		else if (_negDelay > 0)

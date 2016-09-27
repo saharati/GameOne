@@ -26,13 +26,18 @@ public final class Alien2 extends AbstractObject
 	
 	public Alien2(final int x, final int y)
 	{
-		super(x, y + 1, MarioType.ALIENNEW);
+		super(x, y, MarioType.ALIENNEW);
 	}
 	
 	@Override
 	public void onStart()
 	{
 		super.onStart();
+		
+		do
+		{
+			setLocation(getX(), getY() + 1);
+		} while (getNearbyObjects(new Rectangle(getX() - getWidth(), getY(), getWidth(), getHeight())).get(Direction.BELOW).isEmpty());
 		
 		MarioTaskManager.getInstance().add(this);
 	}

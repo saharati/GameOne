@@ -30,10 +30,10 @@ public final class Flames extends AbstractObject
 	{
 		if (_regCount == 50)
 		{
-			if (getIcon() == getTypes()[0].getIcon())
-				setIcon(getTypes()[1].getIcon());
+			if (getCurrentImage() == getImages()[0])
+				setCurrentImage(getImages()[1]);
 			else
-				setIcon(getTypes()[0].getIcon());
+				setCurrentImage(getImages()[0]);
 			
 			_regCount = 0;
 		}

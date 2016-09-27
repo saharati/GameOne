@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 
 import client.Client;
 import mario.objects.AbstractObject;
+import mario.objects.Coin;
 import mario.objects.FallingCube;
 import mario.objects.Flat;
 import mario.objects.Player;
@@ -33,6 +35,7 @@ import mario.prototypes.Direction;
 import mario.prototypes.JumpType;
 import mario.resources.BackgroundPanel;
 import mario.resources.SelectionPanel;
+import network.request.RequestUpdateGameScore;
 import objects.mario.MarioObject;
 import objects.mario.MarioType;
 import util.threadpool.ThreadPool;
@@ -56,8 +59,8 @@ public final class SuperMario extends JFrame implements Runnable
 	private final SelectionPanel _selectionPanel;
 	private final BackgroundPanel _background;
 	
-	private final List<Component> _addedObjects = new ArrayList<>();
-	private final List<Component> _removedObjects = new ArrayList<>();
+	private final List<Component> _addedObjects = new CopyOnWriteArrayList<>();
+	private final List<Component> _removedObjects = new CopyOnWriteArrayList<>();
 	private final List<TubeExit> _exitTubes = new ArrayList<>();
 	private boolean _isPlaying;
 	private int _score;
@@ -83,11 +86,6 @@ public final class SuperMario extends JFrame implements Runnable
 		setLayout(new BorderLayout());
 		add(_background, BorderLayout.NORTH);
 		add(_selectionPanel, BorderLayout.SOUTH);
-		
-		for (final MarioObject o : Client.getInstance().getMarioObjects())
-			addObject(o.getType().getClassName(), o.getX(), o.getY(), false);
-		
-		reload();
 		
 		setResizable(false);
 		pack();
@@ -160,10 +158,28 @@ public final class SuperMario extends JFrame implements Runnable
 			_exitTubes.remove(obj);
 		
 		_mapHolder.remove(obj);
-		_removedObjects.add(obj);
+		
+		if (_addedObjects.contains(obj))
+			_addedObjects.remove(obj);
+		else
+			_removedObjects.add(obj);
 		
 		if (repaint)
 			_mapHolder.repaint();
+	}
+	
+	public void reset()
+	{
+		_addedObjects.clear();
+		_removedObjects.clear();
+		_exitTubes.clear();
+		
+		_mapHolder.removeAll();
+		_mapHolder.revalidate();
+		
+		for (final MarioObject o : Client.getInstance().getMarioObjects())
+			addObject(o.getType().getClassName(), o.getX(), o.getY(), false);
+		reload();
 	}
 	
 	public AbstractObject[] getObjects()
@@ -242,6 +258,7 @@ public final class SuperMario extends JFrame implements Runnable
 		reload();
 		
 		_isPlaying = false;
+		_fallCount = 0;
 		
 		_background.changeBackground(MarioType.BACKGROUND.getIcon());
 		
@@ -253,9 +270,24 @@ public final class SuperMario extends JFrame implements Runnable
 		
 		MarioTaskManager.getInstance().stop();
 		
-		// TODO _client.getConnection().saveUserStatus(Math.max(_score, _client.getScore()), Math.max(_score, _client.getScore()), 0);
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(getObjectsOfType(Coin.class).size() == _score, _score));
 		
 		_score = 0;
+	}
+	
+	public List<Component> getAddedObjects()
+	{
+		return _addedObjects;
+	}
+	
+	public List<Component> getRemovedObjects()
+	{
+		return _removedObjects;
+	}
+	
+	public SelectionPanel getSelectionPanel()
+	{
+		return _selectionPanel;
 	}
 	
 	public JPanel getMapHolder()

@@ -27,5 +27,6 @@ public final class TubeEntrance extends AbstractObject
 		super.onStart();
 		
 		SuperMario.getInstance().addObject(new Flower(getX() + X_OFFSET, getY() + Y_OFFSET), true);
+		SuperMario.getInstance().getMapHolder().setComponentZOrder(this, 2);
 	}
 }

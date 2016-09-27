@@ -15,7 +15,7 @@ public enum PacketInfo
 	LOGOUT("RequestLogout", "LogoutResponse", true),
 	GAME("RequestGame", "GameResponse", true),
 	OBJECTS("RequestGameObjects", "GameObjectsResponse", false),
-	PACMAN_EDIT("RequestPacmanMapEdit", "PacmanMapEditResponse", true),
+	EDIT("RequestGameEdit", "GameEditResponse", true),
 	SCORE("RequestUpdateGameScore", "GameScoreUpdateResponse", true);
 	
 	private static final String REQUEST_PACKAGE = "network.request";

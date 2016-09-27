@@ -5,3 +5,5 @@ Shutdown - disconnect all players safely.
 games to add:
 * fish hunt
 * yu gi oh
+* monopol
+* red alert

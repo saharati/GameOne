@@ -29,7 +29,7 @@ public final class Player extends AbstractObject
 	};
 	private static final int LEVEL_OFFSET = 11;
 	
-	private int _level;
+	private int _level = 2;
 	private int _jumpCount;
 	private int _invisCount;
 	private int _swallowCount;
@@ -55,7 +55,7 @@ public final class Player extends AbstractObject
 	{
 		super.onEnd();
 		
-		_level = 0;
+		_level = 2;
 		_jumpCount = 0;
 		_invisCount = 0;
 		_swallowCount = 0;
@@ -71,8 +71,8 @@ public final class Player extends AbstractObject
 		
 		_level++;
 		
-		setTypes(TYPES_PER_LEVEL[_level]);
-		setBounds(getX(), (_level == 1 ? getY() - LEVEL_OFFSET : getY()), getIcon().getIconWidth(), getIcon().getIconHeight());
+		setImages(TYPES_PER_LEVEL[_level]);
+		setBounds(getX(), (_level == 1 ? getY() - LEVEL_OFFSET : getY()), getCurrentImage().getWidth(null), getCurrentImage().getHeight(null));
 	}
 	
 	public void levelDown()
@@ -89,8 +89,8 @@ public final class Player extends AbstractObject
 			return;
 		}
 		
-		setTypes(TYPES_PER_LEVEL[_level]);
-		setBounds(getX(), (_level == 1 ? getY() - LEVEL_OFFSET : getY()), getIcon().getIconWidth(), getIcon().getIconHeight());
+		setImages(TYPES_PER_LEVEL[_level]);
+		setBounds(getX(), (_level == 1 ? getY() - LEVEL_OFFSET : getY()), getCurrentImage().getWidth(null), getCurrentImage().getHeight(null));
 	}
 	
 	public void jump(final JumpType type)
@@ -191,10 +191,10 @@ public final class Player extends AbstractObject
 						}
 					}
 					
-					if (getIcon() == TYPES_PER_LEVEL[_level][0].getFlippedIcon())
-						setIcon(TYPES_PER_LEVEL[_level][1].getFlippedIcon());
+					if (getCurrentImage() == TYPES_PER_LEVEL[_level][0].getFlippedIcon().getImage())
+						setCurrentImage(TYPES_PER_LEVEL[_level][1].getFlippedIcon().getImage());
 					else
-						setIcon(TYPES_PER_LEVEL[_level][0].getFlippedIcon());
+						setCurrentImage(TYPES_PER_LEVEL[_level][0].getFlippedIcon().getImage());
 				}
 				else
 				{
@@ -211,10 +211,10 @@ public final class Player extends AbstractObject
 							setLocation(getX() + 1, getY());
 					}
 					
-					if (getIcon() == getTypes()[0].getIcon())
-						setIcon(getTypes()[1].getIcon());
+					if (getCurrentImage() == getImages()[0])
+						setCurrentImage(getImages()[1]);
 					else
-						setIcon(getTypes()[0].getIcon());
+						setCurrentImage(getImages()[0]);
 				}
 				
 				if (getX() > SuperMario.SCREEN_MOVING_POINT)

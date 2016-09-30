@@ -25,7 +25,7 @@ public final class Top extends JFrame
 			private static final long serialVersionUID = 5338117964502108581L;
 			
 			@Override
-			public boolean isCellEditable(int r, int c)
+			public boolean isCellEditable(final int r, final int c)
 			{
 				return false;
 			}

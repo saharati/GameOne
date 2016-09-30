@@ -1,10 +1,9 @@
 package network.response;
 
 import client.Client;
-import mario.SuperMario;
 import network.PacketReader;
+import network.request.RequestWaitingRoom;
 import objects.GameId;
-import pacman.PacmanBuilder;
 import s2048.S2048;
 import snake.SnakeScreen;
 import tetris.TetrisScreen;
@@ -16,45 +15,57 @@ import windows.GameSelect;
  */
 public final class GameResponse extends PacketReader<Client>
 {
-	private int _gameId;
+	private GameId _gameId;
+	private boolean _joined;
 	
 	@Override
 	public void read()
 	{
-		_gameId = readInt();
+		_gameId = GameId.values()[readInt()];
+		_joined = readBoolean();
 	}
 	
 	@Override
 	public void run(final Client client)
 	{
-		GameSelect.getInstance().disableAllButtons();
-		
-		final GameId gameId = GameId.values()[_gameId];
-		switch (gameId)
+		if (_joined)
 		{
-			case CHECKERS:
-				break;
-			case CHESS:
-				break;
-			case G2048:
-				S2048.getInstance().start();
-				break;
-			case LAMA:
-				break;
-			case LOBBY:
-				break;
-			case MARIO:
-				SuperMario.getInstance().setVisible(true);
-				break;
-			case PACMAN:
-				PacmanBuilder.getInstance().setVisible(true);
-				break;
-			case SNAKE:
-				SnakeScreen.getInstance().start();
-				break;
-			case TETRIS:
-				TetrisScreen.getInstance().start();
-				break;
+			GameSelect.getInstance().disableAllButtons();
+			
+			switch (_gameId)
+			{
+				case CHECKERS:
+				case CHESS:
+				case LAMA:
+					Client.getInstance().sendPacket(new RequestWaitingRoom(_gameId));
+					break;
+				case MARIO:
+				case PACMAN:
+					Client.getInstance().getCurrentWindow().setVisible(true);
+					break;
+				case G2048:
+					S2048.getInstance().start();
+					break;
+				case SNAKE:
+					SnakeScreen.getInstance().start();
+					break;
+				case TETRIS:
+					TetrisScreen.getInstance().start();
+					break;
+			}
+		}
+		else
+		{
+			GameSelect.getInstance().enableAllButtons();
+			
+			switch (_gameId)
+			{
+				case CHECKERS:
+				case CHESS:
+				case LAMA:
+					Client.getInstance().sendPacket(new RequestWaitingRoom(_gameId));
+					break;
+			}
 		}
 	}
 }

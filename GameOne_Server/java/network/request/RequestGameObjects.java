@@ -22,9 +22,6 @@ public final class RequestGameObjects extends PacketReader<GameClient>
 	@Override
 	public void run(final GameClient client)
 	{
-		if (GameId.values().length < _gameId)
-			return;
-		
 		final GameId gameId = GameId.values()[_gameId];
 		client.sendPacket(new GameObjectsResponse(gameId));
 	}

@@ -3,10 +3,10 @@ package network.request;
 import java.awt.Component;
 import java.util.List;
 
+import client.Client;
 import mario.objects.AbstractObject;
 import network.PacketInfo;
 import network.PacketWriter;
-import objects.GameId;
 import pacman.PacmanButton;
 
 /**
@@ -15,8 +15,6 @@ import pacman.PacmanButton;
  */
 public final class RequestGameEdit extends PacketWriter
 {
-	private final GameId _gameId;
-	
 	// Mario
 	private List<Component> _addedObjects;
 	private List<Component> _removedObjects;
@@ -27,14 +25,12 @@ public final class RequestGameEdit extends PacketWriter
 	
 	public RequestGameEdit(final List<Component> addedObjects, final List<Component> removedObjects)
 	{
-		_gameId = GameId.MARIO;
 		_addedObjects = addedObjects;
 		_removedObjects = removedObjects;
 	}
 	
 	public RequestGameEdit(final int mapId, final PacmanButton[][] buttons)
 	{
-		_gameId = GameId.PACMAN;
 		_mapId = mapId;
 		_buttons = buttons;
 	}
@@ -44,8 +40,8 @@ public final class RequestGameEdit extends PacketWriter
 	{
 		writeInt(PacketInfo.EDIT.ordinal());
 		
-		writeInt(_gameId.ordinal());
-		switch (_gameId)
+		writeInt(Client.getInstance().getCurrentGame().ordinal());
+		switch (Client.getInstance().getCurrentGame())
 		{
 			case MARIO:
 				writeInt(_addedObjects.size());

@@ -23,10 +23,14 @@ import javax.swing.text.AbstractDocument;
 import client.Client;
 import configs.Config;
 import gui.SpringUtilities;
-import network.request.RequestGame;
+import mario.SuperMario;
 import network.request.RequestLogout;
 import network.request.RequestMessage;
 import objects.GameId;
+import pacman.PacmanBuilder;
+import s2048.S2048;
+import snake.SnakeScreen;
+import tetris.TetrisScreen;
 import util.LengthDocumentFilter;
 
 /**
@@ -69,28 +73,28 @@ public final class GameSelect extends JFrame
 		
 		// Create the buttons panel next, using SpringLayout.
 		final JButton spPacman = new JButton("Pacman (SP)");
-		spPacman.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.PACMAN)));
+		spPacman.addActionListener(a -> Client.getInstance().setCurrentDetails(PacmanBuilder.getInstance(), GameId.PACMAN, true));
 		_buttonsPanel.add(spPacman);
 		final JButton mpChess = new JButton("Chess (MP)");
-		mpChess.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.CHESS)));
+		mpChess.addActionListener(a -> Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS, true));
 		_buttonsPanel.add(mpChess);
 		final JButton spTetris = new JButton("Tetris (SP)");
-		spTetris.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.TETRIS)));
+		spTetris.addActionListener(a -> Client.getInstance().setCurrentDetails(TetrisScreen.getInstance(), GameId.TETRIS, true));
 		_buttonsPanel.add(spTetris);
 		final JButton mpSal = new JButton("Slide a Lama (MP)");
-		mpSal.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.LAMA)));
+		mpSal.addActionListener(a -> Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.LAMA, true));
 		_buttonsPanel.add(mpSal);
 		final JButton spSnake = new JButton("Snake (SP)");
-		spSnake.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.SNAKE)));
+		spSnake.addActionListener(a -> Client.getInstance().setCurrentDetails(SnakeScreen.getInstance(), GameId.SNAKE, true));
 		_buttonsPanel.add(spSnake);
 		final JButton mpCheckers = new JButton("Checkers (MP)");
-		mpCheckers.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.CHECKERS)));
+		mpCheckers.addActionListener(a -> Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHECKERS, true));
 		_buttonsPanel.add(mpCheckers);
 		final JButton mario = new JButton("Super Mario (SP)");
-		mario.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.MARIO)));
+		mario.addActionListener(a -> Client.getInstance().setCurrentDetails(SuperMario.getInstance(), GameId.MARIO, true));
 		_buttonsPanel.add(mario);
 		final JButton s2048 = new JButton("2048 (SP)");
-		s2048.addActionListener(a -> Client.getInstance().sendPacket(new RequestGame(GameId.G2048)));
+		s2048.addActionListener(a -> Client.getInstance().setCurrentDetails(S2048.getInstance(), GameId.G2048, true));
 		_buttonsPanel.add(s2048);
 		_buttonsPanel.add(DUMMY);
 		
@@ -141,17 +145,6 @@ public final class GameSelect extends JFrame
 		return _sender;
 	}
 	
-	private void sendText()
-	{
-		if (_sender.getText().trim().isEmpty())
-			return;
-		
-		final RequestMessage msg = new RequestMessage(_sender.getText());
-		Client.getInstance().sendPacket(msg);
-		
-		_sender.setText("");
-	}
-	
 	public void enableAllButtons()
 	{
 		for (final Component c : _buttonsPanel.getComponents())
@@ -162,6 +155,17 @@ public final class GameSelect extends JFrame
 	{
 		for (final Component c : _buttonsPanel.getComponents())
 			c.setEnabled(false);
+	}
+	
+	private void sendText()
+	{
+		if (_sender.getText().trim().isEmpty())
+			return;
+		
+		final RequestMessage msg = new RequestMessage(_sender.getText());
+		Client.getInstance().sendPacket(msg);
+		
+		_sender.setText("");
 	}
 	
 	private class KeyboardChatSendListener extends KeyAdapter

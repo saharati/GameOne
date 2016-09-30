@@ -26,9 +26,6 @@ public final class RequestUpdateGameScore extends PacketReader<GameClient>
 	public void run(final GameClient client)
 	{
 		final GameId currentGame = client.getUser().getCurrentGame();
-		if (currentGame == null || currentGame == GameId.LOBBY)
-			return;
-		
 		if (!client.getUser().hasGame(currentGame))
 		{
 			final GameStat gs = new GameStat(currentGame, _totalScore, _isWin ? 1 : 0, !_isWin ? 1 : 0);

@@ -3,6 +3,7 @@ package util;
 import data.sql.UsersTable;
 import network.PacketWriter;
 import network.response.MessageResponse;
+import objects.GameId;
 import server.objects.GameClient;
 
 /**
@@ -26,5 +27,10 @@ public final class Broadcast
 		final MessageResponse msg = new MessageResponse(text);
 		
 		UsersTable.getInstance().getOnlineUsers().filter(u -> u.getClient() != client).forEach(u -> u.sendPacket(msg));
+	}
+	
+	public static void toAllUsersOfGame(final PacketWriter packet, final GameId gameId)
+	{
+		UsersTable.getInstance().getOnlineUsers().filter(u -> u.getCurrentGame() == gameId).forEach(u -> u.sendPacket(packet));
 	}
 }

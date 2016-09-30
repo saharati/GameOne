@@ -61,6 +61,12 @@ public final class S2048 extends JFrame
 	{
 		super.dispose();
 		
+		reset();
+		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+	}
+	
+	public void reset()
+	{
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(has2048Block(), _score));
 		
 		for (int i = 0;i < SIZE;i++)
@@ -68,8 +74,6 @@ public final class S2048 extends JFrame
 				_puzzle[i][j].reset();
 		
 		_score = 0;
-		
-		GameSelect.getInstance().enableAllButtons();
 	}
 	
 	public void start()

@@ -63,7 +63,7 @@ public final class RequestGameEdit extends PacketReader<GameClient>
 	public void run(final GameClient client)
 	{
 		if (client.getUser().getAccessLevel() != AccessLevel.GM)
-			client.sendPacket(new GameEditResponse(_gameId, GameEditResponse.NO_PERMISSION));
+			client.sendPacket(GameEditResponse.NO_PERMISSION);
 		else
 		{
 			switch (_gameId)
@@ -89,12 +89,12 @@ public final class RequestGameEdit extends PacketReader<GameClient>
 						if (obj.getType() == MarioType.PLAYER)
 							playerAmount++;
 					if (playerAmount != 1)
-						client.sendPacket(new GameEditResponse(_gameId, GameEditResponse.FAIL));
+						client.sendPacket(GameEditResponse.FAIL);
 					else if (!MarioTable.getInstance().updateDatabase(backup))
-						client.sendPacket(new GameEditResponse(_gameId, GameEditResponse.FAIL));
+						client.sendPacket(GameEditResponse.FAIL);
 					else
 					{
-						client.sendPacket(new GameEditResponse(_gameId, GameEditResponse.SUCCESS));
+						client.sendPacket(GameEditResponse.SUCCESS);
 						
 						Broadcast.toAllUsers(new GameObjectsResponse(GameId.MARIO));
 					}
@@ -114,12 +114,12 @@ public final class RequestGameEdit extends PacketReader<GameClient>
 					}
 					
 					if (!hasPlayer || !hasAtLeastOneStar)
-						client.sendPacket(new GameEditResponse(_gameId, GameEditResponse.FAIL));
+						client.sendPacket(GameEditResponse.FAIL);
 					else
 					{
 						PacmanTable.getInstance().updateMap(_mapId, _objects);
 						
-						client.sendPacket(new GameEditResponse(_gameId, GameEditResponse.SUCCESS));
+						client.sendPacket(GameEditResponse.SUCCESS);
 						
 						Broadcast.toAllUsers(new GameObjectsResponse(GameId.PACMAN));
 					}

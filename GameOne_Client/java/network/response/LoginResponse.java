@@ -34,7 +34,9 @@ public final class LoginResponse extends PacketReader<Client>
 		{
 			case LOGIN_OK:
 				client.storeUserDetails();
-				client.setCurrentWindow(GameSelect.getInstance());
+				client.getCurrentWindow().setVisible(false);
+				client.setCurrentDetails(GameSelect.getInstance(), null, false);
+				client.getCurrentWindow().setVisible(true);
 				break;
 			case LOGIN_FAILED:
 				JOptionPane.showMessageDialog(null, "Username or password incorrect.", "Login Failed", JOptionPane.ERROR_MESSAGE);

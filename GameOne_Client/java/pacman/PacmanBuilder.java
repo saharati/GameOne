@@ -160,7 +160,6 @@ public final class PacmanBuilder extends JFrame
 		_currentScore = 0;
 		
 		Client.getInstance().getPacmanMaps().values().forEach(m -> m.reset());
-		GameSelect.getInstance().enableAllButtons();
 	}
 	
 	@Override
@@ -169,6 +168,7 @@ public final class PacmanBuilder extends JFrame
 		super.dispose();
 		
 		reset();
+		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	
 	public static PacmanBuilder getInstance()

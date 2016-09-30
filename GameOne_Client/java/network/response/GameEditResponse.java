@@ -5,7 +5,6 @@ import javax.swing.JOptionPane;
 import client.Client;
 import mario.SuperMario;
 import network.PacketReader;
-import objects.GameId;
 import pacman.PacmanBuilder;
 
 /**
@@ -18,20 +17,18 @@ public final class GameEditResponse extends PacketReader<Client>
 	private static final byte FAIL = -2;
 	private static final byte SUCCESS = 1;
 	
-	private GameId _gameId;
 	private byte _response;
 	
 	@Override
 	public void read()
 	{
-		_gameId = GameId.values()[readInt()];
 		_response = readByte();
 	}
 	
 	@Override
 	public void run(final Client client)
 	{
-		switch (_gameId)
+		switch (client.getCurrentGame())
 		{
 			case MARIO:
 				SuperMario.getInstance().getSelectionPanel().enableAllButtons();

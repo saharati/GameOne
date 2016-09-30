@@ -92,7 +92,7 @@ public final class Startup extends JFrame
 		_currentLoad.setText("Loading Objects...");
 		
 		StringUtil.printSection("Objects");
-		Client.getInstance().setStartupWindow(this);
+		Client.getInstance().setCurrentDetails(this, null, false);
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.MARIO));
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.PACMAN));
 		
@@ -112,10 +112,13 @@ public final class Startup extends JFrame
 		TetrisScreen.getInstance();
 		SnakeScreen.getInstance();
 		S2048.getInstance();
+		WaitingRoom.getInstance();
 		
 		_progressBar.setValue(5);
 		
-		Client.getInstance().setCurrentWindow(Login.getInstance());
+		Client.getInstance().getCurrentWindow().setVisible(false);
+		Client.getInstance().setCurrentDetails(Login.getInstance(), null, false);
+		Client.getInstance().getCurrentWindow().setVisible(true);
 	}
 	
 	public static void main(final String[] args) throws SecurityException, URISyntaxException, IOException

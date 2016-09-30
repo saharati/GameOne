@@ -11,10 +11,12 @@ import objects.GameId;
 public final class GameResponse extends PacketWriter
 {
 	private final GameId _gameId;
+	private final boolean _joined;
 	
-	public GameResponse(final GameId gameId)
+	public GameResponse(final GameId gameId, final boolean joined)
 	{
 		_gameId = gameId;
+		_joined = joined;
 	}
 	
 	@Override
@@ -23,5 +25,6 @@ public final class GameResponse extends PacketWriter
 		writeInt(PacketInfo.GAME.ordinal());
 		
 		writeInt(_gameId.ordinal());
+		writeBoolean(_joined);
 	}
 }

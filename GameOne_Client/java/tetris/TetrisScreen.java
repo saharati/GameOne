@@ -73,10 +73,15 @@ public final class TetrisScreen extends JFrame implements Runnable
 		_moveTask = ThreadPool.schedule(this, SLOW_SPEED);
 	}
 	
-	@Override
-	public void dispose()
+	public void reset()
 	{
-		super.dispose();
+		if (_moveTask != null)
+		{
+			if (!_moveTask.isCancelled())
+				_moveTask.cancel(true);
+			
+			_moveTask = null;
+		}
 		
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(_isWin, _score));
 		
@@ -89,8 +94,15 @@ public final class TetrisScreen extends JFrame implements Runnable
 		_curShape = 0;
 		_align = 0;
 		_score = 0;
+	}
+	
+	@Override
+	public void dispose()
+	{
+		super.dispose();
 		
-		GameSelect.getInstance().enableAllButtons();
+		reset();
+		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	
 	@Override

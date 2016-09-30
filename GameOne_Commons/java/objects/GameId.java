@@ -6,7 +6,6 @@ package objects;
  */
 public enum GameId
 {
-	LOBBY,
 	PACMAN,
 	CHESS,
 	TETRIS,

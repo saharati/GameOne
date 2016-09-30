@@ -104,6 +104,7 @@ public final class PacmanMap extends JFrame
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin, totalScore));
 		
 		PacmanBuilder.getInstance().reset();
+		PacmanBuilder.getInstance().setVisible(true);
 	}
 	
 	public PacmanMapObject[][] getObjects()

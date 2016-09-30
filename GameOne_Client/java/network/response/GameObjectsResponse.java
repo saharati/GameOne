@@ -21,19 +21,18 @@ import windows.Startup;
  */
 public final class GameObjectsResponse extends PacketReader<Client>
 {
-	private int _gameId;
+	private GameId _gameId;
 	
 	@Override
 	public void read()
 	{
-		_gameId = readInt();
+		_gameId = GameId.values()[readInt()];
 	}
 	
 	@Override
 	public void run(final Client client)
 	{
-		final GameId gameId = GameId.values()[_gameId];
-		switch (gameId)
+		switch (_gameId)
 		{
 			case MARIO:
 				final MarioType[] marioTypes = MarioType.values();

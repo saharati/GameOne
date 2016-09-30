@@ -22,11 +22,17 @@ public final class RequestGame extends PacketReader<GameClient>
 	@Override
 	public void run(final GameClient client)
 	{
-		if (GameId.values().length < _gameId)
-			return;
-		
-		final GameId gameId = GameId.values()[_gameId];
-		client.getUser().setCurrentGame(gameId);
-		client.sendPacket(new GameResponse(gameId));
+		if (_gameId == -1)
+		{
+			client.sendPacket(new GameResponse(client.getUser().getCurrentGame(), false));
+			client.getUser().setCurrentGame(null);
+		}
+		else
+		{
+			final GameId gameId = GameId.values()[_gameId];
+			
+			client.getUser().setCurrentGame(gameId);
+			client.sendPacket(new GameResponse(gameId, true));
+		}
 	}
 }

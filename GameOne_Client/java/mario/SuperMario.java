@@ -107,7 +107,7 @@ public final class SuperMario extends JFrame implements Runnable
 		else
 			reload();
 		
-		GameSelect.getInstance().enableAllButtons();
+		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	
 	public void addObject(final String className, final int x, final int y, final boolean soleObject)
@@ -273,6 +273,11 @@ public final class SuperMario extends JFrame implements Runnable
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(getObjectsOfType(Coin.class).size() == _score, _score));
 		
 		_score = 0;
+	}
+	
+	public boolean isPlaying()
+	{
+		return _isPlaying;
 	}
 	
 	public List<Component> getAddedObjects()

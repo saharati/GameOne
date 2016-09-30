@@ -29,7 +29,7 @@ public final class Player extends AbstractObject
 	};
 	private static final int LEVEL_OFFSET = 11;
 	
-	private int _level = 2;
+	private int _level;
 	private int _jumpCount;
 	private int _invisCount;
 	private int _swallowCount;
@@ -55,7 +55,7 @@ public final class Player extends AbstractObject
 	{
 		super.onEnd();
 		
-		_level = 2;
+		_level = 0;
 		_jumpCount = 0;
 		_invisCount = 0;
 		_swallowCount = 0;

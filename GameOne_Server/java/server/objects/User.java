@@ -31,6 +31,7 @@ public final class User
 	private String _ip;
 	private String _mac;
 	private GameId _currentGame;
+	private UserGroup _group;
 	
 	public User(final int id, final String username, final String password, final String ip, final String mac, final AccessLevel accessLevel, final Map<GameId, GameStat> gameStats)
 	{
@@ -118,6 +119,21 @@ public final class User
 	public void setCurrentGame(final GameId currentGame)
 	{
 		_currentGame = currentGame;
+	}
+	
+	public boolean isInGroup()
+	{
+		return _group != null;
+	}
+	
+	public UserGroup getGroup()
+	{
+		return _group;
+	}
+	
+	public void setGroup(final UserGroup group)
+	{
+		_group = group;
 	}
 	
 	public void onLogin(final GameClient client, final String ip, final String mac)

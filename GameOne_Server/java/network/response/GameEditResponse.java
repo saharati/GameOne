@@ -2,7 +2,6 @@ package network.response;
 
 import network.PacketInfo;
 import network.PacketWriter;
-import objects.GameId;
 
 /**
  * Packet responsible for telling the result of a specific game edit request.
@@ -10,16 +9,14 @@ import objects.GameId;
  */
 public final class GameEditResponse extends PacketWriter
 {
-	public static final byte NO_PERMISSION = -1;
-	public static final byte FAIL = -2;
-	public static final byte SUCCESS = 1;
+	public static final GameEditResponse NO_PERMISSION = new GameEditResponse((byte)-1);
+	public static final GameEditResponse FAIL = new GameEditResponse((byte) -2);
+	public static final GameEditResponse SUCCESS = new GameEditResponse((byte) 1);
 	
-	private final GameId _gameId;
 	private final byte _result;
 	
-	public GameEditResponse(final GameId gameId, final byte result)
+	private GameEditResponse(final byte result)
 	{
-		_gameId = gameId;
 		_result = result;
 	}
 	
@@ -28,7 +25,6 @@ public final class GameEditResponse extends PacketWriter
 	{
 		writeInt(PacketInfo.EDIT.ordinal());
 		
-		writeInt(_gameId.ordinal());
 		writeByte(_result);
 	}
 }

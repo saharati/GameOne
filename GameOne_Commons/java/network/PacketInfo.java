@@ -16,7 +16,9 @@ public enum PacketInfo
 	GAME("RequestGame", "GameResponse", true),
 	OBJECTS("RequestGameObjects", "GameObjectsResponse", false),
 	EDIT("RequestGameEdit", "GameEditResponse", true),
-	SCORE("RequestUpdateGameScore", "GameScoreUpdateResponse", true);
+	SCORE("RequestUpdateGameScore", "GameScoreUpdateResponse", true),
+	WAIT("RequestWaitingRoom", "WaitingRoomResponse", true),
+	INVITE("RequestInviteToDuel", "DuelInviteResponse", true);
 	
 	private static final String REQUEST_PACKAGE = "network.request";
 	private static final String RESPONSE_PACKAGE = "network.response";

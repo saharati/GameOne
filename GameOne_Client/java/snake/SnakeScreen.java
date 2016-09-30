@@ -71,15 +71,25 @@ public final class SnakeScreen extends JFrame implements Runnable
 	{
 		super.dispose();
 		
+		reset();
+		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+	}
+	
+	public void reset()
+	{
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(isFull(), _score));
 		
 		_snake.clear();
-		_moveTask = null;
+		if (_moveTask != null)
+		{
+			if (!_moveTask.isCancelled())
+				_moveTask.cancel(false);
+			
+			_moveTask = null;
+		}
 		_lastAlign = 0;
 		_currentAlign = 0;
 		_score = 0;
-		
-		GameSelect.getInstance().enableAllButtons();
 	}
 	
 	public void start()

@@ -16,7 +16,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 /**
- * Playing around with GridLayout.
+ * This class is not a part of the project
+ * Playing around a little bit with GridLayout.
  * @author Sahar
  */
 public final class GridLayoutTest extends JFrame

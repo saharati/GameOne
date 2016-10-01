@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
+import chess.ChessScreen;
 import client.Client;
 import configs.Config;
 import mario.SuperMario;
@@ -113,6 +114,7 @@ public final class Startup extends JFrame
 		SnakeScreen.getInstance();
 		S2048.getInstance();
 		WaitingRoom.getInstance();
+		ChessScreen.getInstance();
 		
 		_progressBar.setValue(5);
 		

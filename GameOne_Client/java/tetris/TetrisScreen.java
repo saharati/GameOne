@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
+import objects.GameResult;
 import util.random.Rnd;
 import util.threadpool.ThreadPool;
 import windows.GameSelect;
@@ -83,7 +84,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 			_moveTask = null;
 		}
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(_isWin, _score));
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(_isWin ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		for (int i = 0;i < ROWS;i++)
 			for (int j = 0;j < COLS;j++)

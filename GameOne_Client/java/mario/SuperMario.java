@@ -36,6 +36,7 @@ import mario.prototypes.JumpType;
 import mario.resources.BackgroundPanel;
 import mario.resources.SelectionPanel;
 import network.request.RequestUpdateGameScore;
+import objects.GameResult;
 import objects.mario.MarioObject;
 import objects.mario.MarioType;
 import util.threadpool.ThreadPool;
@@ -270,7 +271,7 @@ public final class SuperMario extends JFrame implements Runnable
 		
 		MarioTaskManager.getInstance().stop();
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(getObjectsOfType(Coin.class).size() == _score, _score));
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(getObjectsOfType(Coin.class).size() == _score ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		_score = 0;
 	}

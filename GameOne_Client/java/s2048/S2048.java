@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import windows.GameSelect;
 import client.Client;
 import network.request.RequestUpdateGameScore;
+import objects.GameResult;
 import util.random.Rnd;
 
 /**
@@ -67,7 +68,7 @@ public final class S2048 extends JFrame
 	
 	public void reset()
 	{
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(has2048Block(), _score));
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(has2048Block() ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		for (int i = 0;i < SIZE;i++)
 			for (int j = 0;j < SIZE;j++)

@@ -13,6 +13,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import client.Client;
+import network.request.RequestGameStart;
 import network.request.RequestInviteToDuel;
 import util.InfoTableModel;
 import util.threadpool.ThreadPool;
@@ -110,9 +111,7 @@ public final class WaitingRoom extends JFrame
 					Client.getInstance().sendPacket(RequestInviteToDuel.STATIC_PACKET);
 				// Approved by user, start game.
 				else
-				{
-					// TODO
-				}
+					Client.getInstance().sendPacket(RequestGameStart.STATIC_PACKET);
 			}
 		});
 	}
@@ -130,9 +129,11 @@ public final class WaitingRoom extends JFrame
 	public void reload(final Object[][] newData)
 	{
 		_model.updateInfo(newData);
-		_table.setPreferredScrollableViewportSize(_table.getPreferredSize());
-		pack();
 		
+		_table.setPreferredScrollableViewportSize(_table.getPreferredSize());
+		_table.revalidate();
+		
+		pack();
 		if (!isVisible())
 		{
 			setLocationRelativeTo(null);

@@ -27,6 +27,7 @@ public final class WaitingRoomResponse extends PacketReader<Client>
 	@Override
 	public void run(final Client client)
 	{
-		WaitingRoom.getInstance().reload(_userList);
+		if (client.getCurrentWindow() == WaitingRoom.getInstance())
+			WaitingRoom.getInstance().reload(_userList);
 	}
 }

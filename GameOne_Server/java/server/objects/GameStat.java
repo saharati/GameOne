@@ -14,6 +14,11 @@ public final class GameStat
 	private int _wins;
 	private int _loses;
 	
+	public GameStat(final GameId gameId)
+	{
+		_gameId = gameId;
+	}
+	
 	public GameStat(final GameId gameId, final int score, final int wins, final int loses)
 	{
 		_gameId = gameId;

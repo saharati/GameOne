@@ -172,7 +172,10 @@ public final class User
 	public void onLogout()
 	{
 		_isOnline = false;
+		
 		_client = null;
+		_group = null;
+		_currentGame = null;
 	}
 	
 	public void sendPacket(final String sender, final String msg)

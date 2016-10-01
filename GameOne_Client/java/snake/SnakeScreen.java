@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
+import objects.GameResult;
 import util.random.Rnd;
 import util.threadpool.ThreadPool;
 import windows.GameSelect;
@@ -77,7 +78,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 	
 	public void reset()
 	{
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(isFull(), _score));
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(isFull() ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		_snake.clear();
 		if (_moveTask != null)

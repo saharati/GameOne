@@ -2,6 +2,10 @@ package server.objects;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
+
+import network.PacketWriter;
+import util.random.Rnd;
 
 /**
  * Group of users connected together for a certain objective (i.e. duel invite, game etc)
@@ -31,5 +35,25 @@ public final class UserGroup
 	public void addMember(final User member)
 	{
 		_members.add(member);
+	}
+	
+	public void disband()
+	{
+		_members.forEach(member -> member.setGroup(null));
+	}
+	
+	public User getRandomMember()
+	{
+		return Rnd.get(_members);
+	}
+	
+	public Stream<User> getUsersExcept(final User user)
+	{
+		return _members.stream().filter(member -> member != user);
+	}
+	
+	public void broadcast(final PacketWriter packet)
+	{
+		_members.forEach(member -> member.sendPacket(packet));
 	}
 }

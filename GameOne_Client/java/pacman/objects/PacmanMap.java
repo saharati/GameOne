@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
+import objects.GameResult;
 import objects.pacman.PacmanObject;
 import pacman.PacmanBuilder;
 import pacman.objects.PacmanMapObject;
@@ -101,7 +102,7 @@ public final class PacmanMap extends JFrame
 		final boolean isWin = PacmanBuilder.getInstance().getCurrentMap() == null;
 		final int totalScore = PacmanBuilder.getInstance().getCurrentScore();
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin, totalScore));
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin ? GameResult.WIN : GameResult.LOSE, totalScore));
 		
 		PacmanBuilder.getInstance().reset();
 		PacmanBuilder.getInstance().setVisible(true);
@@ -533,7 +534,7 @@ public final class PacmanMap extends JFrame
 				int toY = entry.getKey().getY();
 				entry.setValue(getRandomDirectionChange(toX, toY, entry.getValue()));
 				if (entry.getValue() == '0')
-					entry.setValue(DIRECTIONS.get(Rnd.get(DIRECTIONS.size())));
+					entry.setValue(Rnd.get(DIRECTIONS));
 				
 				PacmanMapObject finalTarget = null;
 				switch (entry.getValue())

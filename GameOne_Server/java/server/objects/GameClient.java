@@ -8,7 +8,11 @@ import java.util.logging.Logger;
 import network.BasicClient;
 import network.PacketInfo;
 import network.PacketReader;
+import network.response.GameScoreUpdateResponse;
 import network.response.MessageResponse;
+import network.response.WaitingRoomResponse;
+import objects.GameId;
+import objects.GameResult;
 import util.Broadcast;
 import util.StringUtil;
 
@@ -44,7 +48,25 @@ public final class GameClient extends BasicClient
 	{
 		final String msg;
 		if (user == null)
+		{
 			msg = _user.getUsername() + " has logged off.";
+			
+			final GameId currentGame = _user.getCurrentGame();
+			final UserGroup group = _user.getGroup();
+			
+			_user.onLogout();
+			
+			if (currentGame != null)
+			{
+				if (group != null)
+				{
+					final GameScoreUpdateResponse result = new GameScoreUpdateResponse(GameResult.EXIT, currentGame);
+					group.getUsersExcept(_user).forEach(member -> member.sendPacket(result));
+				}
+				
+				Broadcast.toAllUsersOfGame(new WaitingRoomResponse(currentGame), currentGame);
+			}
+		}
 		else
 			msg = user.getUsername() + " has logged on.";
 		
@@ -97,19 +119,6 @@ public final class GameClient extends BasicClient
 		if (_user == null)
 			LOGGER.info(_remoteAddr + " terminated the connection.");
 		else
-		{
-			// TODO
-			/*
-			if (_user.isInDuel())
-				new NotifyLogout(_user.getDuel().getOpponent().getThread());
-
-			_objects.put("gameId", _user.getCurrentGameId());
-
-			new WaitingRoomInfo(this);
-			 */
-			
-			_user.onLogout();
 			setUser(null);
-		}
 	}
 }

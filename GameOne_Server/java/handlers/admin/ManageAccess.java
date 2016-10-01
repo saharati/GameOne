@@ -44,9 +44,8 @@ public final class ManageAccess implements IAdminCommandHandler
 			case "kick":
 				if (target.isOnline())
 				{
-					target.getClient().setUser(null);
 					target.sendPacket(LogoutResponse.STATIC_PACKET);
-					target.onLogout();
+					target.getClient().setUser(null);
 				}
 				else
 				{

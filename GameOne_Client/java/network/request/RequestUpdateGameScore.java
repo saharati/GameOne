@@ -2,6 +2,7 @@ package network.request;
 
 import network.PacketInfo;
 import network.PacketWriter;
+import objects.GameResult;
 
 /**
  * Packing updating server with new score data from current game.
@@ -9,12 +10,12 @@ import network.PacketWriter;
  */
 public final class RequestUpdateGameScore extends PacketWriter
 {
-	private final boolean _isWin;
+	private final GameResult _result;
 	private final int _totalScore;
 	
-	public RequestUpdateGameScore(final boolean isWin, final int totalScore)
+	public RequestUpdateGameScore(final GameResult result, final int totalScore)
 	{
-		_isWin = isWin;
+		_result = result;
 		_totalScore = totalScore;
 	}
 	
@@ -23,7 +24,7 @@ public final class RequestUpdateGameScore extends PacketWriter
 	{
 		writeInt(PacketInfo.SCORE.ordinal());
 		
-		writeBoolean(_isWin);
+		writeInt(_result.ordinal());
 		writeInt(_totalScore);
 	}
 }

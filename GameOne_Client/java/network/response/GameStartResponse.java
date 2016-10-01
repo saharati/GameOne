@@ -4,6 +4,7 @@ import chess.ChessScreen;
 import client.Client;
 import network.PacketReader;
 import objects.GameId;
+import sal.SalScreen;
 import windows.WaitingRoom;
 
 /**
@@ -32,6 +33,12 @@ public final class GameStartResponse extends PacketReader<Client>
 				client.setCurrentDetails(ChessScreen.getInstance(), GameId.CHESS, false);
 				
 				ChessScreen.getInstance().start(_isStarting ? "white" : "black");
+				break;
+			case LAMA:
+				client.setCurrentDetails(SalScreen.getInstance(), GameId.LAMA, false);
+				
+				if (_isStarting)
+					SalScreen.getInstance().start();
 				break;
 		}
 	}

@@ -17,6 +17,11 @@ public final class RequestTurnChange extends PacketReader<GameClient>
 	private String[] _images;
 	private int[][] _positions;
 	
+	// Slide a Lama
+	private String[][] _matrixPanel;
+	private String[] _nextCards;
+	private int _score;
+	
 	@Override
 	public void read()
 	{
@@ -32,6 +37,16 @@ public final class RequestTurnChange extends PacketReader<GameClient>
 					for (int j = 0;j < _positions[i].length;j++)
 						_positions[i][j] = readInt();
 				break;
+			case LAMA:
+				_matrixPanel = new String[5][5];
+				_nextCards = new String[3];
+				for (int i = 0;i < _matrixPanel.length;i++)
+					for (int j = 0;j < _matrixPanel[i].length;j++)
+						_matrixPanel[i][j] = readString();
+				for (int i = 0;i < _nextCards.length;i++)
+					_nextCards[i] = readString();
+				_score = readInt();
+				break;
 		}
 	}
 	
@@ -42,6 +57,9 @@ public final class RequestTurnChange extends PacketReader<GameClient>
 		{
 			case CHESS:
 				client.getUser().getGroup().getUsersExcept(client.getUser()).findFirst().get().sendPacket(new TurnChangeResponse(_images, _positions));
+				break;
+			case LAMA:
+				client.getUser().getGroup().getUsersExcept(client.getUser()).findFirst().get().sendPacket(new TurnChangeResponse(_matrixPanel, _nextCards, _score));
 				break;
 		}
 	}

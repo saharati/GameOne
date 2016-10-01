@@ -20,6 +20,7 @@ import network.request.RequestGameObjects;
 import objects.GameId;
 import pacman.PacmanBuilder;
 import s2048.S2048;
+import sal.SalScreen;
 import snake.SnakeScreen;
 import tetris.TetrisScreen;
 import util.StringUtil;
@@ -115,6 +116,7 @@ public final class Startup extends JFrame
 		S2048.getInstance();
 		WaitingRoom.getInstance();
 		ChessScreen.getInstance();
+		SalScreen.getInstance();
 		
 		_progressBar.setValue(5);
 		

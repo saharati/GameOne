@@ -25,8 +25,9 @@ public final class RequestGameStart extends PacketReader<GameClient>
 		switch (user.getCurrentGame())
 		{
 			case CHESS:
-				final User other = user.getGroup().getUsersExcept(user).findFirst().get();
-				final boolean userStarts = Rnd.nextBoolean();
+			case LAMA:
+				User other = user.getGroup().getUsersExcept(user).findFirst().get();
+				boolean userStarts = Rnd.nextBoolean();
 				
 				user.sendPacket(new GameStartResponse(userStarts));
 				other.sendPacket(new GameStartResponse(!userStarts));

@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS `announcements` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 INSERT IGNORE INTO `announcements` VALUES ('1', 'Welcome to GameOne!');
-INSERT IGNORE INTO `announcements` VALUES ('2', 'This is an example announcement!');
+INSERT IGNORE INTO `announcements` VALUES ('2', 'This is example announce!');
 INSERT IGNORE INTO `announcements` VALUES ('3', 'Admins can edit it.');

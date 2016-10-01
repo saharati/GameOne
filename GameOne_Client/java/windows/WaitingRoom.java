@@ -36,7 +36,7 @@ public final class WaitingRoom extends JFrame
 	private static final JOptionPane WAIT_PANE = new JOptionPane(WAIT, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[] {"Cancel"}, null);
 	
 	private final JTable _table = new JTable();
-	private final InfoTableModel _model = new InfoTableModel();
+	private final InfoTableModel _model = new InfoTableModel("Name", "Status", "Score / Wins / Loses");
 	
 	private JDialog _inviteDialog;
 	private JDialog _waitDialog;
@@ -55,8 +55,9 @@ public final class WaitingRoom extends JFrame
 		
 		final DefaultTableCellRenderer centerAlign = new DefaultTableCellRenderer();
 		centerAlign.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
-		for (final String header : InfoTableModel.COLUMN_NAMES)
+		for (int i = 0;i < _model.getColumnCount();i++)
 		{
+			final String header = _model.getColumnName(i);
 			_table.getColumn(header).setCellRenderer(centerAlign);
 			_table.getColumn(header).setPreferredWidth(200);
 		}

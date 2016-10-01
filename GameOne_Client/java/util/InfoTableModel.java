@@ -13,20 +13,24 @@ public final class InfoTableModel extends AbstractTableModel
 {
 	private static final long serialVersionUID = -475285636203274193L;
 	
-	public static final String[] COLUMN_NAMES = {"Name", "Status", "Score / Wins / Loses"};
-	
+	private final String[] _columns;
 	private final List<Object[]> _data = new CopyOnWriteArrayList<>();
+	
+	public InfoTableModel(final String... columns)
+	{
+		_columns = columns;
+	}
 	
 	@Override
 	public int getColumnCount()
 	{
-		return COLUMN_NAMES.length;
+		return _columns.length;
 	}
 	
 	@Override
 	public String getColumnName(final int col)
 	{
-		return COLUMN_NAMES[col];
+		return _columns[col];
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 IPConfig - IPv6 support.
-GameClient#onDisconnect - TODO.
-Shutdown - disconnect all players safely.
+RequestUpdateGameScore - TODO.
 
 games to add:
 * fish hunt

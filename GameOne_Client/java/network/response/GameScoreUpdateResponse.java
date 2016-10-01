@@ -4,6 +4,7 @@ import chess.ChessScreen;
 import client.Client;
 import network.PacketReader;
 import objects.GameResult;
+import sal.SalScreen;
 import windows.Top;
 
 /**
@@ -31,6 +32,9 @@ public final class GameScoreUpdateResponse extends PacketReader<Client>
 		{
 			case CHESS:
 				ChessScreen.getInstance().showResult(_result);
+				break;
+			case LAMA:
+				SalScreen.getInstance().showResult(_result);
 				break;
 		}
 		if (_result != GameResult.EXIT)

@@ -35,7 +35,7 @@ public final class DBInstallerGUI extends JFrame implements DBInstallerInterface
 		_progBar.setIndeterminate(true);
 		add(_progBar, BorderLayout.PAGE_START);
 		
-		_progArea = new JTextArea();
+		_progArea = new JTextArea(20, 50);
 		
 		final JScrollPane scrollPane = new JScrollPane(_progArea);
 		

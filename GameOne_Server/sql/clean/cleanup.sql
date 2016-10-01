@@ -1,5 +1,5 @@
-DROP TABLE `users`;
-DROP TABLE `user_games`;
-DROP TABLE `announcements`;
-DROP TABLE `pacman`;
-DROP TABLE `mario`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `user_games`;
+DROP TABLE IF EXISTS `announcements`;
+DROP TABLE IF EXISTS `pacman`;
+DROP TABLE IF EXISTS `mario`;

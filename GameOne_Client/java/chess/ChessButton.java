@@ -17,7 +17,6 @@ public final class ChessButton extends JButton
 	private static final Dimension BLOCK_SIZE = new Dimension(100, 100);
 	
 	private final Color _bgColor;
-	private String _name;
 	private String _color;
 	private boolean _moved;
 	
@@ -27,7 +26,7 @@ public final class ChessButton extends JButton
 		{
 			final String[] img = image.split("-");
 			
-			_name = img[0];
+			setName(img[0]);
 			_color = img[1];
 		}
 		
@@ -48,11 +47,6 @@ public final class ChessButton extends JButton
 		_moved = true;
 	}
 	
-	public String getName()
-	{
-		return _name;
-	}
-	
 	public String getColor()
 	{
 		return _color;
@@ -62,14 +56,14 @@ public final class ChessButton extends JButton
 	{
 		if (image == null)
 		{
-			_name = null;
+			setName(null);
 			_color = null;
 		}
 		else
 		{
 			final String[] img = image.split("-");
 			
-			_name = img[0];
+			setName(img[0]);
 			_color = img[1];
 		}
 		
@@ -84,7 +78,7 @@ public final class ChessButton extends JButton
 	
 	public String getFullName()
 	{
-		return _name + "-" + _color;
+		return getName() + "-" + _color;
 	}
 	
 	@Override
@@ -92,7 +86,7 @@ public final class ChessButton extends JButton
 	{
 		super.paintComponent(g);
 		
-		if (_name != null)
+		if (getName() != null)
 			g.drawImage(ChessScreen.IMAGES.get(getFullName()), 0, 0, getWidth(), getHeight(), null);
 	}
 }

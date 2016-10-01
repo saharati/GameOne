@@ -16,7 +16,7 @@ public final class MarioTaskManager extends CopyOnWriteArrayList<AbstractObject>
 	
 	private ScheduledFuture<?> _future;
 	
-	private MarioTaskManager()
+	protected MarioTaskManager()
 	{
 		
 	}
@@ -47,6 +47,6 @@ public final class MarioTaskManager extends CopyOnWriteArrayList<AbstractObject>
 	
 	private static class SingletonHolder
 	{
-		private static final MarioTaskManager INSTANCE = new MarioTaskManager();
+		protected static final MarioTaskManager INSTANCE = new MarioTaskManager();
 	}
 }

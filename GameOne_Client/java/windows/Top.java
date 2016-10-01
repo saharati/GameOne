@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,14 +39,14 @@ public final class Top extends JFrame
 		table.setModel(new DefaultTableModel(data, HEAD));
 		
 		final DefaultTableCellRenderer centerAlign = new DefaultTableCellRenderer();
-		centerAlign.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		centerAlign.setHorizontalAlignment(SwingConstants.CENTER);
 		for (final String s : HEAD)
 			table.getColumn(s).setCellRenderer(centerAlign);
 		
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		add(new JScrollPane(table));
 		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);

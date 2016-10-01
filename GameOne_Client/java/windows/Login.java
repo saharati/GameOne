@@ -40,7 +40,7 @@ public final class Login extends JFrame
 	private final JTextField _username;
 	private final JPasswordField _password;
 	
-	private Login()
+	protected Login()
 	{
 		super("GameOne Client - Sahar Atias");
 		
@@ -94,7 +94,7 @@ public final class Login extends JFrame
 		LOGGER.info("Login screen loaded.");
 	}
 	
-	private void submitForm()
+	protected void submitForm()
 	{
 		if (_username.getText().isEmpty())
 			JOptionPane.showMessageDialog(null, "Please enter your username.", "Login Failed", JOptionPane.ERROR_MESSAGE);
@@ -134,7 +134,7 @@ public final class Login extends JFrame
 		}
 	}
  
-	private class KeyboardLoginListener extends KeyAdapter
+	protected class KeyboardLoginListener extends KeyAdapter
 	{
 		@Override
 		public void keyTyped(final KeyEvent ke)
@@ -151,6 +151,6 @@ public final class Login extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final Login INSTANCE = new Login();
+		protected static final Login INSTANCE = new Login();
 	}
 }

@@ -28,7 +28,7 @@ public final class AnnouncementsTable
 	
 	private final Map<Integer, MessageResponse> _announcements = new ConcurrentSkipListMap<>();
 	
-	private AnnouncementsTable()
+	protected AnnouncementsTable()
 	{
 		try (final Connection con = Database.getConnection();
 			final PreparedStatement ps = con.prepareStatement(SELECT_ANNOUNCEMENTS);
@@ -103,6 +103,6 @@ public final class AnnouncementsTable
 	
 	private static class SingletonHolder
 	{
-		private static final AnnouncementsTable INSTANCE = new AnnouncementsTable();
+		protected static final AnnouncementsTable INSTANCE = new AnnouncementsTable();
 	}
 }

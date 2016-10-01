@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -82,14 +84,14 @@ public final class SalScreen extends JFrame
 	private boolean _myTurn;
 	private boolean _isVertical;
 	
-	private SalScreen()
+	protected SalScreen()
 	{
 		super("GameOne Client - Slide a Lama");
 		
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		
 		final DefaultTableCellRenderer centerAlign = new DefaultTableCellRenderer();
-		centerAlign.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		centerAlign.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		_players.getTableHeader().setReorderingAllowed(false);
 		_players.setRowHeight(_players.getRowHeight() + 10);
@@ -180,7 +182,7 @@ public final class SalScreen extends JFrame
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		LOGGER.info("Slide a Lama screen loaded.");
 	}
@@ -403,6 +405,6 @@ public final class SalScreen extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final SalScreen INSTANCE = new SalScreen();
+		protected static final SalScreen INSTANCE = new SalScreen();
 	}
 }

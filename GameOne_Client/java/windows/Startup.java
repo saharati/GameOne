@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 import chess.ChessScreen;
 import client.Client;
@@ -48,7 +49,7 @@ public final class Startup extends JFrame
 		
 		final Font font = new Font("Arial", Font.BOLD, 20);
 		_currentLoad.setBounds(5, 5, 300, 30);
-		_currentLoad.setHorizontalAlignment(JLabel.CENTER);
+		_currentLoad.setHorizontalAlignment(SwingConstants.CENTER);
 		_currentLoad.setFont(font);
 		add(_currentLoad);
 		_progressBar.setBounds(5, 40, 300, 30);

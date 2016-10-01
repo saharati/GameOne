@@ -122,7 +122,7 @@ public final class SelectionPanel extends JPanel
 		private int _directionSpeed;
 		private ScheduledFuture<?> _future;
 		
-		private Move(final int directionSpeed)
+		protected Move(final int directionSpeed)
 		{
 			_directionSpeed = directionSpeed;
 		}

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
@@ -34,17 +35,18 @@ public final class TetrisScreen extends JFrame implements Runnable
 	private static final int SLOW_SPEED = 250;
 	private static final int FAST_SPEED = 50;
 	
+	protected ScheduledFuture<?> _moveTask;
+	protected boolean _keyDownPressed;
+	
 	private final TetrisPanel[][] _board = new TetrisPanel[ROWS][COLS];
 	private char _nextShape = SHAPES[Rnd.get(SHAPES.length)];
-	private ScheduledFuture<?> _moveTask;
 	private boolean _isWin;
-	private boolean _keyDownPressed;
 	private int[][] _currentShape;
 	private char _curShape;
 	private int _score;
 	private int _align;
 	
-	private TetrisScreen()
+	protected TetrisScreen()
 	{
 		super("GameOne Client - Tetris");
 		
@@ -61,7 +63,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addKeyListener(new Movement());
 		
 		LOGGER.info("Tetris screen loaded.");
@@ -313,7 +315,16 @@ public final class TetrisScreen extends JFrame implements Runnable
 		return true;
 	}
 	
-	private void tryMoveToSide(int movement)
+	private Color getCurrentColor()
+	{
+		for (int i = 0;i < SHAPES.length;i++)
+			if (SHAPES[i] == _curShape)
+				return COLORS[i];
+		
+		return Color.LIGHT_GRAY;
+	}
+	
+	protected void tryMoveToSide(int movement)
 	{
 		if (_currentShape == null)
 			return;
@@ -341,7 +352,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 			_board[_currentShape[i][0]][_currentShape[i][1]].setTakenBy(getCurrentColor(), true);
 	}
 	
-	private void trySwitchingAlignment()
+	protected void trySwitchingAlignment()
 	{
 		if (_currentShape == null || _curShape == 'O')
 			return;
@@ -590,16 +601,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 			_board[_currentShape[i][0]][_currentShape[i][1]].setTakenBy(getCurrentColor(), true);
 	}
 	
-	private Color getCurrentColor()
-	{
-		for (int i = 0;i < SHAPES.length;i++)
-			if (SHAPES[i] == _curShape)
-				return COLORS[i];
-		
-		return Color.LIGHT_GRAY;
-	}
-	
-	private void pause()
+	protected void pause()
 	{
 		if (_moveTask.isCancelled())
 			_moveTask = ThreadPool.schedule(this, _keyDownPressed ? FAST_SPEED : SLOW_SPEED);
@@ -607,7 +609,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 			_moveTask.cancel(false);
 	}
 	
-	private class Movement extends KeyAdapter
+	protected class Movement extends KeyAdapter
 	{
 		@Override
 		public void keyReleased(final KeyEvent e)
@@ -650,6 +652,6 @@ public final class TetrisScreen extends JFrame implements Runnable
 	
 	private static class SingletonHolder
 	{
-		private static final TetrisScreen INSTANCE = new TetrisScreen();
+		protected static final TetrisScreen INSTANCE = new TetrisScreen();
 	}
 }

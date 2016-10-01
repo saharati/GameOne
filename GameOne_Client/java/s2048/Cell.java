@@ -6,6 +6,7 @@ import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 /**
@@ -28,7 +29,7 @@ public final class Cell extends JLabel
 		setPreferredSize(BLOCK_SIZE);
 		setBorder(BORDER);
 		setFont(FONT);
-		setHorizontalAlignment(JLabel.CENTER);
+		setHorizontalAlignment(SwingConstants.CENTER);
 		setBackground(Color.LIGHT_GRAY);
 		setForeground(Color.RED);
 	}

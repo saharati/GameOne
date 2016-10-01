@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
@@ -41,13 +42,13 @@ public final class ChessScreen extends JFrame
 	private final ChessPromotion _promotionPanel = new ChessPromotion();
 	private ChessBoard _board;
 	
-	private ChessScreen()
+	protected ChessScreen()
 	{
 		super("GameOne Client - Chess");
 		
 		setLayout(_layout);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		add(_promotionPanel, PROMOTION);
 		
@@ -131,6 +132,6 @@ public final class ChessScreen extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final ChessScreen INSTANCE = new ChessScreen();
+		protected static final ChessScreen INSTANCE = new ChessScreen();
 	}
 }

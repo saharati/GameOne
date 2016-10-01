@@ -14,7 +14,6 @@ public final class SalImage extends JPanel
 	private static final long serialVersionUID = -5956612606155953640L;
 	
 	private Image _image;
-	private String _name;
 	
 	public SalImage()
 	{
@@ -29,15 +28,11 @@ public final class SalImage extends JPanel
 	
 	public void setImage(final String name)
 	{
-		_name = name;
+		setName(name);
+		
 		_image = SalScreen.IMAGES.get(name);
 		
 		repaint();
-	}
-	
-	public String getName()
-	{
-		return _name;
 	}
 	
 	@Override

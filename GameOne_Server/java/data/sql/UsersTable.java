@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public final class UsersTable
 	
 	private final Map<Integer, User> _users = new HashMap<>();
 	
-	private UsersTable()
+	protected UsersTable()
 	{
 		try (final Connection con = Database.getConnection();
 			final PreparedStatement ps = con.prepareStatement(SELECT_USER);
@@ -99,7 +100,7 @@ public final class UsersTable
 			if (Config.AUTO_CREATE_ACCOUNTS)
 			{
 				try (final Connection con = Database.getConnection();
-					final PreparedStatement ps = con.prepareStatement(INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS))
+					final PreparedStatement ps = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS))
 				{
 					final AccessLevel access = _users.isEmpty() ? AccessLevel.GM : AccessLevel.NORMAL;
 					
@@ -150,7 +151,7 @@ public final class UsersTable
 		for (final String[] r : ret)
 			Arrays.fill(r, "");
 		
-		final List<User> users = new CopyOnWriteArrayList<User>(_users.values());
+		final List<User> users = new CopyOnWriteArrayList<>(_users.values());
 		User max = null;
 		for (int i = 0;i < 5 && !users.isEmpty();i++)
 		{
@@ -193,6 +194,6 @@ public final class UsersTable
 	
 	private static class SingletonHolder
 	{
-		private static final UsersTable INSTANCE = new UsersTable();
+		protected static final UsersTable INSTANCE = new UsersTable();
 	}
 }

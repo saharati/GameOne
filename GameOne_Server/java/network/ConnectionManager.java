@@ -23,7 +23,7 @@ public final class ConnectionManager implements CompletionHandler<AsynchronousSo
 	
 	private AsynchronousServerSocketChannel _asynchronousServerSocketChannel;
 	
-	private ConnectionManager()
+	protected ConnectionManager()
 	{
 		try
 		{
@@ -84,6 +84,6 @@ public final class ConnectionManager implements CompletionHandler<AsynchronousSo
 	
 	private static class SingletonHolder
 	{
-		private static final ConnectionManager INSTANCE = new ConnectionManager();
+		protected static final ConnectionManager INSTANCE = new ConnectionManager();
 	}
 }

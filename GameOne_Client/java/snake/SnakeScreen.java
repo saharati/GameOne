@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
@@ -34,16 +35,16 @@ public final class SnakeScreen extends JFrame implements Runnable
 	private static final int SPEED = 75;
 	private static final Dimension BLOCK_SIZE = new Dimension(20, 20);
 	
-	private final JPanel[][] _board = new JPanel[SCREEN_SIZE][SCREEN_SIZE];
-	private final LinkedList<int[]> _snake = new LinkedList<>();
-	private final int[] _food = new int[2];
+	protected final LinkedList<int[]> _snake = new LinkedList<>();
+	protected ScheduledFuture<?> _moveTask;
+	protected int _lastAlign;
+	protected int _currentAlign;
 	
-	private ScheduledFuture<?> _moveTask;
-	private int _lastAlign;
-	private int _currentAlign;
+	private final JPanel[][] _board = new JPanel[SCREEN_SIZE][SCREEN_SIZE];
+	private final int[] _food = new int[2];
 	private int _score;
 	
-	private SnakeScreen()
+	protected SnakeScreen()
 	{
 		super("GameOne Client - Snake");
 		
@@ -61,7 +62,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addKeyListener(new Movement());
 		
 		LOGGER.info("Snake screen loaded.");
@@ -146,7 +147,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 		_board[_food[0]][_food[1]].setBackground(Color.RED);
 	}
 	
-	private boolean moveSnake()
+	protected boolean moveSnake()
 	{
 		final int[] tail = _snake.removeLast();
 		_board[tail[0]][tail[1]].setBackground(Color.LIGHT_GRAY);
@@ -206,7 +207,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 		}
 	}
 	
-	private class Movement extends KeyAdapter
+	protected class Movement extends KeyAdapter
 	{
 		@Override
 		public void keyPressed(final KeyEvent e)
@@ -255,6 +256,6 @@ public final class SnakeScreen extends JFrame implements Runnable
 	
 	private static class SingletonHolder
 	{
-		private static final SnakeScreen INSTANCE = new SnakeScreen();
+		protected static final SnakeScreen INSTANCE = new SnakeScreen();
 	}
 }

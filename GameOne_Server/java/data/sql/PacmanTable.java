@@ -28,7 +28,7 @@ public final class PacmanTable
 	
 	private final Map<Integer, PacmanObject[][]> _maps = new ConcurrentHashMap<>();
 	
-	private PacmanTable()
+	protected PacmanTable()
 	{
 		try (final Connection con = Database.getConnection();
 			final PreparedStatement ps = con.prepareStatement(SELECT_MAPS);
@@ -132,6 +132,6 @@ public final class PacmanTable
 	
 	private static class SingletonHolder
 	{
-		private static final PacmanTable INSTANCE = new PacmanTable();
+		protected static final PacmanTable INSTANCE = new PacmanTable();
 	}
 }

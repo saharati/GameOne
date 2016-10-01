@@ -14,6 +14,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import client.Client;
 import network.request.RequestUpdateGameScore;
@@ -32,7 +33,7 @@ public final class PacmanMap extends JFrame
 {
 	private static final long serialVersionUID = -9081629023961869616L;
 	
-	private static final List<Character> DIRECTIONS = new ArrayList<>();
+	protected static final List<Character> DIRECTIONS = new ArrayList<>();
 	static
 	{
 		DIRECTIONS.add('w');
@@ -41,15 +42,15 @@ public final class PacmanMap extends JFrame
 		DIRECTIONS.add('d');
 	}
 	
-	private final ScheduledFuture<?>[] _schedules = new ScheduledFuture<?>[3];
-	private final Map<PacmanMapObject, Character> _mobs = new ConcurrentHashMap<>();
-	private final char[] _nextMoves = new char[2];
-	private final PacmanMapObject[][] _objects;
-	private final int _totalStars;
+	protected final ScheduledFuture<?>[] _schedules = new ScheduledFuture<?>[3];
+	protected final Map<PacmanMapObject, Character> _mobs = new ConcurrentHashMap<>();
+	protected final char[] _nextMoves = new char[2];
+	protected final int _totalStars;
+	protected PacmanMapObject _player;
+	protected boolean _slow;
+	protected int _slowTime;
 	
-	private PacmanMapObject _player;
-	private boolean _slow;
-	private int _slowTime;
+	private final PacmanMapObject[][] _objects;
 	
 	public PacmanMap(final PacmanMapObject[][] objects)
 	{
@@ -81,7 +82,7 @@ public final class PacmanMap extends JFrame
 		getContentPane().setComponentZOrder(_player, 0);
 		getContentPane().setBackground(Color.BLACK);
 		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
@@ -128,7 +129,7 @@ public final class PacmanMap extends JFrame
 		_slowTime = 0;
 	}
 	
-	private List<PacmanMapObject> getStars()
+	protected List<PacmanMapObject> getStars()
 	{
 		final List<PacmanMapObject> stars = new ArrayList<>();
 		for (int i = 0;i < _objects.length;i++)
@@ -139,7 +140,7 @@ public final class PacmanMap extends JFrame
 		return stars;
 	}
 	
-	private PacmanMapObject getObjectAt(final int x, final int y)
+	protected PacmanMapObject getObjectAt(final int x, final int y)
 	{
 		for (int i = 0;i < _objects.length;i++)
 			for (int j = 0;j < _objects[i].length;j++)
@@ -149,29 +150,7 @@ public final class PacmanMap extends JFrame
 		return PacmanMapObject.EMPTY;
 	}
 	
-	private boolean isWithin(final int x, final int y, final int objX, final int objY)
-	{
-		return x > objX && x < objX + PacmanBuilder.BLOCK_SIZE && y > objY && y < objY + PacmanBuilder.BLOCK_SIZE;
-	}
-	
-	private char getOppositeDirection()
-	{
-		switch (_nextMoves[1])
-		{
-			case 'w':
-				return 's';
-			case 'a':
-				return 'd';
-			case 's':
-				return 'w';
-			case 'd':
-				return 'a';
-		}
-		
-		return 0;
-	}
-	
-	private void checkForDirectionChange(final int x, final int y)
+	protected void checkForDirectionChange(final int x, final int y)
 	{
 		// If we don't have any next moves planned, ignore.
 		if (_nextMoves[1] == 0)
@@ -230,7 +209,7 @@ public final class PacmanMap extends JFrame
 		}
 	}
 	
-	private char getRandomDirectionChange(final int x, final int y, final char direction)
+	protected char getRandomDirectionChange(final int x, final int y, final char direction)
 	{
 		// If we are not in a place that allows turning, ignore.
 		if (x % PacmanBuilder.BLOCK_SIZE != 0 || y % PacmanBuilder.BLOCK_SIZE != 0)
@@ -302,13 +281,35 @@ public final class PacmanMap extends JFrame
 		return direction;
 	}
 	
-	private void setSlow()
+	protected void setSlow()
 	{
 		_slowTime = 1500;
 		_slow = true;
 	}
 	
-	private class Movement extends KeyAdapter
+	private static boolean isWithin(final int x, final int y, final int objX, final int objY)
+	{
+		return x > objX && x < objX + PacmanBuilder.BLOCK_SIZE && y > objY && y < objY + PacmanBuilder.BLOCK_SIZE;
+	}
+	
+	private char getOppositeDirection()
+	{
+		switch (_nextMoves[1])
+		{
+			case 'w':
+				return 's';
+			case 'a':
+				return 'd';
+			case 's':
+				return 'w';
+			case 'd':
+				return 'a';
+		}
+		
+		return 0;
+	}
+	
+	protected class Movement extends KeyAdapter
 	{
 		@Override
 		public void keyPressed(final KeyEvent e)
@@ -351,7 +352,7 @@ public final class PacmanMap extends JFrame
 		}
 	}
 
-	private class Animation implements Runnable
+	protected class Animation implements Runnable
 	{
 		@Override
 		public void run()
@@ -363,7 +364,7 @@ public final class PacmanMap extends JFrame
 		}
 	}
 
-	private class PlayerMove implements Runnable
+	protected class PlayerMove implements Runnable
 	{
 		@Override
 		public void run()
@@ -390,7 +391,7 @@ public final class PacmanMap extends JFrame
 					finalTarget = getObjectAt(toX + PacmanBuilder.BLOCK_SIZE / 2, downY);
 					toY++;
 					break;
-				case 'd':
+				default:
 					final int rightX = toX + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + PacmanBuilder.BLOCK_SIZE + 1;
 					finalTarget = getObjectAt(rightX, toY + PacmanBuilder.BLOCK_SIZE / 2);
 					toX++;
@@ -480,7 +481,7 @@ public final class PacmanMap extends JFrame
 		}
 	}
 	
-	private class MobMove implements Runnable
+	protected class MobMove implements Runnable
 	{
 		private boolean _slowed;
 		
@@ -554,7 +555,7 @@ public final class PacmanMap extends JFrame
 						finalTarget = getObjectAt(toX + PacmanBuilder.BLOCK_SIZE / 2, downY);
 						toY++;
 						break;
-					case 'd':
+					default:
 						final int rightX = toX + PacmanBuilder.BLOCK_SIZE + 1 > getContentPane().getWidth() ? 1 : toX + PacmanBuilder.BLOCK_SIZE + 1;
 						finalTarget = getObjectAt(rightX, toY + PacmanBuilder.BLOCK_SIZE / 2);
 						toX++;

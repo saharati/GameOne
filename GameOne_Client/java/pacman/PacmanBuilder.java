@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import client.Client;
 import objects.pacman.PacmanObject;
@@ -43,7 +44,7 @@ public final class PacmanBuilder extends JFrame
 	private int _currentMap = -1;
 	private int _currentScore;
 	
-	private PacmanBuilder()
+	protected PacmanBuilder()
 	{
 		super("GameOne Client - Pacman");
 		
@@ -75,7 +76,7 @@ public final class PacmanBuilder extends JFrame
 		
 		setResizable(false);
 		pack();
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
 		
 		LOGGER.info("PacmanBuilder screen loaded.");
@@ -178,6 +179,6 @@ public final class PacmanBuilder extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final PacmanBuilder INSTANCE = new PacmanBuilder();
+		protected static final PacmanBuilder INSTANCE = new PacmanBuilder();
 	}
 }

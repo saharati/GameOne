@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import windows.GameSelect;
 import client.Client;
@@ -29,7 +30,7 @@ public final class S2048 extends JFrame
 	private final Cell[][] _puzzle = new Cell[SIZE][SIZE];
 	private int _score;
 	
-	private S2048()
+	protected S2048()
 	{
 		super("GameOne Client - 2048 Puzzle");
 		
@@ -51,7 +52,7 @@ public final class S2048 extends JFrame
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addKeyListener(new Movement());
 		
 		LOGGER.info("2048Puzzle screen loaded.");
@@ -119,7 +120,7 @@ public final class S2048 extends JFrame
 		_puzzle[rndI][rndJ].set();
 	}
 	
-	private void move(char dir)
+	protected void move(char dir)
 	{
 		switch (dir)
 		{
@@ -244,7 +245,7 @@ public final class S2048 extends JFrame
 		takeRandomBlock();
 	}
 	
-	private class Movement extends KeyAdapter
+	protected class Movement extends KeyAdapter
 	{
 		@Override
 		public void keyPressed(final KeyEvent e)
@@ -278,6 +279,6 @@ public final class S2048 extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final S2048 INSTANCE = new S2048();
+		protected static final S2048 INSTANCE = new S2048();
 	}
 }

@@ -201,6 +201,6 @@ public final class Shutdown extends Thread
 	
 	private static class SingletonHolder
 	{
-		private static final Shutdown INSTANCE = new Shutdown();
+		protected static final Shutdown INSTANCE = new Shutdown();
 	}
 }

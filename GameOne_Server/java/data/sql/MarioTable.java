@@ -27,7 +27,7 @@ public final class MarioTable
 	
 	private final List<MarioObject> _objects = new CopyOnWriteArrayList<>();
 	
-	private MarioTable()
+	protected MarioTable()
 	{
 		try (final Connection con = Database.getConnection();
 			final PreparedStatement ps = con.prepareStatement(SELECT);
@@ -88,6 +88,6 @@ public final class MarioTable
 
 	private static class SingletonHolder
 	{
-		private static final MarioTable INSTANCE = new MarioTable();
+		protected static final MarioTable INSTANCE = new MarioTable();
 	}
 }

@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 /**
  * Upgrade soldier selection panel.
@@ -23,10 +24,10 @@ public final class ChessPromotion extends JPanel
 	
 	private final JPanel _cardPanel = new JPanel(new CardLayout());
 	
-	private int _oldX;
-	private int _oldY;
-	private int _newX;
-	private int _newY;
+	protected int _oldX;
+	protected int _oldY;
+	protected int _newX;
+	protected int _newY;
 	
 	public ChessPromotion()
 	{
@@ -35,7 +36,7 @@ public final class ChessPromotion extends JPanel
 		final JLabel chooseUpgrade = new JLabel("Choose an upgrade");
 		final Font titleFont = new Font("Arial", Font.BOLD, 25);
 		chooseUpgrade.setFont(titleFont);
-		chooseUpgrade.setHorizontalAlignment(JLabel.CENTER);
+		chooseUpgrade.setHorizontalAlignment(SwingConstants.CENTER);
 		chooseUpgrade.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		add(chooseUpgrade, BorderLayout.PAGE_START);
 		
@@ -76,7 +77,7 @@ public final class ChessPromotion extends JPanel
 	{
 		private final String _image;
 		
-		private MakeChoice(final String image)
+		protected MakeChoice(final String image)
 		{
 			_image = image;
 		}

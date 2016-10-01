@@ -34,6 +34,11 @@ public final class Client extends BasicClient
 	private GameId _currentGame;
 	private JFrame _currentWindow;
 	
+	protected Client()
+	{
+		
+	}
+	
 	public void setLoginDetails(final String username, final String password)
 	{
 		_username = username;
@@ -125,8 +130,6 @@ public final class Client extends BasicClient
 		System.exit(0);
 	}
 	
-	private Client() {}
-	
 	public static Client getInstance()
 	{
 		return SingletonHolder.INSTANCE;
@@ -134,6 +137,6 @@ public final class Client extends BasicClient
 	
 	private static class SingletonHolder
 	{
-		private static final Client INSTANCE = new Client();
+		protected static final Client INSTANCE = new Client();
 	}
 }

@@ -59,23 +59,19 @@ public final class ChessBoard extends JPanel
 		}
 	}
 	
-	private final ChessButton[][] _buttons = new ChessButton[BOARD_SIZE][BOARD_SIZE];
-	
-	private List<int[]> _possibleRoute;
+	protected final ChessButton[][] _buttons = new ChessButton[BOARD_SIZE][BOARD_SIZE];
+	protected List<int[]> _possibleRoute;
+	protected String _myColor;
+	protected boolean _myTurn;
+	protected String _selectedSoldierName;
+	protected int[] _selectedSoldierPosition;
+	protected CheckStatus _check = CheckStatus.NOT_UNDER_CHECK;
 	private int[][] _enemyRoute;
 	
-	private String _myColor;
-	private boolean _myTurn;
-	
-	private String _selectedSoldierName;
-	private int[] _selectedSoldierPosition;
-	
-	private CheckStatus _check = CheckStatus.NOT_UNDER_CHECK;
-	
 	// Special root move.
-	private boolean _canCast = true;
+	protected boolean _canCast = true;
 	// Special pawn move.
-	private int[] _inPassing = {-1, -1};
+	protected int[] _inPassing = {-1, -1};
 	
 	public ChessBoard(final String myColor)
 	{
@@ -188,7 +184,7 @@ public final class ChessBoard extends JPanel
 		return Math.max(getScoreOfColor("black"), getScoreOfColor("white"));
 	}
 	
-	private List<int[]> movementHandler(int i, int j, final boolean withKing)
+	protected List<int[]> movementHandler(int i, int j, final boolean withKing)
 	{
 		List<int[]> path = new ArrayList<>();
 		if (_buttons[i][j].getName().equals("king"))
@@ -602,7 +598,7 @@ public final class ChessBoard extends JPanel
 		return path;
 	}
 	
-	private boolean canMove(final int i, final int j)
+	protected boolean canMove(final int i, final int j)
 	{
 		for (final int[] route : _possibleRoute)
 			if (route[0] == i && route[1] == j)
@@ -611,7 +607,7 @@ public final class ChessBoard extends JPanel
 		return false;
 	}
 	
-	private CheckStatus isUnderCheck()
+	protected CheckStatus isUnderCheck()
 	{
 		for (int i = 0;i < BOARD_SIZE;i++)
 		{
@@ -842,7 +838,7 @@ public final class ChessBoard extends JPanel
 		private int _i;
 		private int _j;
 		
-		private CellClick(final int i, final int j)
+		protected CellClick(final int i, final int j)
 		{
 			_i = i;
 			_j = j;

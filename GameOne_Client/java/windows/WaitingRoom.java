@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import client.Client;
@@ -31,18 +33,18 @@ public final class WaitingRoom extends JFrame
 	private static final String ASK = "%requestor% has invited you to a duel, do you accept?";
 	private static final String WAIT = "Waiting user response...";
 	
-	private static final JOptionPane INVITE_PANE = new JOptionPane(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, null, null);
+	protected static final JOptionPane INVITE_PANE = new JOptionPane(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, null, null);
 	private static final JOptionPane ASK_PANE = new JOptionPane(null, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, null, null);
 	private static final JOptionPane WAIT_PANE = new JOptionPane(WAIT, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[] {"Cancel"}, null);
 	
-	private final JTable _table = new JTable();
+	protected final JTable _table = new JTable();
 	private final InfoTableModel _model = new InfoTableModel("Name", "Status", "Score / Wins / Loses");
 	
-	private JDialog _inviteDialog;
+	protected JDialog _inviteDialog;
 	private JDialog _waitDialog;
 	private JDialog _askDialog;
 	
-	private WaitingRoom()
+	protected WaitingRoom()
 	{
 		super("GameOne Client - Sahar Atias");
 		
@@ -54,7 +56,7 @@ public final class WaitingRoom extends JFrame
 		_table.setModel(_model);
 		
 		final DefaultTableCellRenderer centerAlign = new DefaultTableCellRenderer();
-		centerAlign.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+		centerAlign.setHorizontalAlignment(SwingConstants.CENTER);
 		for (int i = 0;i < _model.getColumnCount();i++)
 		{
 			final String header = _model.getColumnName(i);
@@ -64,7 +66,7 @@ public final class WaitingRoom extends JFrame
 		
 		add(new JScrollPane(_table));
 		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(false);
 	}
 	
@@ -142,7 +144,7 @@ public final class WaitingRoom extends JFrame
 		}
 	}
 	
-	private class MouseHandler extends MouseAdapter
+	protected class MouseHandler extends MouseAdapter
 	{
 		@Override
 		public void mousePressed(final MouseEvent me)
@@ -172,6 +174,6 @@ public final class WaitingRoom extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final WaitingRoom INSTANCE = new WaitingRoom();
+		protected static final WaitingRoom INSTANCE = new WaitingRoom();
 	}
 }

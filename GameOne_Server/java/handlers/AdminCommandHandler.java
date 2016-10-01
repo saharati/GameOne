@@ -14,7 +14,7 @@ public final class AdminCommandHandler
 {
 	private final Map<String, IAdminCommandHandler> _datatable = new HashMap<>();
 	
-	private AdminCommandHandler()
+	protected AdminCommandHandler()
 	{
 		registerHandler(new AdminShutdown());
 		registerHandler(new Announce());
@@ -50,6 +50,6 @@ public final class AdminCommandHandler
 	
 	private static class SingletonHolder
 	{
-		private static final AdminCommandHandler INSTANCE = new AdminCommandHandler();
+		protected static final AdminCommandHandler INSTANCE = new AdminCommandHandler();
 	}
 }

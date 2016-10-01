@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import client.Client;
 import mario.objects.AbstractObject;
@@ -56,21 +57,23 @@ public final class SuperMario extends JFrame implements Runnable
 	public static final int MAX_DISTANCE = SCREEN_SIZE.width + 100;
 	public static final int SCREEN_MOVING_POINT = SCREEN_SIZE.width - 450;
 	
-	private final JPanel _mapHolder = new JPanel(null);
-	private final SelectionPanel _selectionPanel;
-	private final BackgroundPanel _background;
+	protected final JPanel _mapHolder = new JPanel(null);
+	protected final SelectionPanel _selectionPanel;
 	
+	private final BackgroundPanel _background;
 	private final List<Component> _addedObjects = new CopyOnWriteArrayList<>();
 	private final List<Component> _removedObjects = new CopyOnWriteArrayList<>();
 	private final List<TubeExit> _exitTubes = new ArrayList<>();
-	private boolean _isPlaying;
+	
+	protected Direction _lastKey = Direction.RIGHT;
+	protected Player _player;
+	protected boolean _isPlaying;
+	
 	private int _score;
 	private int _fallCount;
-	private Direction _lastKey = Direction.RIGHT;
 	private ScheduledFuture<?> _fallTask;
-	private Player _player;
 	
-	private SuperMario()
+	protected SuperMario()
 	{
 		super("GameOne Client - Super Mario");
 		
@@ -91,7 +94,7 @@ public final class SuperMario extends JFrame implements Runnable
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addKeyListener(new Movement());
 		
 		LOGGER.info("SuperMario screen loaded.");
@@ -323,7 +326,7 @@ public final class SuperMario extends JFrame implements Runnable
 		_fallTask = ThreadPool.scheduleAtFixedRate(this, 0, 2000);
 	}
 	
-	private Component getNearestObject(final int x, final int y)
+	protected Component getNearestObject(final int x, final int y)
 	{
 		Component nearest = null;
 		double dist = Double.MAX_VALUE;
@@ -343,7 +346,7 @@ public final class SuperMario extends JFrame implements Runnable
 		return nearest;
 	}
 	
-	private Flat getNearestFlat(final int x, final int y, final Collection<Flat> searchIn)
+	private static Flat getNearestFlat(final int x, final int y, final Collection<Flat> searchIn)
 	{
 		Flat nearest = null;
 		double dist = Double.MAX_VALUE;
@@ -384,7 +387,7 @@ public final class SuperMario extends JFrame implements Runnable
 			_fallTask.cancel(false);
 	}
 	
-	private class MotionDetector extends MouseMotionAdapter
+	protected class MotionDetector extends MouseMotionAdapter
 	{
 		@Override
 		public void mouseMoved(final MouseEvent e)
@@ -400,7 +403,7 @@ public final class SuperMario extends JFrame implements Runnable
 		}
 	}
 	
-	private class CreateObject extends MouseAdapter
+	protected class CreateObject extends MouseAdapter
 	{
 		@Override
 		public void mousePressed(final MouseEvent e)
@@ -451,7 +454,7 @@ public final class SuperMario extends JFrame implements Runnable
 		}
 	}
 	
-	private class Movement extends KeyAdapter
+	protected class Movement extends KeyAdapter
 	{
 		@Override
 		public void keyReleased(final KeyEvent e)
@@ -512,6 +515,6 @@ public final class SuperMario extends JFrame implements Runnable
 	
 	private static class SingletonHolder
 	{
-		private static final SuperMario INSTANCE = new SuperMario();
+		protected static final SuperMario INSTANCE = new SuperMario();
 	}
 }

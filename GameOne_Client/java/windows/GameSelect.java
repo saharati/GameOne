@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.text.AbstractDocument;
@@ -51,7 +52,7 @@ public final class GameSelect extends JFrame
 	private final JTextArea _chat = new JTextArea(10, 10);
 	private final JPanel _buttonsPanel = new JPanel(new SpringLayout());
 	
-	private GameSelect()
+	protected GameSelect()
 	{
 		super("GameOne Client - Sahar Atias");
 		
@@ -68,7 +69,7 @@ public final class GameSelect extends JFrame
 		final JLabel selectGame = new JLabel("Choose Your Game!");
 		final Font titleFont = new Font("Arial", Font.BOLD, 25);
 		selectGame.setFont(titleFont);
-		selectGame.setHorizontalAlignment(JLabel.CENTER);
+		selectGame.setHorizontalAlignment(SwingConstants.CENTER);
 		add(selectGame, BorderLayout.PAGE_START);
 		
 		// Create the buttons panel next, using SpringLayout.
@@ -157,7 +158,7 @@ public final class GameSelect extends JFrame
 			c.setEnabled(false);
 	}
 	
-	private void sendText()
+	protected void sendText()
 	{
 		if (_sender.getText().trim().isEmpty())
 			return;
@@ -168,7 +169,7 @@ public final class GameSelect extends JFrame
 		_sender.setText("");
 	}
 	
-	private class KeyboardChatSendListener extends KeyAdapter
+	protected class KeyboardChatSendListener extends KeyAdapter
 	{
 		@Override
 		public void keyTyped(final KeyEvent ke)
@@ -185,6 +186,6 @@ public final class GameSelect extends JFrame
 	
 	private static class SingletonHolder
 	{
-		private static final GameSelect INSTANCE = new GameSelect();
+		protected static final GameSelect INSTANCE = new GameSelect();
 	}
 }

@@ -1,5 +1,6 @@
 package network.response;
 
+import checkers.CheckersScreen;
 import chess.ChessScreen;
 import client.Client;
 import network.PacketReader;
@@ -39,6 +40,11 @@ public final class GameStartResponse extends PacketReader<Client>
 				
 				if (_isStarting)
 					SalScreen.getInstance().start();
+				break;
+			case CHECKERS:
+				client.setCurrentDetails(CheckersScreen.getInstance(), GameId.CHECKERS, false);
+				
+				CheckersScreen.getInstance().start(_isStarting ? "white" : "black");
 				break;
 		}
 	}

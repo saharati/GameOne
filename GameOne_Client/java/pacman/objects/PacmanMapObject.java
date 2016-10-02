@@ -62,6 +62,6 @@ public final class PacmanMapObject extends JPanel
 	{
 		super.paintComponent(g);
 		
-		g.drawImage(PacmanBuilder.getInstance().getPacmanObjects().get(_type), 0, 0, PacmanBuilder.BLOCK_SIZE, PacmanBuilder.BLOCK_SIZE, Color.BLACK, null);
+		g.drawImage(PacmanBuilder.getInstance().getPacmanObjects().get(_type), 0, 0, Color.BLACK, null);
 	}
 }

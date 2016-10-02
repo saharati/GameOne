@@ -206,6 +206,6 @@ public abstract class AbstractObject extends JPanel
 	{
 		super.paintComponent(g);
 		
-		g.drawImage(_currentImage, 0, 0, _currentImage.getWidth(null), _currentImage.getHeight(null), null);
+		g.drawImage(_currentImage, 0, 0, null);
 	}
 }

@@ -7,3 +7,4 @@ games to add:
 * monopol
 * red alert
 * lottery
+* brick breaker

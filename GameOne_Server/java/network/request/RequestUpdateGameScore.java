@@ -57,6 +57,7 @@ public final class RequestUpdateGameScore extends PacketReader<GameClient>
 				break;
 			case CHESS:
 			case LAMA:
+			case CHECKERS:
 				switch (_result)
 				{
 					case WIN:

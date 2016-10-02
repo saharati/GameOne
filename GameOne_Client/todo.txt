@@ -1,3 +1,5 @@
 add a readme telling that external program is needed to create the exe called launch4j.
 in any case include the already built program in the source.
 add icon.
+
+add prefs.reg to build.xml

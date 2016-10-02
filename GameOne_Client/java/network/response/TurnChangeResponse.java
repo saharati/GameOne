@@ -1,5 +1,6 @@
 package network.response;
 
+import checkers.CheckersScreen;
 import chess.ChessScreen;
 import client.Client;
 import network.PacketReader;
@@ -13,12 +14,17 @@ public final class TurnChangeResponse extends PacketReader<Client>
 {
 	// Chess
 	private String[] _images;
-	private int[][] _positions;
 	
 	// Slide a Lama
 	private String[][] _matrixPanel;
 	private String[] _nextCards;
 	private int _score;
+	
+	// Checkers
+	private String _image;
+	
+	// Checkers && Chess
+	private int[][] _positions;
 	
 	@Override
 	public void read()
@@ -44,6 +50,13 @@ public final class TurnChangeResponse extends PacketReader<Client>
 					_nextCards[i] = readString();
 				_score = readInt();
 				break;
+			case CHECKERS:
+				_image = readString();
+				_positions = new int[3][2];
+				for (int i = 0;i < _positions.length;i++)
+					for (int j = 0;j < _positions[i].length;j++)
+						_positions[i][j] = readInt();
+				break;
 		}
 	}
 	
@@ -60,6 +73,9 @@ public final class TurnChangeResponse extends PacketReader<Client>
 					SalScreen.getInstance().start(_matrixPanel, _nextCards);
 				else
 					SalScreen.getInstance().updateData(_matrixPanel, _nextCards, _score);
+				break;
+			case CHECKERS:
+				CheckersScreen.getInstance().updateData(_image, _positions);
 				break;
 		}
 	}

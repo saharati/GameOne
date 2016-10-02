@@ -14,12 +14,17 @@ public final class TurnChangeResponse extends PacketWriter
 	
 	// Chess
 	private String[] _images;
-	private int[][] _positions;
 	
 	// Slide a Lama
 	private String[][] _matrixPanel;
 	private String[] _nextCards;
 	private int _score;
+	
+	// Checkers
+	private String _image;
+	
+	// Checkers && Chess
+	private int[][] _positions;
 	
 	public TurnChangeResponse(final String[] images, final int[][] positions)
 	{
@@ -34,6 +39,13 @@ public final class TurnChangeResponse extends PacketWriter
 		_matrixPanel = matrixPanel;
 		_nextCards = nextCards;
 		_score = score;
+	}
+	
+	public TurnChangeResponse(final String image, final int[][] positions)
+	{
+		_gameId = GameId.CHECKERS;
+		_image = image;
+		_positions = positions;
 	}
 	
 	@Override
@@ -57,6 +69,12 @@ public final class TurnChangeResponse extends PacketWriter
 				for (int i = 0;i < _nextCards.length;i++)
 					writeString(_nextCards[i]);
 				writeInt(_score);
+				break;
+			case CHECKERS:
+				writeString(_image);
+				for (int i = 0;i < _positions.length;i++)
+					for (int j = 0;j < _positions[i].length;j++)
+						writeInt(_positions[i][j]);
 				break;
 		}
 	}

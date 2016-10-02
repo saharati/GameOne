@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
+import checkers.CheckersScreen;
 import chess.ChessScreen;
 import client.Client;
 import configs.Config;
@@ -118,6 +119,7 @@ public final class Startup extends JFrame
 		WaitingRoom.getInstance();
 		ChessScreen.getInstance();
 		SalScreen.getInstance();
+		CheckersScreen.getInstance();
 		
 		_progressBar.setValue(5);
 		

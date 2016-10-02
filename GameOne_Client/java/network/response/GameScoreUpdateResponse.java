@@ -1,5 +1,6 @@
 package network.response;
 
+import checkers.CheckersScreen;
 import chess.ChessScreen;
 import client.Client;
 import network.PacketReader;
@@ -28,14 +29,20 @@ public final class GameScoreUpdateResponse extends PacketReader<Client>
 	@Override
 	public void run(final Client client)
 	{
-		switch (client.getCurrentGame())
+		if (client.getCurrentGame() != null)
 		{
-			case CHESS:
-				ChessScreen.getInstance().showResult(_result);
-				break;
-			case LAMA:
-				SalScreen.getInstance().showResult(_result);
-				break;
+			switch (client.getCurrentGame())
+			{
+				case CHESS:
+					ChessScreen.getInstance().showResult(_result);
+					break;
+				case LAMA:
+					SalScreen.getInstance().showResult(_result);
+					break;
+				case CHECKERS:
+					CheckersScreen.getInstance().showResult(_result);
+					break;
+			}
 		}
 		if (_result != GameResult.EXIT)
 			new Top(_toplist).setVisible(true);

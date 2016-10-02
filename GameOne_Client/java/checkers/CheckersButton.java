@@ -1,4 +1,4 @@
-package chess;
+package checkers;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,20 +7,19 @@ import java.awt.Graphics;
 import javax.swing.JButton;
 
 /**
- * A single button in the chess board.
+ * A single button in the checkers board.
  * @author Sahar
  */
-public final class ChessButton extends JButton
+public final class CheckersButton extends JButton
 {
 	private static final long serialVersionUID = 608473057363743650L;
 	
-	private static final Dimension BLOCK_SIZE = new Dimension(100, 100);
+	private static final Dimension BLOCK_SIZE = new Dimension(50, 50);
 	
 	private final Color _bgColor;
 	private String _color;
-	private boolean _moved;
 	
-	public ChessButton(final String image, final boolean turn)
+	public CheckersButton(final String image, final boolean turn)
 	{
 		if (image != null)
 		{
@@ -30,21 +29,11 @@ public final class ChessButton extends JButton
 			_color = img[1];
 		}
 		
-		_bgColor = turn ? Color.GRAY : Color.LIGHT_GRAY;
+		_bgColor = turn ? Color.WHITE : Color.BLACK;
 		
 		setPreferredSize(BLOCK_SIZE);
 		setBackground(_bgColor);
 		setOpaque(true);
-	}
-	
-	public boolean hasMoved()
-	{
-		return _moved;
-	}
-	
-	public void setMoved()
-	{
-		_moved = true;
 	}
 	
 	public String getColor()
@@ -87,6 +76,6 @@ public final class ChessButton extends JButton
 		super.paintComponent(g);
 		
 		if (getName() != null)
-			g.drawImage(ChessScreen.IMAGES.get(getFullName()), 0, 0, null);
+			g.drawImage(CheckersScreen.IMAGES.get(getFullName()), 0, 0, null);
 	}
 }

@@ -16,12 +16,17 @@ public final class RequestTurnChange extends PacketWriter
 	
 	// Chess
 	private String[] _images;
-	private int[][] _positions;
 	
 	// Slide a Lama
 	private SalImage[][] _matrixPanel;
 	private SalImage[] _nextCards;
 	private int _score;
+	
+	// Checkers
+	private String _image;
+	
+	// Checkers && Chess
+	private int[][] _positions;
 	
 	public RequestTurnChange(final String[] images, final int[][] positions)
 	{
@@ -36,6 +41,13 @@ public final class RequestTurnChange extends PacketWriter
 		_matrixPanel = matrixPanel;
 		_nextCards = nextCards;
 		_score = score;
+	}
+	
+	public RequestTurnChange(final String image, final int[][] moves)
+	{
+		_gameId = GameId.CHECKERS;
+		_image = image;
+		_positions = moves;
 	}
 	
 	@Override
@@ -60,6 +72,12 @@ public final class RequestTurnChange extends PacketWriter
 				for (int i = 0;i < _nextCards.length;i++)
 					writeString(_nextCards[i].getName());
 				writeInt(_score);
+				break;
+			case CHECKERS:
+				writeString(_image);
+				for (int i = 0;i < _positions.length;i++)
+					for (int j = 0;j < _positions[i].length;j++)
+						writeInt(_positions[i][j]);
 				break;
 		}
 	}

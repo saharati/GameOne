@@ -20,7 +20,7 @@ import objects.GameResult;
 import windows.WaitingRoom;
 
 /**
- * Chess board.
+ * Chess main frame.
  * @author Sahar
  */
 public final class ChessScreen extends JFrame

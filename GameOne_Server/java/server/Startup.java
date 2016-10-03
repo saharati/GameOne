@@ -15,6 +15,7 @@ import util.StringUtil;
 import util.UPnPService;
 import util.configs.CommonConfig;
 import util.configs.Config;
+import util.configs.GameConfig;
 import util.configs.IPConfig;
 import util.database.Database;
 import util.parsers.xml.XmlFactory;
@@ -32,6 +33,7 @@ public final class Startup
 	{
 		CommonConfig.load();
 		IPConfig.load();
+		GameConfig.load();
 		Config.load();
 		
 		StringUtil.printSection("Parsers");

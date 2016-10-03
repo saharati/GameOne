@@ -20,6 +20,7 @@ public final class AdminCommandHandler
 		registerHandler(new Announce());
 		registerHandler(new ListCommands());
 		registerHandler(new ManageAccess());
+		registerHandler(new Reload());
 	}
 	
 	public void registerHandler(final IAdminCommandHandler handler)

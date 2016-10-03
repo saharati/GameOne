@@ -32,14 +32,14 @@ import mario.objects.Flat;
 import mario.objects.Player;
 import mario.objects.TubeEntrance;
 import mario.objects.TubeExit;
-import mario.prototypes.Direction;
-import mario.prototypes.JumpType;
 import mario.resources.BackgroundPanel;
+import mario.resources.JumpType;
 import mario.resources.SelectionPanel;
 import network.request.RequestUpdateGameScore;
 import objects.GameResult;
 import objects.mario.MarioObject;
 import objects.mario.MarioType;
+import util.Direction;
 import util.threadpool.ThreadPool;
 import windows.GameSelect;
 

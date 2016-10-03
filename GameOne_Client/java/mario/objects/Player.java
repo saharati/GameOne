@@ -7,10 +7,10 @@ import java.util.Map.Entry;
 import javax.swing.JOptionPane;
 
 import mario.SuperMario;
+import mario.resources.JumpType;
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
-import mario.prototypes.JumpType;
 import objects.mario.MarioType;
+import util.Direction;
 import util.random.Rnd;
 
 /**

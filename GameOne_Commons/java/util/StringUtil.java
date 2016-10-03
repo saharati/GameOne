@@ -29,7 +29,6 @@ public final class StringUtil
 		sb.append(sender);
 		sb.append(": ");
 		sb.append(text);
-		sb.append("\r\n");
 		
 		return sb.toString();
 	}

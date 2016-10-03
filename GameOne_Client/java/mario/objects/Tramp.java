@@ -1,10 +1,10 @@
 package mario.objects;
 
 import mario.SuperMario;
+import mario.resources.JumpType;
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
-import mario.prototypes.JumpType;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * Tramp object player uses to jump on.

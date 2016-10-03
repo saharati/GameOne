@@ -1,8 +1,8 @@
 package mario.objects;
 
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * A wall object.

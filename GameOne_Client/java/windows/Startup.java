@@ -18,6 +18,7 @@ import configs.Config;
 import mario.SuperMario;
 import mario.MarioTaskManager;
 import network.ConnectionManager;
+import network.request.RequestGameConfigs;
 import network.request.RequestGameObjects;
 import objects.GameId;
 import pacman.PacmanBuilder;
@@ -97,6 +98,7 @@ public final class Startup extends JFrame
 		
 		StringUtil.printSection("Objects");
 		Client.getInstance().setCurrentDetails(this, null, false);
+		Client.getInstance().sendPacket(RequestGameConfigs.STATIC_PACKET);
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.MARIO));
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.PACMAN));
 		

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import mario.SuperMario;
-import mario.prototypes.Direction;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * A mushrum instance used to level up player.

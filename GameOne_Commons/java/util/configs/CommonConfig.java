@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import util.parsers.properties.ExProperties;
 
 /**
- * Load all server configurations files.
+ * Load all common configurations files.
  * @author Sahar
  */
 public final class CommonConfig
 {
+	private static final Logger LOGGER = Logger.getLogger(CommonConfig.class.getName());
+	
 	// --------------------------------------------------
 	// Property File Definitions
 	// --------------------------------------------------
@@ -60,5 +63,7 @@ public final class CommonConfig
 		THREADS_PER_SCHEDULED_THREAD_POOL = threads.getProperty("ThreadsPerScheduledThreadPool", 4);
 		INSTANT_THREAD_POOL_COUNT = threads.getProperty("InstantThreadPoolCount", -1);
 		THREADS_PER_INSTANT_THREAD_POOL = threads.getProperty("ThreadsPerInstantThreadPool", 2);
+		
+		LOGGER.info("CommonConfig loaded!");
 	}
 }

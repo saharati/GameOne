@@ -1,5 +1,7 @@
 package util.configs;
 
+import java.util.logging.Logger;
+
 import util.parsers.properties.ExProperties;
 
 /**
@@ -8,6 +10,8 @@ import util.parsers.properties.ExProperties;
  */
 public final class Config
 {
+	private static final Logger LOGGER = Logger.getLogger(Config.class.getName());
+	
 	// --------------------------------------------------
 	// Property File Definitions
 	// --------------------------------------------------
@@ -73,5 +77,7 @@ public final class Config
 		
 		ENABLE_UPNP = network.getProperty("EnableUPnP", true);
 		PORT = network.getProperty("Port", 777);
+		
+		LOGGER.info("Config loaded!");
 	}
 }

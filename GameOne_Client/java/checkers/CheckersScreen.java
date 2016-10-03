@@ -20,11 +20,14 @@ import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 import client.Client;
+import configs.Config;
+import configs.GameConfig;
 import network.request.RequestTurnChange;
 import network.request.RequestUpdateGameScore;
 import network.request.RequestWaitingRoom;
 import objects.GameId;
 import objects.GameResult;
+import util.Direction;
 import windows.WaitingRoom;
 
 /**
@@ -47,7 +50,7 @@ public final class CheckersScreen extends JFrame
 	
 	protected final CheckersButton[][] _buttons = new CheckersButton[BOARD_SIZE][BOARD_SIZE];
 	protected Map<int[], int[]> _possibleEats = new HashMap<>();
-	protected List<int[]> _possibleRoute;
+	protected List<int[]> _possibleRoute = new ArrayList<>();
 	protected String _myColor;
 	protected boolean _myTurn;
 	protected String _selectedSoldierName;
@@ -193,7 +196,8 @@ public final class CheckersScreen extends JFrame
 			_buttons[moves[2][0]][moves[2][1]].setImage(null, true);
 		}
 		
-		Toolkit.getDefaultToolkit().beep();
+		if (Config.GAME_BEEP)
+			Toolkit.getDefaultToolkit().beep();
 		
 		_myTurn = true;
 		
@@ -210,252 +214,182 @@ public final class CheckersScreen extends JFrame
 		return Math.max(getScoreOfColor("black"), getScoreOfColor("white"));
 	}
 	
-	protected List<int[]> movementHandler(int i, int j)
+	protected void movementHandler(final int i, final int j)
 	{
-		final List<int[]> path = new ArrayList<>();
-		
-		// If its queen...
 		if (_buttons[i][j].getName().equals("queen"))
 		{
-			// Flag for marking that a queen cannot eat more than one soldier.
-			boolean engaged = false;
-			
-			// Search main diagonal.
-			for (int x = i + 1, y = j + 1;x < BOARD_SIZE && y < BOARD_SIZE;x++, y++)
+			if (GameConfig.QUEEN_SINGLE_STEP)
 			{
-				// If spot taken by self, break.
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				// If spot taken by enemy.
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					if (engaged)
-						break;
-					
-					// Allow to eat only if there's no other soldier behind it.
-					if (x + 1 < BOARD_SIZE && y + 1 < BOARD_SIZE && !isTakenBy("black", x + 1, y + 1) && !isTakenBy("white", x + 1, y + 1))
-					{
-						final int[] goIndex = new int[] {x + 1, y + 1};
-						final int[] eatIndex = new int[] {x, y};
-						_possibleEats.put(goIndex, eatIndex);
-						path.add(goIndex);
-						
-						x++;
-						y++;
-						engaged = true;
-						continue;
-					}
-					
-					// Break either way.
-					break;
-				}
-				
-				// Add current cell.
-				path.add(new int[] {x, y});
+				checkDirection(i, j, Direction.ABOVE);
+				checkDirection(i, j, Direction.BELOW);
 			}
-			engaged = false;
-			for (int x = i - 1, y = j - 1;x >= 0 && y >= 0;x--, y--)
-			{
-				// If spot taken by self, break.
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				// If spot taken by enemy.
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					if (engaged)
-						break;
-					
-					// Allow to eat only if there's no other soldier behind it.
-					if (x - 1 >= 0 && y - 1 >= 0 && !isTakenBy("black", x - 1, y - 1) && !isTakenBy("white", x - 1, y - 1))
-					{
-						final int[] goIndex = new int[] {x - 1, y - 1};
-						final int[] eatIndex = new int[] {x, y};
-						_possibleEats.put(goIndex, eatIndex);
-						path.add(goIndex);
-						
-						x--;
-						y--;
-						engaged = true;
-						continue;
-					}
-					
-					// Break either way.
-					break;
-				}
-				
-				// Add current cell.
-				path.add(new int[] {x, y});
-			}
-			// Search sub diagonal.
-			engaged = false;
-			for (int x = i + 1, y = j - 1;x < BOARD_SIZE && y >= 0;x++, y--)
-			{
-				// If spot taken by self, break.
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				// If spot taken by enemy.
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					if (engaged)
-						break;
-					
-					// Allow to eat only if there's no other soldier behind it.
-					if (x + 1 < BOARD_SIZE && y - 1 >= 0 && !isTakenBy("black", x + 1, y - 1) && !isTakenBy("white", x + 1, y - 1))
-					{
-						final int[] goIndex = new int[] {x + 1, y - 1};
-						final int[] eatIndex = new int[] {x, y};
-						_possibleEats.put(goIndex, eatIndex);
-						path.add(goIndex);
-						
-						x++;
-						y--;
-						engaged = true;
-						continue;
-					}
-					
-					// Break either way.
-					break;
-				}
-				
-				// Add current cell.
-				path.add(new int[] {x, y});
-			}
-			engaged = false;
-			for (int x = i - 1, y = j + 1;x >= 0 && y < BOARD_SIZE;x--, y++)
-			{
-				// If spot taken by self, break.
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				// If spot taken by enemy.
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					if (engaged)
-						break;
-					
-					// Allow to eat only if there's no other soldier behind it.
-					if (x - 1 >= 0 && y + 1 < BOARD_SIZE && !isTakenBy("black", x - 1, y + 1) && !isTakenBy("white", x - 1, y + 1))
-					{
-						final int[] goIndex = new int[] {x - 1, y + 1};
-						final int[] eatIndex = new int[] {x, y};
-						_possibleEats.put(goIndex, eatIndex);
-						path.add(goIndex);
-						
-						x--;
-						y++;
-						engaged = true;
-						continue;
-					}
-					
-					// Break either way.
-					break;
-				}
-				
-				// Add current cell.
-				path.add(new int[] {x, y});
-			}
-		}
-		// Regular soldier.
-		else
-		{
-			// If its white it can only go up.
-			if (_buttons[i][j].getColor().equals("white"))
-			{
-				i--;
-				if (i == -1)
-					return path;
-				
-				// Check left.
-				if (j - 1 >= 0)
-				{
-					// If taken by enemy.
-					if (isTakenBy("black", i, j - 1))
-					{
-						// If Still not out of boundaries and not taken by anyone...
-						if (i - 1 >= 0 && j - 2 >= 0 && !isTakenBy("black", i - 1, j - 2) && !isTakenBy("black", i - 1, j - 2))
-						{
-							// Add the ability to eat.
-							final int[] goIndex = new int[] {i - 1, j - 2};
-							final int[] eatIndex = new int[] {i, j - 1};
-							_possibleEats.put(goIndex, eatIndex);
-							path.add(goIndex);
-						}
-					}
-					// Add path if not taken by self.
-					else if (!isTakenBy("white", i, j - 1))
-						path.add(new int[] {i, j - 1});
-				}
-				// Check right.
-				if (j + 1 < BOARD_SIZE)
-				{
-					// If taken by enemy.
-					if (isTakenBy("black", i, j + 1))
-					{
-						// If Still not out of boundaries and not taken by anyone...
-						if (i - 1 >= 0 && j + 2 < BOARD_SIZE && !isTakenBy("black", i - 1, j + 2) && !isTakenBy("black", i - 1, j + 2))
-						{
-							// Add the ability to eat.
-							final int[] goIndex = new int[] {i - 1, j + 2};
-							final int[] eatIndex = new int[] {i, j + 1};
-							_possibleEats.put(goIndex, eatIndex);
-							path.add(goIndex);
-						}
-					}
-					// Add path if not taken by self.
-					else if (!isTakenBy("white", i, j + 1))
-						path.add(new int[] {i, j + 1});
-				}
-			}
-			// Its black and it can only go down.
 			else
 			{
-				i++;
-				if (i == BOARD_SIZE)
-					return path;
+				// Flag holding the first index for eat possibility.
+				// Queen cannot eat more than one soldier at once.
+				// As well as any index beyond the first eat index should be added to _possibleEats.
+				int[] engaged = null;
 				
-				// Check left.
-				if (j - 1 >= 0)
+				// Search main diagonal.
+				for (int x = i + 1, y = j + 1;x < BOARD_SIZE && y < BOARD_SIZE;x++, y++)
 				{
-					// If taken by enemy.
-					if (isTakenBy("white", i, j - 1))
+					// If spot taken by self, break.
+					if (_myColor.equals(_buttons[x][y].getColor()))
+						break;
+					// If spot taken by enemy.
+					if (hasEnemy(x, y))
 					{
-						// If Still not out of boundaries and not taken by anyone...
-						if (j - 2 >= 0 && i + 1 < BOARD_SIZE && !isTakenBy("white", i + 1, j - 2) && !isTakenBy("white", i + 1, j - 2))
+						if (engaged != null)
+							break;
+						
+						// Allow to eat only if there's no other soldier behind it.
+						if (canEat(x, y, Direction.BELOW, Direction.RIGHT))
 						{
-							// Add the ability to eat.
-							final int[] goIndex = new int[] {i + 1, j - 2};
-							final int[] eatIndex = new int[] {i, j - 1};
+							final int[] goIndex = new int[] {x + 1, y + 1};
+							final int[] eatIndex = new int[] {x, y};
 							_possibleEats.put(goIndex, eatIndex);
-							path.add(goIndex);
+							_possibleRoute.add(goIndex);
+							
+							x++;
+							y++;
+							engaged = eatIndex;
 						}
+						else
+							break;
 					}
-					// Add path if not taken by self.
-					else if (!isTakenBy("black", i, j - 1))
-						path.add(new int[] {i, j - 1});
+					// Spot empty.
+					else
+					{
+						final int[] goIndex = new int[] {x, y};
+						_possibleRoute.add(goIndex);
+						
+						if (engaged != null)
+							_possibleEats.put(goIndex, engaged);
+					}
 				}
-				// Check right.
-				if (j + 1 < BOARD_SIZE)
+				engaged = null;
+				for (int x = i - 1, y = j - 1;x >= 0 && y >= 0;x--, y--)
 				{
-					// If taken by enemy.
-					if (isTakenBy("white", i, j + 1))
+					// If spot taken by self, break.
+					if (_myColor.equals(_buttons[x][y].getColor()))
+						break;
+					// If spot taken by enemy.
+					if (hasEnemy(x, y))
 					{
-						// If Still not out of boundaries and not taken by anyone...
-						if (j + 2 < BOARD_SIZE && i + 1 < BOARD_SIZE && !isTakenBy("white", i + 1, j + 2) && !isTakenBy("white", i + 1, j + 2))
+						if (engaged != null)
+							break;
+						
+						// Allow to eat only if there's no other soldier behind it.
+						if (canEat(x, y, Direction.ABOVE, Direction.LEFT))
 						{
-							// Add the ability to eat.
-							final int[] goIndex = new int[] {i + 1, j + 2};
-							final int[] eatIndex = new int[] {i, j + 1};
+							final int[] goIndex = new int[] {x - 1, y - 1};
+							final int[] eatIndex = new int[] {x, y};
 							_possibleEats.put(goIndex, eatIndex);
-							path.add(goIndex);
+							_possibleRoute.add(goIndex);
+							
+							x--;
+							y--;
+							engaged = eatIndex;
 						}
+						else
+							break;
 					}
-					// Add path if not taken by self.
-					else if (!isTakenBy("black", i, j + 1))
-						path.add(new int[] {i, j + 1});
+					// Spot empty.
+					else
+					{
+						final int[] goIndex = new int[] {x, y};
+						_possibleRoute.add(goIndex);
+						
+						if (engaged != null)
+							_possibleEats.put(goIndex, engaged);
+					}
+				}
+				
+				engaged = null;
+				
+				// Search sub diagonal.
+				for (int x = i + 1, y = j - 1;x < BOARD_SIZE && y >= 0;x++, y--)
+				{
+					// If spot taken by self, break.
+					if (_myColor.equals(_buttons[x][y].getColor()))
+						break;
+					// If spot taken by enemy.
+					if (hasEnemy(x, y))
+					{
+						if (engaged != null)
+							break;
+						
+						// Allow to eat only if there's no other soldier behind it.
+						if (canEat(x, y, Direction.BELOW, Direction.LEFT))
+						{
+							final int[] goIndex = new int[] {x + 1, y - 1};
+							final int[] eatIndex = new int[] {x, y};
+							_possibleEats.put(goIndex, eatIndex);
+							_possibleRoute.add(goIndex);
+							
+							x++;
+							y--;
+							engaged = eatIndex;
+						}
+						else
+							break;
+					}
+					// Spot empty.
+					else
+					{
+						final int[] goIndex = new int[] {x, y};
+						_possibleRoute.add(goIndex);
+						
+						if (engaged != null)
+							_possibleEats.put(goIndex, engaged);
+					}
+				}
+				engaged = null;
+				for (int x = i - 1, y = j + 1;x >= 0 && y < BOARD_SIZE;x--, y++)
+				{
+					// If spot taken by self, break.
+					if (_myColor.equals(_buttons[x][y].getColor()))
+						break;
+					// If spot taken by enemy.
+					if (hasEnemy(x, y))
+					{
+						if (engaged != null)
+							break;
+						
+						// Allow to eat only if there's no other soldier behind it.
+						if (canEat(x, y, Direction.ABOVE, Direction.RIGHT))
+						{
+							final int[] goIndex = new int[] {x - 1, y + 1};
+							final int[] eatIndex = new int[] {x, y};
+							_possibleEats.put(goIndex, eatIndex);
+							_possibleRoute.add(goIndex);
+							
+							x--;
+							y++;
+							engaged = eatIndex;
+						}
+						else
+							break;
+					}
+					// Spot empty.
+					else
+					{
+						final int[] goIndex = new int[] {x, y};
+						_possibleRoute.add(goIndex);
+						
+						if (engaged != null)
+							_possibleEats.put(goIndex, engaged);
+					}
 				}
 			}
 		}
-		
-		return path;
+		else
+		{
+			if (_buttons[i][j].getColor().equals("white"))
+				checkDirection(i, j, Direction.ABOVE);
+			else
+				checkDirection(i, j, Direction.BELOW);
+		}
 	}
 	
 	protected boolean canMove(final int i, final int j)
@@ -476,9 +410,71 @@ public final class CheckersScreen extends JFrame
 		return null;
 	}
 	
-	private boolean isTakenBy(final String color, final int i, final int j)
+	private static boolean isLegitSpot(final int i, final int j)
 	{
-		return color.equals(_buttons[i][j].getColor());
+		return i >= 0 && j >= 0 && i < BOARD_SIZE && j < BOARD_SIZE;
+	}
+	
+	private boolean isEmptySpot(final int i, final int j)
+	{
+		return _buttons[i][j].getColor() == null;
+	}
+	
+	private boolean hasEnemy(final int i, final int j)
+	{
+		final String enemyColor = _myColor.equals("white") ? "black" : "white";
+		return enemyColor.equals(_buttons[i][j].getColor());
+	}
+	
+	private boolean canEat(int i, int j, final Direction verticalDirection, final Direction horizontalDirection)
+	{
+		if (!hasEnemy(i, j))
+			return false;
+		
+		switch (verticalDirection)
+		{
+			case ABOVE:
+				i--;
+				break;
+			case BELOW:
+				i++;
+				break;
+		}
+		switch (horizontalDirection)
+		{
+			case LEFT:
+				j--;
+				break;
+			case RIGHT:
+				j++;
+				break;
+		}
+		
+		if (!isLegitSpot(i, j))
+			return false;
+		
+		return isEmptySpot(i, j);
+	}
+	
+	private void checkDirection(final int i, final int j, final Direction verticalDirection)
+	{
+		final int x = verticalDirection == Direction.ABOVE ? i - 1 : i + 1;
+		for (final Direction horizontalDirection : Direction.HORIZONTAL_DIRECTIONS)
+		{
+			final int y = horizontalDirection == Direction.LEFT ? j - 1 : j + 1;
+			if (!isLegitSpot(x, y))
+				continue;
+			
+			if (isEmptySpot(x, y))
+				_possibleRoute.add(new int[] {x, y});
+			else if (canEat(x, y, verticalDirection, horizontalDirection))
+			{
+				final int[] goIndex = new int[] {verticalDirection == Direction.ABOVE ? x - 1 : x + 1, horizontalDirection == Direction.LEFT ? y - 1 : y + 1};
+				final int[] eatIndex = new int[] {x, y};
+				_possibleEats.put(goIndex, eatIndex);
+				_possibleRoute.add(goIndex);
+			}
+		}
 	}
 	
 	private boolean lost()
@@ -535,7 +531,7 @@ public final class CheckersScreen extends JFrame
 					return;
 				}
 				
-				_possibleRoute = movementHandler(_i, _j);
+				movementHandler(_i, _j);
 				if (_possibleRoute.size() == 0)
 				{
 					JOptionPane.showMessageDialog(null, "This soldier cannot move anywhere.", "Cannot move", JOptionPane.ERROR_MESSAGE);

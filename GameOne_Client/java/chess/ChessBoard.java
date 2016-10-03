@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import client.Client;
+import configs.Config;
 import network.request.RequestTurnChange;
 import network.request.RequestUpdateGameScore;
 import objects.GameResult;
@@ -171,7 +172,8 @@ public final class ChessBoard extends JPanel
 			}
 		}
 		
-		Toolkit.getDefaultToolkit().beep();
+		if (Config.GAME_BEEP)
+			Toolkit.getDefaultToolkit().beep();
 		
 		_myTurn = true;
 		_check = isUnderCheck();

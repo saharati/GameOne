@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 
 import mario.SuperMario;
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * Abstract class for every mario object.

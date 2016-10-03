@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
 import objects.mario.MarioType;
+import util.Direction;
 import util.random.Rnd;
 
 /**

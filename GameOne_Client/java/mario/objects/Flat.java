@@ -5,8 +5,8 @@ import java.util.List;
 
 import mario.SuperMario;
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * A floating block used to travel around.

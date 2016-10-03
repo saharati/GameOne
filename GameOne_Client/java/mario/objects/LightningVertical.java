@@ -2,8 +2,8 @@ package mario.objects;
 
 import mario.SuperMario;
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * Vertical lightning object, delevels player if hit.

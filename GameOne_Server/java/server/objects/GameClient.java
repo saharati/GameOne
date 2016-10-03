@@ -78,11 +78,6 @@ public final class GameClient extends BasicClient
 		_user = user;
 	}
 	
-	public boolean isAuthed()
-	{
-		return _user != null;
-	}
-	
 	public void sendPacket(final String sender, final String msg)
 	{
 		final String refinedMsg = StringUtil.refineBeforeSend(sender, msg);
@@ -104,9 +99,7 @@ public final class GameClient extends BasicClient
 			final PacketReader<BasicClient> packet = inf.getReadPacket();
 			packet.setBuffer(buffer);
 			packet.read();
-			
-			if (inf.isAuthedState() == isAuthed())
-				packet.run(this);
+			packet.run(this);
 		}
 		buffer.clear();
 		

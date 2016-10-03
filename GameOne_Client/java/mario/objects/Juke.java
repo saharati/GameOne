@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import mario.SuperMario;
+import mario.resources.JumpType;
 import mario.MarioTaskManager;
-import mario.prototypes.Direction;
-import mario.prototypes.JumpType;
 import objects.mario.MarioType;
+import util.Direction;
 
 /**
  * A juke monster instance.

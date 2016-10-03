@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -256,6 +257,9 @@ public final class SalScreen extends JFrame
 		_players.setValueAt(score, 2, 1);
 		_players.setValueAt("\u2191", 1, 0);
 		_players.setValueAt("\u2191", 1, 1);
+		
+		if (Config.GAME_BEEP)
+			Toolkit.getDefaultToolkit().beep();
 		
 		_myTurn = true;
 		

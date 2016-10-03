@@ -10,27 +10,27 @@ import java.util.logging.Logger;
  */
 public enum PacketInfo
 {
-	LOGIN("RequestLogin", "LoginResponse", false),
-	MESSAGE("RequestMessage", "MessageResponse", true),
-	LOGOUT("RequestLogout", "LogoutResponse", true),
-	GAME("RequestGame", "GameResponse", true),
-	OBJECTS("RequestGameObjects", "GameObjectsResponse", false),
-	EDIT("RequestGameEdit", "GameEditResponse", true),
-	SCORE("RequestUpdateGameScore", "GameScoreUpdateResponse", true),
-	WAIT("RequestWaitingRoom", "WaitingRoomResponse", true),
-	INVITE("RequestInviteToDuel", "DuelInviteResponse", true),
-	START("RequestGameStart", "GameStartResponse", true),
-	TURN("RequestTurnChange", "TurnChangeResponse", true);
+	LOGIN("RequestLogin", "LoginResponse"),
+	MESSAGE("RequestMessage", "MessageResponse"),
+	LOGOUT("RequestLogout", "LogoutResponse"),
+	GAME("RequestGame", "GameResponse"),
+	OBJECTS("RequestGameObjects", "GameObjectsResponse"),
+	EDIT("RequestGameEdit", "GameEditResponse"),
+	SCORE("RequestUpdateGameScore", "GameScoreUpdateResponse"),
+	WAIT("RequestWaitingRoom", "WaitingRoomResponse"),
+	INVITE("RequestInviteToDuel", "DuelInviteResponse"),
+	START("RequestGameStart", "GameStartResponse"),
+	TURN("RequestTurnChange", "TurnChangeResponse"),
+	CONFIGS("RequestGameConfigs", "GameConfigsResponse");
 	
 	private static final String REQUEST_PACKAGE = "network.request";
 	private static final String RESPONSE_PACKAGE = "network.response";
 	
 	private final Logger _logger = Logger.getLogger(PacketInfo.class.getName());
 	private PacketReader<BasicClient> _readPacket;
-	private boolean _authed;
 	
 	@SuppressWarnings("unchecked")
-	private PacketInfo(final String requestPacket, final String responsePacket, final boolean authed)
+	private PacketInfo(final String requestPacket, final String responsePacket)
 	{
 		try
 		{
@@ -39,7 +39,6 @@ public enum PacketInfo
 				packet = Class.forName(RESPONSE_PACKAGE + "." + responsePacket);
 			
 			_readPacket = (PacketReader<BasicClient>) packet.getConstructor().newInstance();
-			_authed = authed;
 		}
 		catch (final InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e)
 		{
@@ -50,10 +49,5 @@ public enum PacketInfo
 	public PacketReader<BasicClient> getReadPacket()
 	{
 		return _readPacket;
-	}
-	
-	public boolean isAuthedState()
-	{
-		return _authed;
 	}
 }

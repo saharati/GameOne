@@ -186,20 +186,45 @@ public final class CheckersScreen extends JFrame
 		// [0] - From.
 		// [1] - To.
 		// [2] - Eat, if exists.
-		_buttons[moves[0][0]][moves[0][1]].setBackground(Color.PINK);
-		_buttons[moves[1][0]][moves[1][1]].setBackground(Color.MAGENTA);
+		if (GameConfig.CHECKERS_PAINT_MOVES)
+			_buttons[moves[0][0]][moves[0][1]].setBackground(Color.PINK);
 		_buttons[moves[0][0]][moves[0][1]].setImage(null, true);
-		_buttons[moves[1][0]][moves[1][1]].setImage(image, true);
-		if (moves[2][0] != -1)
+		if (!image.isEmpty())
 		{
-			_buttons[moves[2][0]][moves[2][1]].setBackground(Color.RED);
-			_buttons[moves[2][0]][moves[2][1]].setImage(null, true);
+			if (GameConfig.CHECKERS_PAINT_MOVES)
+				_buttons[moves[1][0]][moves[1][1]].setBackground(Color.MAGENTA);
+			_buttons[moves[1][0]][moves[1][1]].setImage(image, true);
+			
+			if (moves[2][0] != -1)
+			{
+				if (GameConfig.CHECKERS_PAINT_MOVES)
+					_buttons[moves[2][0]][moves[2][1]].setBackground(Color.RED);
+				_buttons[moves[2][0]][moves[2][1]].setImage(null, true);
+				
+				if (GameConfig.BURN_PLAYERS)
+				{
+					// Change myColor to enemy color temporary.
+					_myColor = _myColor.equals("white") ? "black" : "white";
+					// Check if the player can eat anything else in the spot it moved to.
+					movementHandler(moves[1][0], moves[1][1]);
+					if (_possibleEats.isEmpty())
+					{
+						// Nothing to eat, its my turn.
+						setTurn();
+					}
+					// Reset back variables.
+					_myColor = _myColor.equals("white") ? "black" : "white";
+					_possibleEats.clear();
+					_possibleRoute.clear();
+				}
+				else
+					setTurn();
+			}
+			else
+				setTurn();
 		}
-		
-		if (Config.GAME_BEEP)
-			Toolkit.getDefaultToolkit().beep();
-		
-		_myTurn = true;
+		else
+			setTurn();
 		
 		if (lost())
 		{
@@ -410,6 +435,14 @@ public final class CheckersScreen extends JFrame
 		return null;
 	}
 	
+	protected void setTurn()
+	{
+		if (Config.GAME_BEEP)
+			Toolkit.getDefaultToolkit().beep();
+		
+		_myTurn = true;
+	}
+	
 	private static boolean isLegitSpot(final int i, final int j)
 	{
 		return i >= 0 && j >= 0 && i < BOARD_SIZE && j < BOARD_SIZE;
@@ -538,8 +571,9 @@ public final class CheckersScreen extends JFrame
 					return;
 				}
 				
-				for (final int[] route : _possibleRoute)
-					_buttons[route[0]][route[1]].setBackground(Color.YELLOW);
+				if (GameConfig.CHECKERS_PAINT_ROUTE)
+					for (final int[] route : _possibleRoute)
+						_buttons[route[0]][route[1]].setBackground(Color.YELLOW);
 				_buttons[_i][_j].setBackground(Color.ORANGE);
 				
 				_selectedSoldierName = _buttons[_i][_j].getFullName();
@@ -547,15 +581,17 @@ public final class CheckersScreen extends JFrame
 			}
 			else
 			{
-				if (_buttons[_i][_j].getBackground().equals(Color.ORANGE))
+				if (_i == _selectedSoldierPosition[0] && _j == _selectedSoldierPosition[1])
 				{
-					for (final int[] route : _possibleRoute)
-						_buttons[route[0]][route[1]].setBackground(_buttons[route[0]][route[1]].getBackgroundColor());
+					if (GameConfig.CHECKERS_PAINT_ROUTE)
+						for (final int[] route : _possibleRoute)
+							_buttons[route[0]][route[1]].setBackground(_buttons[route[0]][route[1]].getBackgroundColor());
+					_buttons[_i][_j].setBackground(_buttons[_i][_j].getBackgroundColor());
+					
 					_selectedSoldierName = null;
 					_selectedSoldierPosition = null;
 					_possibleRoute.clear();
 					_possibleEats.clear();
-					_buttons[_i][_j].setBackground(_buttons[_i][_j].getBackgroundColor());
 					return;
 				}
 				if (!canMove(_i, _j))
@@ -564,10 +600,11 @@ public final class CheckersScreen extends JFrame
 					return;
 				}
 				
+				_myTurn = false;
+				
 				for (int i = 0;i < BOARD_SIZE;i++)
 					for (int j = 0;j < BOARD_SIZE;j++)
 						_buttons[i][j].setBackground(_buttons[i][j].getBackgroundColor());
-				_possibleRoute.clear();
 				
 				_buttons[_selectedSoldierPosition[0]][_selectedSoldierPosition[1]].setImage(null, true);
 				if (_myColor.equals("white"))
@@ -580,7 +617,36 @@ public final class CheckersScreen extends JFrame
 					if (_i == BOARD_SIZE - 1 && _selectedSoldierName.equals("soldier-" + _myColor))
 						_selectedSoldierName = "queen-" + _myColor;
 				}
-				_buttons[_i][_j].setImage(_selectedSoldierName, true);
+				
+				final int[] eatIndex = getEatIndex(_i, _j);
+				if (GameConfig.BURN_PLAYERS && eatIndex == null)
+				{
+					boolean burn = false;
+					for (int i = 0;i < BOARD_SIZE && !burn;i++)
+					{
+						for (int j = 0;j < BOARD_SIZE && !burn;j++)
+						{
+							if (_myColor.equals(_buttons[i][j].getColor()))
+							{
+								_possibleEats.clear();
+								
+								movementHandler(i, j);
+								if (!_possibleEats.isEmpty())
+									burn = true;
+							}
+						}
+					}
+					if (burn)
+					{
+						JOptionPane.showMessageDialog(null, "You must eat whenever possible and you didn't do so.", "Missed Eat", JOptionPane.INFORMATION_MESSAGE);
+					
+						_selectedSoldierName = null;
+					}
+					else
+						_buttons[_i][_j].setImage(_selectedSoldierName, true);
+				}
+				else
+					_buttons[_i][_j].setImage(_selectedSoldierName, true);
 				
 				final String image = _selectedSoldierName;
 				final int[][] moves = new int[3][2];
@@ -588,13 +654,18 @@ public final class CheckersScreen extends JFrame
 				moves[0][1] = _selectedSoldierPosition[1];
 				moves[1][0] = _i;
 				moves[1][1] = _j;
-				final int[] eatIndex = getEatIndex(_i, _j);
 				if (eatIndex != null)
 				{
 					_buttons[eatIndex[0]][eatIndex[1]].setImage(null, true);
 					
 					moves[2][0] = eatIndex[0];
 					moves[2][1] = eatIndex[1];
+					
+					_possibleEats.clear();
+					
+					movementHandler(_i, _j);
+					if (!_possibleEats.isEmpty())
+						setTurn();
 				}
 				else
 				{
@@ -605,7 +676,7 @@ public final class CheckersScreen extends JFrame
 				_selectedSoldierName = null;
 				_selectedSoldierPosition = null;
 				_possibleEats.clear();
-				_myTurn = false;
+				_possibleRoute.clear();
 				
 				Client.getInstance().sendPacket(new RequestTurnChange(image, moves));
 			}

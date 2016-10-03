@@ -31,8 +31,16 @@ public final class GameConfig
 		// Load Games.properties file (if exists)
 		final ExProperties games = new ExProperties(GAMES_FILE);
 		
+		// Checkers
 		CONFIGS.put("QueenSingleStep", games.getProperty("QueenSingleStep", "False"));
 		CONFIGS.put("BurnPlayers", games.getProperty("BurnPlayers", "True"));
+		CONFIGS.put("CheckersPaintMoves", games.getProperty("CheckersPaintMoves", "True"));
+		CONFIGS.put("CheckersPaintRoute", games.getProperty("CheckersPaintRoute", "True"));
+		
+		// Chess
+		CONFIGS.put("ChessPaintMoves", games.getProperty("ChessPaintMoves", "True"));
+		CONFIGS.put("ChessPaintRoute", games.getProperty("ChessPaintRoute", "True"));
+		CONFIGS.put("ChooseOnPromote", games.getProperty("ChooseOnPromote", "True"));
 		
 		LOGGER.info("GameConfig loaded!");
 	}

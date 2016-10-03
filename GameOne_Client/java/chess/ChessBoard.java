@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 
 import client.Client;
 import configs.Config;
+import configs.GameConfig;
 import network.request.RequestTurnChange;
 import network.request.RequestUpdateGameScore;
 import objects.GameResult;
@@ -159,14 +160,22 @@ public final class ChessBoard extends JPanel
 			}
 			else if (images[i].equals("inPassing_kill"))
 			{
-				_buttons[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
-				_buttons[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
+				if (GameConfig.CHESS_PAINT_MOVES)
+				{
+					_buttons[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
+					_buttons[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
+				}
+				
 				_buttons[moves[i][2]][moves[i][3]].setImage(null, true);
 			}
 			else
 			{
-				_buttons[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
-				_buttons[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
+				if (GameConfig.CHESS_PAINT_MOVES)
+				{
+					_buttons[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
+					_buttons[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
+				}
+				
 				_buttons[moves[i][0]][moves[i][1]].setImage(null, true);
 				_buttons[moves[i][2]][moves[i][3]].setImage(images[i], true);
 			}
@@ -875,8 +884,9 @@ public final class ChessBoard extends JPanel
 					return;
 				}
 				
-				for (final int[] route : _possibleRoute)
-					_buttons[route[0]][route[1]].setBackground(Color.YELLOW);
+				if (GameConfig.CHESS_PAINT_ROUTE)
+					for (final int[] route : _possibleRoute)
+						_buttons[route[0]][route[1]].setBackground(Color.YELLOW);
 				_buttons[_i][_j].setBackground(Color.ORANGE);
 				
 				_selectedSoldierName = _buttons[_i][_j].getFullName();
@@ -884,14 +894,16 @@ public final class ChessBoard extends JPanel
 			}
 			else
 			{
-				if (_buttons[_i][_j].getBackground().equals(Color.ORANGE))
+				if (_i == _selectedSoldierPosition[0] && _j == _selectedSoldierPosition[1])
 				{
-					for (final int[] route : _possibleRoute)
-						_buttons[route[0]][route[1]].setBackground(_buttons[route[0]][route[1]].getBackgroundColor());
+					if (GameConfig.CHESS_PAINT_ROUTE)
+						for (final int[] route : _possibleRoute)
+							_buttons[route[0]][route[1]].setBackground(_buttons[route[0]][route[1]].getBackgroundColor());
+					_buttons[_i][_j].setBackground(_buttons[_i][_j].getBackgroundColor());
+					
 					_selectedSoldierName = null;
 					_selectedSoldierPosition = null;
 					_possibleRoute.clear();
-					_buttons[_i][_j].setBackground(_buttons[_i][_j].getBackgroundColor());
 					return;
 				}
 				if (!canMove(_i, _j))
@@ -905,7 +917,7 @@ public final class ChessBoard extends JPanel
 						_buttons[i][j].setBackground(_buttons[i][j].getBackgroundColor());
 				_possibleRoute.clear();
 				
-				final String image = _selectedSoldierName;
+				String image = _selectedSoldierName;
 				final int[] xy = _selectedSoldierPosition;
 				_selectedSoldierName = null;
 				_selectedSoldierPosition = null;
@@ -968,13 +980,18 @@ public final class ChessBoard extends JPanel
 					{
 						if (_i == 0)
 						{
-							ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, xy[0], xy[1], _i, _j);
-							
 							_inPassing[0] = _inPassing[1] = -1;
-							return;
+							
+							if (GameConfig.CHOOSE_ON_PROMOTE)
+							{
+								ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, xy[0], xy[1], _i, _j);
+								return;
+							}
+							
+							image = "queen-white";
+							_buttons[_i][_j].setImage("queen-white", true);
 						}
-						
-						if (_i == xy[0] - 2 && (_j - 1 >= 0 && _buttons[_i][_j - 1].getName() != null && _buttons[_i][_j - 1].getFullName().equals("pawn-black") || _j + 1 < BOARD_SIZE && _buttons[_i][_j + 1].getName() != null && _buttons[_i][_j + 1].getFullName().equals("pawn-black")))
+						else if (_i == xy[0] - 2 && (_j - 1 >= 0 && _buttons[_i][_j - 1].getName() != null && _buttons[_i][_j - 1].getFullName().equals("pawn-black") || _j + 1 < BOARD_SIZE && _buttons[_i][_j + 1].getName() != null && _buttons[_i][_j + 1].getFullName().equals("pawn-black")))
 						{
 							images[0] = "inPassing_make";
 							
@@ -999,13 +1016,18 @@ public final class ChessBoard extends JPanel
 					{
 						if (_i == BOARD_SIZE - 1)
 						{
-							ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, xy[0], xy[1], _i, _j);
-							
 							_inPassing[0] = _inPassing[1] = -1;
-							return;
+							
+							if (GameConfig.CHOOSE_ON_PROMOTE)
+							{
+								ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, xy[0], xy[1], _i, _j);
+								return;
+							}
+							
+							image = "queen-black";
+							_buttons[_i][_j].setImage("queen-black", true);
 						}
-						
-						if (_i == xy[0] + 2 && (_j - 1 >= 0 && _buttons[_i][_j - 1].getName() != null && _buttons[_i][_j - 1].getFullName().equals("pawn-white") || _j + 1 < BOARD_SIZE && _buttons[_i][_j + 1].getName() != null && _buttons[_i][_j + 1].getFullName().equals("pawn-white")))
+						else if (_i == xy[0] + 2 && (_j - 1 >= 0 && _buttons[_i][_j - 1].getName() != null && _buttons[_i][_j - 1].getFullName().equals("pawn-white") || _j + 1 < BOARD_SIZE && _buttons[_i][_j + 1].getName() != null && _buttons[_i][_j + 1].getFullName().equals("pawn-white")))
 						{
 							images[0] = "inPassing_make";
 							

@@ -12,6 +12,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import checkers.CheckersScreen;
+import chess.ChessBackground;
 import chess.ChessScreen;
 import client.Client;
 import configs.Config;
@@ -122,6 +123,7 @@ public final class Startup extends JFrame
 		ChessScreen.getInstance();
 		SalScreen.getInstance();
 		CheckersScreen.getInstance();
+		ChessBackground.getInstance();
 		
 		_progressBar.setValue(5);
 		

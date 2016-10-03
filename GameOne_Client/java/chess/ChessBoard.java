@@ -651,8 +651,7 @@ public final class ChessBoard extends JPanel
 					}
 					
 					Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LOSE, calcScore()));
-					
-					JOptionPane.showMessageDialog(null, "You are under a checkmate, you lost!", "CHECKMATE", JOptionPane.INFORMATION_MESSAGE);
+					ChessBackground.getInstance().showDialog("Checkmate", ChessBackground.LOST);
 					
 					return CheckStatus.UNDER_CHECKMATE;
 				}
@@ -699,8 +698,7 @@ public final class ChessBoard extends JPanel
 					return;
 		
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
-		
-		JOptionPane.showMessageDialog(null, "You are not under a check, but you cannot make any move.", "Tie", JOptionPane.INFORMATION_MESSAGE);
+		ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
 	}
 	
 	private int[][] getThreateningSoldier(final int i, final int j)

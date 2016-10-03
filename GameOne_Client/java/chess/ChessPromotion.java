@@ -1,18 +1,17 @@
 package chess;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Font;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 /**
  * Upgrade soldier selection panel.
@@ -31,14 +30,9 @@ public final class ChessPromotion extends JPanel
 	
 	public ChessPromotion()
 	{
-		super(new BorderLayout());
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		final JLabel chooseUpgrade = new JLabel("Choose an upgrade");
-		final Font titleFont = new Font("Arial", Font.BOLD, 25);
-		chooseUpgrade.setFont(titleFont);
-		chooseUpgrade.setHorizontalAlignment(SwingConstants.CENTER);
-		chooseUpgrade.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		add(chooseUpgrade, BorderLayout.PAGE_START);
+		add(Box.createVerticalStrut(160));
 		
 		final JPanel optionsWhite = new JPanel(new GridLayout(1, 4));
 		final JPanel optionsBlack = new JPanel(new GridLayout(1, 4));
@@ -55,9 +49,10 @@ public final class ChessPromotion extends JPanel
 			optionsWhite.add(white);
 			optionsBlack.add(black);
 		}
+		_cardPanel.setMaximumSize(new Dimension(400, 100));
 		_cardPanel.add(optionsWhite, "white");
 		_cardPanel.add(optionsBlack, "black");
-		add(_cardPanel, BorderLayout.PAGE_END);
+		add(_cardPanel);
 	}
 	
 	public void showSelectionWindow(final String color, final int oldX, final int oldY, final int newX, final int newY)
@@ -71,6 +66,14 @@ public final class ChessPromotion extends JPanel
 		layout.show(_cardPanel, color);
 		
 		ChessScreen.getInstance().switchPanels(ChessScreen.PROMOTION);
+	}
+	
+	@Override
+	protected void paintComponent(final Graphics g)
+	{
+		super.paintComponent(g);
+		
+		g.drawImage(ChessBackground.CHOOSE, 0, 0, getWidth(), getHeight(), null);
 	}
 	
 	private class MakeChoice extends MouseAdapter

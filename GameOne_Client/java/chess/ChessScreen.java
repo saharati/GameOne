@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 import client.Client;
@@ -27,15 +26,16 @@ public final class ChessScreen extends JFrame
 {
 	private static final long serialVersionUID = -7018309977842760132L;
 	private static final Logger LOGGER = Logger.getLogger(ChessScreen.class.getName());
-	private static final String IMAGE_PATH = "./images/chess/";
 	
 	public static final String PROMOTION = "promotion";
 	public static final String BOARD = "board";
+	public static final String IMAGE_PATH = "./images/chess/";
 	public static final Map<String, Image> IMAGES = new HashMap<>();
 	static
 	{
 		for (final File file : new File(IMAGE_PATH).listFiles())
-			IMAGES.put(file.getName().substring(0, file.getName().lastIndexOf('.')), new ImageIcon(file.getAbsolutePath()).getImage());
+			if (file.isFile())
+				IMAGES.put(file.getName().substring(0, file.getName().lastIndexOf('.')), new ImageIcon(file.getAbsolutePath()).getImage());
 	}
 	
 	private final CardLayout _layout = new CardLayout();
@@ -74,7 +74,6 @@ public final class ChessScreen extends JFrame
 		
 		_layout.show(getContentPane(), BOARD);
 		
-		getContentPane().setPreferredSize(_board.getPreferredSize());
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -85,13 +84,13 @@ public final class ChessScreen extends JFrame
 		switch (result)
 		{
 			case WIN:
-				JOptionPane.showMessageDialog(null, "Congratulations, you win!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+				ChessBackground.getInstance().showDialog("Checkmate", ChessBackground.WON);
 				break;
 			case TIE:
-				JOptionPane.showMessageDialog(null, "The match has ended in a tie.", "Tie", JOptionPane.INFORMATION_MESSAGE);
+				ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
 				break;
 			case LEAVE:
-				JOptionPane.showMessageDialog(null, "Your opponent has logged off, you won!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+				ChessBackground.getInstance().showDialog("Victory", ChessBackground.OFF);
 				break;
 			case EXIT:
 				Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.EXIT, _board.calcScore()));
@@ -107,12 +106,6 @@ public final class ChessScreen extends JFrame
 	public void switchPanels(final String panel)
 	{
 		_layout.show(getContentPane(), panel);
-		
-		if (panel.equals(PROMOTION))
-			getContentPane().setPreferredSize(_promotionPanel.getPreferredSize());
-		else
-			getContentPane().setPreferredSize(_board.getPreferredSize());
-		pack();
 	}
 	
 	public ChessBoard getBoard()

@@ -67,10 +67,9 @@ public final class ChessBoard extends JPanel
 	protected boolean _myTurn;
 	protected String _selectedSoldierName;
 	protected int[] _selectedSoldierPosition;
-	protected CheckStatus _check = CheckStatus.NOT_UNDER_CHECK;
 	private int[][] _enemyRoute;
 	
-	// Special root move.
+	// Special rook move.
 	protected boolean _canCast = true;
 	// Special pawn move.
 	protected int[] _inPassing = {-1, -1};
@@ -185,9 +184,21 @@ public final class ChessBoard extends JPanel
 			Toolkit.getDefaultToolkit().beep();
 		
 		_myTurn = true;
-		_check = isUnderCheck();
-		if (_check == CheckStatus.NOT_UNDER_CHECK)
-			checkForTie();
+		
+		final CheckStatus check = isUnderCheck();
+		switch (check)
+		{
+			case NOT_UNDER_CHECK:
+				checkForTie();
+				break;
+			case UNDER_CHECK:
+				JOptionPane.showMessageDialog(null, "You are under a check.", "Check", JOptionPane.INFORMATION_MESSAGE);
+				break;
+			case UNDER_CHECKMATE:
+				Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LOSE, calcScore()));
+				ChessBackground.getInstance().showDialog("Checkmate", ChessBackground.LOST);
+				break;
+		}
 	}
 	
 	public int calcScore()
@@ -630,10 +641,7 @@ public final class ChessBoard extends JPanel
 						return CheckStatus.NOT_UNDER_CHECK;
 					
 					if (movementHandler(i, j, false).size() > 0)
-					{
-						JOptionPane.showMessageDialog(null, "You are under a check.", "CHECK", JOptionPane.INFORMATION_MESSAGE);
 						return CheckStatus.UNDER_CHECK;
-					}
 					
 					_enemyRoute = getThreateningSoldier(i, j);
 					_myColor = _myColor.equals("white") ? "black" : "white";
@@ -645,20 +653,14 @@ public final class ChessBoard extends JPanel
 					_enemyRoute = null;
 					
 					if (found)
-					{
-						JOptionPane.showMessageDialog(null, "You are under a check.", "CHECK", JOptionPane.INFORMATION_MESSAGE);
 						return CheckStatus.UNDER_CHECK;
-					}
-					
-					Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LOSE, calcScore()));
-					ChessBackground.getInstance().showDialog("Checkmate", ChessBackground.LOST);
 					
 					return CheckStatus.UNDER_CHECKMATE;
 				}
 			}
 		}
 		
-		return CheckStatus.NOT_UNDER_CHECK;
+		return null;
 	}
 	
 	private int getScoreOfColor(final String color)
@@ -925,9 +927,11 @@ public final class ChessBoard extends JPanel
 				_buttons[xy[0]][xy[1]].setImage(null, true);
 				_buttons[_i][_j].setImage(image, true);
 				
-				_check = isUnderCheck();
-				if (_check == CheckStatus.UNDER_CHECK)
+				final CheckStatus check = isUnderCheck();
+				if (check == CheckStatus.UNDER_CHECK)
 				{
+					JOptionPane.showMessageDialog(null, "You are under a check.", "Check", JOptionPane.INFORMATION_MESSAGE);
+					
 					_buttons[_i][_j].setImage(tempTarget, true);
 					_buttons[xy[0]][xy[1]].setImage(image, true);
 					return;
@@ -941,7 +945,7 @@ public final class ChessBoard extends JPanel
 				{
 					if (_canCast)
 					{
-						if (_check == CheckStatus.NOT_UNDER_CHECK)
+						if (check == CheckStatus.NOT_UNDER_CHECK)
 						{
 							if (_j == 6)
 							{

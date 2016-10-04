@@ -33,7 +33,7 @@ public final class RequestTurnChange extends PacketReader<GameClient>
 		_gameId = GameId.values()[readInt()];
 		switch (_gameId)
 		{
-			case CHESS:
+			case CHESS_MP:
 				_images = new String[2];
 				_positions = new int[2][4];
 				for (int i = 0;i < _images.length;i++)
@@ -67,7 +67,7 @@ public final class RequestTurnChange extends PacketReader<GameClient>
 	{
 		switch (_gameId)
 		{
-			case CHESS:
+			case CHESS_MP:
 				client.getUser().getGroup().getUsersExcept(client.getUser()).findFirst().get().sendPacket(new TurnChangeResponse(_images, _positions));
 				break;
 			case LAMA:

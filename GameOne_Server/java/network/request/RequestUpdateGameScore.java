@@ -55,7 +55,7 @@ public final class RequestUpdateGameScore extends PacketReader<GameClient>
 			case G2048:
 				gs.setScore(Math.max(_score, gs.getScore()));
 				break;
-			case CHESS:
+			case CHESS_MP:
 			case LAMA:
 			case CHECKERS:
 				switch (_result)

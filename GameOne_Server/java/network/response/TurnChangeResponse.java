@@ -28,7 +28,7 @@ public final class TurnChangeResponse extends PacketWriter
 	
 	public TurnChangeResponse(final String[] images, final int[][] positions)
 	{
-		_gameId = GameId.CHESS;
+		_gameId = GameId.CHESS_MP;
 		_images = images;
 		_positions = positions;
 	}
@@ -55,7 +55,7 @@ public final class TurnChangeResponse extends PacketWriter
 		
 		switch (_gameId)
 		{
-			case CHESS:
+			case CHESS_MP:
 				for (int i = 0;i < _images.length;i++)
 					writeString(_images[i]);
 				for (int i = 0;i < _positions.length;i++)

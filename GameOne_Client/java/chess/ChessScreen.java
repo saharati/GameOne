@@ -61,7 +61,7 @@ public final class ChessScreen extends JFrame
 		super.dispose();
 		
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LEAVE, _board.calcScore()));
-		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS, false);
+		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, false);
 	}
 	
 	public void start(final String myColor)
@@ -99,8 +99,8 @@ public final class ChessScreen extends JFrame
 		
 		setVisible(false);
 		
-		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS, false);
-		Client.getInstance().sendPacket(new RequestWaitingRoom(GameId.CHESS));
+		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, false);
+		Client.getInstance().sendPacket(new RequestWaitingRoom(GameId.CHESS_MP));
 	}
 	
 	public void switchPanels(final String panel)

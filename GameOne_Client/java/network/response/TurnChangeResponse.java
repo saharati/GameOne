@@ -31,7 +31,7 @@ public final class TurnChangeResponse extends PacketReader<Client>
 	{
 		switch (Client.getInstance().getCurrentGame())
 		{
-			case CHESS:
+			case CHESS_MP:
 				_images = new String[2];
 				_positions = new int[2][4];
 				for (int i = 0;i < _images.length;i++)
@@ -65,7 +65,7 @@ public final class TurnChangeResponse extends PacketReader<Client>
 	{
 		switch (client.getCurrentGame())
 		{
-			case CHESS:
+			case CHESS_MP:
 				ChessScreen.getInstance().getBoard().updateData(_images, _positions);
 				break;
 			case LAMA:

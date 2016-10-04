@@ -33,7 +33,7 @@ public final class GameScoreUpdateResponse extends PacketReader<Client>
 		{
 			switch (client.getCurrentGame())
 			{
-				case CHESS:
+				case CHESS_MP:
 					ChessScreen.getInstance().showResult(_result);
 					break;
 				case LAMA:

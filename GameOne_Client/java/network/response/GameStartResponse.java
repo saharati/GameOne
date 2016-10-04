@@ -30,8 +30,8 @@ public final class GameStartResponse extends PacketReader<Client>
 		client.getCurrentWindow().setVisible(false);
 		switch (client.getCurrentGame())
 		{
-			case CHESS:
-				client.setCurrentDetails(ChessScreen.getInstance(), GameId.CHESS, false);
+			case CHESS_MP:
+				client.setCurrentDetails(ChessScreen.getInstance(), GameId.CHESS_MP, false);
 				
 				ChessScreen.getInstance().start(_isStarting ? "white" : "black");
 				break;

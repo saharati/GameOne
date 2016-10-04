@@ -30,7 +30,7 @@ public final class RequestTurnChange extends PacketWriter
 	
 	public RequestTurnChange(final String[] images, final int[][] positions)
 	{
-		_gameId = GameId.CHESS;
+		_gameId = GameId.CHESS_MP;
 		_images = images;
 		_positions = positions;
 	}
@@ -58,7 +58,7 @@ public final class RequestTurnChange extends PacketWriter
 		writeInt(_gameId.ordinal());
 		switch (Client.getInstance().getCurrentGame())
 		{
-			case CHESS:
+			case CHESS_MP:
 				for (int i = 0;i < _images.length;i++)
 					writeString(_images[i]);
 				for (int i = 0;i < _positions.length;i++)

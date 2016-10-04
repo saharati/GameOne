@@ -77,7 +77,7 @@ public final class GameSelect extends JFrame
 		spPacman.addActionListener(a -> Client.getInstance().setCurrentDetails(PacmanBuilder.getInstance(), GameId.PACMAN, true));
 		_buttonsPanel.add(spPacman);
 		final JButton mpChess = new JButton("Chess (MP)");
-		mpChess.addActionListener(a -> Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS, true));
+		mpChess.addActionListener(a -> Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, true));
 		_buttonsPanel.add(mpChess);
 		final JButton spTetris = new JButton("Tetris (SP)");
 		spTetris.addActionListener(a -> Client.getInstance().setCurrentDetails(TetrisScreen.getInstance(), GameId.TETRIS, true));

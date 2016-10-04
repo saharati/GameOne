@@ -7,7 +7,7 @@ package objects;
 public enum GameId
 {
 	PACMAN,
-	CHESS,
+	CHESS_MP,
 	TETRIS,
 	MARIO,
 	LAMA,

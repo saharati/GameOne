@@ -24,7 +24,7 @@ public final class RequestGameStart extends PacketReader<GameClient>
 		final User user = client.getUser();
 		switch (user.getCurrentGame())
 		{
-			case CHESS:
+			case CHESS_MP:
 			case LAMA:
 			case CHECKERS:
 				final User other = user.getGroup().getUsersExcept(user).findFirst().get();

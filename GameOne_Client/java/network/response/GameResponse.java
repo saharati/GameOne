@@ -35,7 +35,7 @@ public final class GameResponse extends PacketReader<Client>
 			switch (_gameId)
 			{
 				case CHECKERS:
-				case CHESS:
+				case CHESS_MP:
 				case LAMA:
 					Client.getInstance().sendPacket(new RequestWaitingRoom(_gameId));
 					break;
@@ -61,7 +61,7 @@ public final class GameResponse extends PacketReader<Client>
 			switch (_gameId)
 			{
 				case CHECKERS:
-				case CHESS:
+				case CHESS_MP:
 				case LAMA:
 					Client.getInstance().sendPacket(new RequestWaitingRoom(_gameId));
 					break;

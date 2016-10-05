@@ -1,8 +1,6 @@
 package chess.objects;
 
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -23,10 +21,11 @@ public final class Bishop extends AbstractObject
 	}
 	
 	@Override
-	public List<ChessCell> getRoute()
+	public void buildPath()
 	{
+		_path.clear();
+		
 		final ChessCell myCell = BOARD.getCell(this);
-		final List<ChessCell> path = new ArrayList<>();
 		// Main Diagonal
 		for (int x = myCell.getCellX() + 1, y = myCell.getCellY() + 1;x < 8 && y < 8;x++, y++)
 		{
@@ -34,13 +33,11 @@ public final class Bishop extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
 		for (int x = myCell.getCellX() - 1, y = myCell.getCellY() - 1;x >= 0 && y >= 0;x--, y--)
 		{
@@ -48,13 +45,11 @@ public final class Bishop extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
 		// Sub Diagonal
 		for (int x = myCell.getCellX() + 1, y = myCell.getCellY() - 1;x < 8 && y >= 0;x++, y--)
@@ -63,13 +58,11 @@ public final class Bishop extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
 		for (int x = myCell.getCellX() - 1, y = myCell.getCellY() + 1;x >= 0 && y < 8;x--, y++)
 		{
@@ -77,16 +70,12 @@ public final class Bishop extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
-		
-		return path;
 	}
 	
 	@Override

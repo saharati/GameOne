@@ -51,10 +51,10 @@ public final class ChessPromotion extends JPanel
 			{
 				final ChessCell white = new ChessCell(0, 0, i % 2 == 0);
 				white.setObject((AbstractObject) classes[i].getConstructors()[0].newInstance(0, 0, "white"), false);
-				white.addMouseListener(new MakeChoice(white.getObject()));
+				white.addMouseListener(new MakeChoice(classes[i].getSimpleName()));
 				final ChessCell black = new ChessCell(0, 0, i % 2 == 0);
 				black.setObject((AbstractObject) classes[i].getConstructors()[0].newInstance(0, 0, "black"), false);
-				black.addMouseListener(new MakeChoice(black.getObject()));
+				black.addMouseListener(new MakeChoice(classes[i].getSimpleName()));
 				
 				optionsWhite.add(white);
 				optionsBlack.add(black);
@@ -93,17 +93,17 @@ public final class ChessPromotion extends JPanel
 	
 	private class MakeChoice extends MouseAdapter
 	{
-		private final AbstractObject _object;
+		private final String _className;
 		
-		protected MakeChoice(final AbstractObject object)
+		protected MakeChoice(final String className)
 		{
-			_object = object;
+			_className = className;
 		}
 		
 		@Override
 		public void mousePressed(final MouseEvent me)
 		{
-			ChessBoard.getInstance().changeTurnAfterPromotion(_object, _oldX, _oldY, _newX, _newY);
+			ChessBoard.getInstance().changeTurnAfterPromotion(_className, _oldX, _oldY, _newX, _newY);
 			ChessScreen.getInstance().switchPanel(ChessScreen.BOARD);
 		}
 	}

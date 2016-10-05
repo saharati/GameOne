@@ -1,7 +1,6 @@
 package chess.objects;
 
 import java.awt.Image;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -24,10 +23,11 @@ public final class King extends AbstractObject
 	}
 	
 	@Override
-	public List<ChessCell> getRoute()
+	public void buildPath()
 	{
+		_path.clear();
+		
 		final ChessCell myCell = BOARD.getCell(this);
-		final List<ChessCell> path = new ArrayList<>();
 		for (int x = myCell.getCellX() - 1;x <= myCell.getCellX() + 1;x++)
 		{
 			for (int y = myCell.getCellY() - 1;y <= myCell.getCellY() + 1;y++)
@@ -39,34 +39,27 @@ public final class King extends AbstractObject
 				if (x < 0 || y < 0 || x >= 8 || y >= 8)
 					continue;
 				
-				final ChessCell targetCell = BOARD.getCell(x, y);
-				final AbstractObject targetObj = targetCell.getObject();
-				// If cell isn't owned by anyone or is owned by enemy.
-				if (targetObj == null || !targetObj.isAlly(this))
-				{
-					// Move king to target cell temporary.
-					myCell.setObject(null, false);
-					targetCell.setObject(this, false);
-					
-					// Check if it cannot be eaten after moving.
-					if (!BOARD.canBeEaten(this))
-						path.add(targetCell);
-					
-					// Add back previous object.
-					myCell.setObject(this, false);
-					targetCell.setObject(targetObj, false);
-				}
+				_path.add(BOARD.getCell(x, y));
 			}
 		}
+	}
+	
+	@Override
+	public void validatePath()
+	{
+		for (final ChessCell cell : _path)
+			if (BOARD.canBeSeenBy(getEnemy(), cell))
+				_path.remove(cell);
 		
 		// Castling move.
-		if (!hasMoved() && BOARD.getCheckStatus(this, path.size() > 0) == CheckStatus.NOT_UNDER_CHECK)
+		final ChessCell myCell = BOARD.getCell(this);
+		if (!hasMoved() && getCheckStatus() == CheckStatus.NOT_UNDER_CHECK)
 		{
 			final ChessCell leftRookCell = BOARD.getCell(myCell.getCellX(), 0);
 			final ChessCell rightRookCell = BOARD.getCell(myCell.getCellX(), 7);
 			
 			// Check that left object is still a Rook, hasn't moved, cannot be eaten and can see all the way to the king.
-			if (leftRookCell.getObject() instanceof Rook && !leftRookCell.getObject().hasMoved() && leftRookCell.getObject().canSeeTarget(this) && !BOARD.canBeEaten(leftRookCell.getObject()))
+			if (leftRookCell.getObject() instanceof Rook && !leftRookCell.getObject().hasMoved() && leftRookCell.getObject().canSee(myCell))
 			{
 				// All way must be clear from enemies.
 				boolean clear = true;
@@ -79,10 +72,10 @@ public final class King extends AbstractObject
 					}
 				}
 				if (clear)
-					path.add(BOARD.getCell(myCell.getCellX(), 2));
+					_path.add(BOARD.getCell(myCell.getCellX(), 2));
 			}
 			// Check that right object is still a Rook, hasn't moved, cannot be eaten and can see all the way to the king.
-			if (rightRookCell.getObject() instanceof Rook && !rightRookCell.getObject().hasMoved() && rightRookCell.getObject().canSeeTarget(this) && !BOARD.canBeEaten(rightRookCell.getObject()))
+			if (rightRookCell.getObject() instanceof Rook && !rightRookCell.getObject().hasMoved() && rightRookCell.getObject().canSee(myCell))
 			{
 				// All way must be clear from enemies.
 				boolean clear = true;
@@ -95,11 +88,9 @@ public final class King extends AbstractObject
 					}
 				}
 				if (clear)
-					path.add(BOARD.getCell(myCell.getCellX(), 6));
+					_path.add(BOARD.getCell(myCell.getCellX(), 6));
 			}
 		}
-		
-		return path;
 	}
 	
 	@Override
@@ -115,5 +106,27 @@ public final class King extends AbstractObject
 	public int getScore()
 	{
 		return 0;
+	}
+	
+	public CheckStatus getCheckStatus()
+	{
+		final List<ChessCell> attackers = BOARD.getThreateningCells(this);
+		if (!attackers.isEmpty())
+		{
+			// If king can move somewhere, its a check.
+			if (!getPossiblePath().isEmpty())
+				return CheckStatus.UNDER_CHECK;
+			// If target can be eaten, its a check.
+			if (BOARD.canBeEaten(attackers.get(0).getObject()))
+				return CheckStatus.UNDER_CHECK;
+			// If target can be blocked, its a check.
+			final List<ChessCell> pathToKing = attackers.get(0).getObject().getPathTo(this);
+			if (BOARD.canBeBlocked(this, pathToKing))
+				return CheckStatus.UNDER_CHECK;
+			
+			return CheckStatus.UNDER_CHECKMATE;
+		}
+		
+		return CheckStatus.NOT_UNDER_CHECK;
 	}
 }

@@ -1,8 +1,6 @@
 package chess.objects;
 
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -23,10 +21,11 @@ public final class Rook extends AbstractObject
 	}
 	
 	@Override
-	public List<ChessCell> getRoute()
+	public void buildPath()
 	{
+		_path.clear();
+		
 		final ChessCell myCell = BOARD.getCell(this);
-		final List<ChessCell> path = new ArrayList<>();
 		// Horizontal
 		for (int x = myCell.getCellX() + 1;x < 8;x++)
 		{
@@ -34,13 +33,11 @@ public final class Rook extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
 		for (int x = myCell.getCellX() - 1;x >= 0;x--)
 		{
@@ -48,13 +45,11 @@ public final class Rook extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
 		// Vertical
 		for (int y = myCell.getCellY() + 1;y < 8;y++)
@@ -63,13 +58,11 @@ public final class Rook extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
 		for (int y = myCell.getCellY() - 1;y >= 0;y--)
 		{
@@ -77,16 +70,12 @@ public final class Rook extends AbstractObject
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
-				if (!targetObj.isAlly(this))
-					path.add(targetCell);
-				
+				_path.add(targetCell);
 				break;
 			}
 			
-			path.add(targetCell);
+			_path.add(targetCell);
 		}
-		
-		return path;
 	}
 	
 	@Override

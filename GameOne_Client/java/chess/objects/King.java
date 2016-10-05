@@ -23,7 +23,7 @@ public final class King extends AbstractObject
 	}
 	
 	@Override
-	public void buildPaths()
+	public void buildPaths(final boolean isEnemy)
 	{
 		// No extended path since it can only go 1 spot toward each direction.
 		_path.clear();

@@ -145,9 +145,9 @@ public final class ChessBoard extends JPanel
 		
 		// Build paths, enemies first.
 		for (final AbstractObject obj : _enemies)
-			obj.buildPaths();
+			obj.buildPaths(true);
 		for (final AbstractObject obj : _allies)
-			obj.buildPaths();
+			obj.buildPaths(false);
 		// Validate paths for ally soldiers only.
 		for (final AbstractObject obj : _allies)
 			obj.validatePath();
@@ -362,9 +362,9 @@ public final class ChessBoard extends JPanel
 		
 		// Build paths, enemies first.
 		for (final AbstractObject obj : _enemies)
-			obj.buildPaths();
+			obj.buildPaths(true);
 		for (final AbstractObject obj : _allies)
-			obj.buildPaths();
+			obj.buildPaths(false);
 		// Validate paths for ally soldiers only.
 		for (final AbstractObject obj : _allies)
 			obj.validatePath();

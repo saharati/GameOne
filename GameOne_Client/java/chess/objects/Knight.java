@@ -30,7 +30,7 @@ public final class Knight extends AbstractObject
 	}
 	
 	@Override
-	public void buildPaths()
+	public void buildPaths(final boolean isEnemy)
 	{
 		// No extended path since knight jumps directly to final destinations.
 		_path.clear();

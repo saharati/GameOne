@@ -136,7 +136,7 @@ public abstract class AbstractObject
 				for (int y = from.getCellY() + 1;y < to.getCellY();y++)
 					path.add(BOARD.getCell(from.getCellX(), y));
 			else
-				for (int y = to.getCellY() - 1;y > from.getCellY();y--)
+				for (int y = from.getCellY() - 1;y > to.getCellY();y--)
 					path.add(BOARD.getCell(from.getCellX(), y));
 		}
 		// Vertical
@@ -146,7 +146,7 @@ public abstract class AbstractObject
 				for (int x = from.getCellX() + 1;x < to.getCellX();x++)
 					path.add(BOARD.getCell(x, from.getCellY()));
 			else
-				for (int x = to.getCellX() - 1;x > from.getCellX();x--)
+				for (int x = from.getCellX() - 1;x > to.getCellX();x--)
 					path.add(BOARD.getCell(x, from.getCellY()));
 		}
 		// Main Diagonal
@@ -154,14 +154,14 @@ public abstract class AbstractObject
 			for (int x = from.getCellX() + 1, y = from.getCellY() + 1;x < to.getCellX() && y < to.getCellY();x++, y++)
 				path.add(BOARD.getCell(x, y));
 		else if (from.getCellX() > to.getCellX() && from.getCellY() > to.getCellY())
-			for (int x = to.getCellX() - 1, y = to.getCellY() - 1;x > from.getCellX() && y > from.getCellY();x--, y--)
+			for (int x = from.getCellX() - 1, y = from.getCellY() - 1;x > to.getCellX() && y > to.getCellY();x--, y--)
 				path.add(BOARD.getCell(x, y));
 		// Sub Diagonal
 		else if (from.getCellX() < to.getCellX() && from.getCellY() > to.getCellY())
-			for (int x = from.getCellX() + 1, y = to.getCellY() - 1;x < to.getCellX() && y > from.getCellY();x++, y--)
+			for (int x = from.getCellX() + 1, y = from.getCellY() - 1;x < to.getCellX() && y > to.getCellY();x++, y--)
 				path.add(BOARD.getCell(x, y));
 		else if (from.getCellX() > to.getCellX() && from.getCellY() < to.getCellY())
-			for (int x = to.getCellX() - 1, y = from.getCellY() + 1;x > from.getCellX() && y < to.getCellY();x--, y++)
+			for (int x = from.getCellX() - 1, y = from.getCellY() + 1;x > to.getCellX() && y < to.getCellY();x--, y++)
 				path.add(BOARD.getCell(x, y));
 		
 		return path;
@@ -209,7 +209,7 @@ public abstract class AbstractObject
 					{
 						// Do not allow this soldier to leave the path.
 						for (final ChessCell cell : getPathToShow())
-							if (!pathTo.contains(cell))
+							if (cell != attacker && !pathTo.contains(cell))
 								_path.remove(cell);
 					}
 				}
@@ -217,7 +217,7 @@ public abstract class AbstractObject
 		}
 	}
 	
-	public abstract void buildPaths();
+	public abstract void buildPaths(final boolean isEnemy);
 	
 	public abstract Image getImage();
 	

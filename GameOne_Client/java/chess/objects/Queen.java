@@ -21,7 +21,7 @@ public final class Queen extends AbstractObject
 	}
 	
 	@Override
-	public void buildPaths()
+	public void buildPaths(final boolean isEnemy)
 	{
 		_path.clear();
 		_extendedPath.clear();

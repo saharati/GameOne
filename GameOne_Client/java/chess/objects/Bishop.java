@@ -21,61 +21,109 @@ public final class Bishop extends AbstractObject
 	}
 	
 	@Override
-	public void buildPath()
+	public void buildPaths()
 	{
 		_path.clear();
+		_extendedPath.clear();
 		
 		final ChessCell myCell = BOARD.getCell(this);
+		
 		// Main Diagonal
+		boolean buildExtended = false;
 		for (int x = myCell.getCellX() + 1, y = myCell.getCellY() + 1;x < 8 && y < 8;x++, y++)
 		{
 			final ChessCell targetCell = BOARD.getCell(x, y);
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
+		buildExtended = false;
 		for (int x = myCell.getCellX() - 1, y = myCell.getCellY() - 1;x >= 0 && y >= 0;x--, y--)
 		{
 			final ChessCell targetCell = BOARD.getCell(x, y);
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
 		// Sub Diagonal
+		buildExtended = false;
 		for (int x = myCell.getCellX() + 1, y = myCell.getCellY() - 1;x < 8 && y >= 0;x++, y--)
 		{
 			final ChessCell targetCell = BOARD.getCell(x, y);
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
+		buildExtended = false;
 		for (int x = myCell.getCellX() - 1, y = myCell.getCellY() + 1;x >= 0 && y < 8;x--, y++)
 		{
 			final ChessCell targetCell = BOARD.getCell(x, y);
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
+		
+		_extendedPath.addAll(_path);
 	}
 	
 	@Override

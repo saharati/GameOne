@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,6 +66,9 @@ public final class ChessBoard extends JPanel
 		}
 	}
 	
+	private final List<AbstractObject> _allies = new CopyOnWriteArrayList<>();
+	private final List<AbstractObject> _enemies = new CopyOnWriteArrayList<>();
+	
 	private final ChessCell[][] _cells = new ChessCell[8][8];
 	private final int[] _inPassing = {-1, -1};
 	private String _myColor;
@@ -112,29 +116,40 @@ public final class ChessBoard extends JPanel
 		revalidate();
 		
 		// Reset all cells.
+		_allies.clear();
+		_enemies.clear();
 		for (final ChessCell[] cells : _cells)
 		{
 			for (final ChessCell cell : cells)
 			{
-				cell.setObject(null, false);
+				cell.setObject(null);
 				cell.setBackground(cell.getBackgroundColor());
 			}
 		}
 		for (final AbstractObject obj : SOLDIERS)
 		{
-			if (obj instanceof King && obj.getOwner().equals(_myColor))
-				_myKing = (King) obj;
+			if (obj.getOwner().equals(_myColor))
+			{
+				_allies.add(obj);
+				
+				if (obj instanceof King)
+					_myKing = (King) obj;
+			}
+			else
+				_enemies.add(obj);
 			
 			obj.setMoved(false);
 			
-			_cells[obj.getInitialX()][obj.getInitialY()].setObject(obj, false);
+			_cells[obj.getInitialX()][obj.getInitialY()].setObject(obj);
 		}
 		
-		// Build and validate paths.
-		// Yes, this must be done separately!
-		for (final AbstractObject obj : SOLDIERS)
-			obj.buildPath();
-		for (final AbstractObject obj : SOLDIERS)
+		// Build paths, enemies first.
+		for (final AbstractObject obj : _enemies)
+			obj.buildPaths();
+		for (final AbstractObject obj : _allies)
+			obj.buildPaths();
+		// Validate paths for ally soldiers only.
+		for (final AbstractObject obj : _allies)
 			obj.validatePath();
 	}
 	
@@ -168,7 +183,7 @@ public final class ChessBoard extends JPanel
 		return _myKing;
 	}
 	
-	public List<ChessCell> getThreateningCells(AbstractObject threatended)
+	public List<ChessCell> getThreateningCells(final AbstractObject threatended)
 	{
 		final List<ChessCell> threatCells = new ArrayList<>();
 		for (final ChessCell[] cells : _cells)
@@ -239,10 +254,13 @@ public final class ChessBoard extends JPanel
 	{
 		try
 		{
-			final AbstractObject newObj = (AbstractObject) Class.forName(PACKAGE_PATH + className).getConstructors()[0].newInstance(newX, newY, _myColor);
+			final AbstractObject newObj = (AbstractObject) Class.forName(PACKAGE_PATH + className).getConstructors()[0].newInstance(0, 0, _myColor);
 			newObj.setMoved(true);
 			
-			_cells[newX][newY].setObject(newObj, true);
+			_allies.remove(_cells[newX][newY].getObject());
+			_allies.add(newObj);
+			
+			_cells[newX][newY].setObject(newObj);
 			
 			_selectedCell = null;
 			_inPassing[0] = _inPassing[1] = -1;
@@ -297,7 +315,9 @@ public final class ChessBoard extends JPanel
 					_cells[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
 				}
 				
-				_cells[moves[i][2]][moves[i][3]].setObject(null, true);
+				_allies.remove(_cells[moves[i][2]][moves[i][3]]);
+				
+				_cells[moves[i][2]][moves[i][3]].setObject(null);
 			}
 			else
 			{
@@ -308,11 +328,14 @@ public final class ChessBoard extends JPanel
 				}
 				
 				final AbstractObject moved = _cells[moves[i][0]][moves[i][1]].getObject();
-				_cells[moves[i][0]][moves[i][1]].setObject(null, true);
+				_cells[moves[i][0]][moves[i][1]].setObject(null);
+				
+				if (_cells[moves[i][2]][moves[i][3]].getObject() != null)
+					_allies.remove(_cells[moves[i][2]][moves[i][3]].getObject());
 				
 				if (moved.getClass().getSimpleName().equals(images[i]))
 				{
-					_cells[moves[i][2]][moves[i][3]].setObject(moved, true);
+					_cells[moves[i][2]][moves[i][3]].setObject(moved);
 					
 					moved.setMoved(true);
 				}
@@ -324,7 +347,10 @@ public final class ChessBoard extends JPanel
 						final AbstractObject newObj = (AbstractObject) Class.forName(PACKAGE_PATH + images[i]).getConstructors()[0].newInstance(0, 0, moved.getOwner());
 						newObj.setMoved(true);
 						
-						_cells[moves[i][2]][moves[i][3]].setObject(newObj, true);
+						_enemies.remove(moved);
+						_enemies.add(newObj);
+						
+						_cells[moves[i][2]][moves[i][3]].setObject(newObj);
 					}
 					catch (final SecurityException | ClassNotFoundException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e)
 					{
@@ -334,16 +360,14 @@ public final class ChessBoard extends JPanel
 			}
 		}
 		
-		// Build and validate paths.
-		// Yes, this must be done separately!
-		for (final ChessCell[] cells : _cells)
-			for (final ChessCell cell : cells)
-				if (cell.getObject() != null)
-					cell.getObject().buildPath();
-		for (final ChessCell[] cells : _cells)
-			for (final ChessCell cell : cells)
-				if (cell.getObject() != null)
-					cell.getObject().validatePath();
+		// Build paths, enemies first.
+		for (final AbstractObject obj : _enemies)
+			obj.buildPaths();
+		for (final AbstractObject obj : _allies)
+			obj.buildPaths();
+		// Validate paths for ally soldiers only.
+		for (final AbstractObject obj : _allies)
+			obj.validatePath();
 		
 		if (Config.GAME_BEEP)
 			Toolkit.getDefaultToolkit().beep();
@@ -386,7 +410,7 @@ public final class ChessBoard extends JPanel
 	{
 		for (final ChessCell[] cells : _cells)
 			for (final ChessCell cell : cells)
-				if (cell.getObject() != null && cell.getObject().getOwner().equals(_myColor) && !cell.getObject().getPossiblePath().isEmpty())
+				if (cell.getObject() != null && cell.getObject().getOwner().equals(_myColor) && !cell.getObject().getPathToShow().isEmpty())
 					return;
 		
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
@@ -415,7 +439,7 @@ public final class ChessBoard extends JPanel
 				return;
 			}
 			
-			final List<ChessCell> route = cell.getObject().getPossiblePath();
+			final List<ChessCell> route = cell.getObject().getPathToShow();
 			if (route.isEmpty())
 			{
 				JOptionPane.showMessageDialog(null, "This soldier cannot move anywhere.", "Cannot move", JOptionPane.ERROR_MESSAGE);
@@ -432,7 +456,7 @@ public final class ChessBoard extends JPanel
 		else if (_selectedCell == cell)
 		{
 			if (GameConfig.CHESS_PAINT_ROUTE)
-				for (final ChessCell routeCell : cell.getObject().getPossiblePath())
+				for (final ChessCell routeCell : cell.getObject().getPathToShow())
 					routeCell.setBackground(routeCell.getBackgroundColor());
 			cell.setBackground(cell.getBackgroundColor());
 			
@@ -440,7 +464,7 @@ public final class ChessBoard extends JPanel
 		}
 		else
 		{
-			final List<ChessCell> route = _selectedCell.getObject().getPossiblePath();
+			final List<ChessCell> route = _selectedCell.getObject().getPathToShow();
 			if (!route.contains(cell))
 			{
 				JOptionPane.showMessageDialog(null, "This soldier cannot move to this location.", "Cannot move", JOptionPane.ERROR_MESSAGE);
@@ -448,8 +472,12 @@ public final class ChessBoard extends JPanel
 			}
 			
 			final AbstractObject selectedObject = _selectedCell.getObject();
-			_selectedCell.setObject(null, true);
-			cell.setObject(selectedObject, true);
+			_selectedCell.setObject(null);
+			
+			if (cell.getObject() != null)
+				_enemies.remove(cell.getObject());
+			
+			cell.setObject(selectedObject);
 			
 			for (final ChessCell[] cells : _cells)
 				for (final ChessCell c : cells)
@@ -471,8 +499,8 @@ public final class ChessBoard extends JPanel
 						moves[0][2] = cell.getCellX();
 						moves[0][3] = 5;
 						
-						_cells[cell.getCellX()][5].setObject(_cells[cell.getCellX()][7].getObject(), true);
-						_cells[cell.getCellX()][7].setObject(null, true);
+						_cells[cell.getCellX()][5].setObject(_cells[cell.getCellX()][7].getObject());
+						_cells[cell.getCellX()][7].setObject(null);
 						
 						_cells[cell.getCellX()][5].getObject().setMoved(true);
 					}
@@ -485,8 +513,8 @@ public final class ChessBoard extends JPanel
 						moves[0][2] = cell.getCellX();
 						moves[0][3] = 3;
 						
-						_cells[cell.getCellX()][3].setObject(_cells[cell.getCellX()][0].getObject(), true);
-						_cells[cell.getCellX()][0].setObject(null, true);
+						_cells[cell.getCellX()][3].setObject(_cells[cell.getCellX()][0].getObject());
+						_cells[cell.getCellX()][0].setObject(null);
 						
 						_cells[cell.getCellX()][3].getObject().setMoved(true);
 					}
@@ -505,8 +533,13 @@ public final class ChessBoard extends JPanel
 							return;
 						}
 						
-						cell.setObject(new Queen(0, 0, selectedObject.getOwner()), true);
-						cell.getObject().setMoved(true);
+						final Queen queen = new Queen(0, 0, selectedObject.getOwner());
+						queen.setMoved(true);
+						
+						_allies.remove(cell.getObject());
+						_allies.add(queen);
+						
+						cell.setObject(queen);
 					}
 					// EnPassing creation, if a pawn tries to avoid a kill by enemy pawn going 2 steps forward.
 					// Then enemy pawn can go behind it to make a kill.
@@ -538,7 +571,9 @@ public final class ChessBoard extends JPanel
 					// EnPassing kill.
 					else if (_inPassing[0] != -1 && _inPassing[1] != -1 && _inPassing[0] == cell.getCellX() && _inPassing[1] == cell.getCellY())
 					{
-						_cells[cell.getCellX() + 1][cell.getCellY()].setObject(null, true);
+						_enemies.remove(_cells[cell.getCellX() + 1][cell.getCellY()].getObject());
+						
+						_cells[cell.getCellX() + 1][cell.getCellY()].setObject(null);
 						
 						images[0] = "inPassing_kill";
 						
@@ -559,8 +594,13 @@ public final class ChessBoard extends JPanel
 							return;
 						}
 						
-						cell.setObject(new Queen(0, 0, selectedObject.getOwner()), true);
-						cell.getObject().setMoved(true);
+						final Queen queen = new Queen(0, 0, selectedObject.getOwner());
+						queen.setMoved(true);
+						
+						_allies.remove(cell.getObject());
+						_allies.add(queen);
+						
+						cell.setObject(queen);
 					}
 					// EnPassing creation, if a pawn tries to avoid a kill by enemy pawn going 2 steps forward.
 					// Then enemy pawn can go behind it to make a kill.
@@ -592,7 +632,9 @@ public final class ChessBoard extends JPanel
 					// EnPassing kill.
 					else if (_inPassing[0] != -1 && _inPassing[1] != -1 && _inPassing[0] == cell.getCellX() && _inPassing[1] == cell.getCellY())
 					{
-						_cells[cell.getCellX() - 1][cell.getCellY()].setObject(null, true);
+						_enemies.remove(_cells[cell.getCellX() - 1][cell.getCellY()].getObject());
+						
+						_cells[cell.getCellX() - 1][cell.getCellY()].setObject(null);
 						
 						images[0] = "inPassing_kill";
 						

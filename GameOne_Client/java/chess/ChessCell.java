@@ -55,12 +55,11 @@ public final class ChessCell extends JButton
 		return _object;
 	}
 	
-	public void setObject(final AbstractObject object, final boolean update)
+	public void setObject(final AbstractObject object)
 	{
 		_object = object;
 		
-		if (update)
-			repaint();
+		repaint();
 	}
 	
 	@Override

@@ -50,10 +50,10 @@ public final class ChessPromotion extends JPanel
 			try
 			{
 				final ChessCell white = new ChessCell(0, 0, i % 2 == 0);
-				white.setObject((AbstractObject) classes[i].getConstructors()[0].newInstance(0, 0, "white"), false);
+				white.setObject((AbstractObject) classes[i].getConstructors()[0].newInstance(0, 0, "white"));
 				white.addMouseListener(new MakeChoice(classes[i].getSimpleName()));
 				final ChessCell black = new ChessCell(0, 0, i % 2 == 0);
-				black.setObject((AbstractObject) classes[i].getConstructors()[0].newInstance(0, 0, "black"), false);
+				black.setObject((AbstractObject) classes[i].getConstructors()[0].newInstance(0, 0, "black"));
 				black.addMouseListener(new MakeChoice(classes[i].getSimpleName()));
 				
 				optionsWhite.add(white);

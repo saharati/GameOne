@@ -21,61 +21,109 @@ public final class Rook extends AbstractObject
 	}
 	
 	@Override
-	public void buildPath()
+	public void buildPaths()
 	{
 		_path.clear();
+		_extendedPath.clear();
 		
 		final ChessCell myCell = BOARD.getCell(this);
+		
 		// Horizontal
+		boolean buildExtended = false;
 		for (int x = myCell.getCellX() + 1;x < 8;x++)
 		{
 			final ChessCell targetCell = BOARD.getCell(x, myCell.getCellY());
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
+		buildExtended = false;
 		for (int x = myCell.getCellX() - 1;x >= 0;x--)
 		{
 			final ChessCell targetCell = BOARD.getCell(x, myCell.getCellY());
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
 		// Vertical
+		buildExtended = false;
 		for (int y = myCell.getCellY() + 1;y < 8;y++)
 		{
 			final ChessCell targetCell = BOARD.getCell(myCell.getCellX(), y);
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
+		buildExtended = false;
 		for (int y = myCell.getCellY() - 1;y >= 0;y--)
 		{
 			final ChessCell targetCell = BOARD.getCell(myCell.getCellX(), y);
 			final AbstractObject targetObj = targetCell.getObject();
 			if (targetObj != null)
 			{
+				if (buildExtended)
+				{
+					_extendedPath.add(targetCell);
+					break;
+				}
+				
 				_path.add(targetCell);
-				break;
+				buildExtended = true;
+				continue;
 			}
 			
-			_path.add(targetCell);
+			if (buildExtended)
+				_extendedPath.add(targetCell);
+			else
+				_path.add(targetCell);
 		}
+		
+		_extendedPath.addAll(_path);
 	}
 	
 	@Override

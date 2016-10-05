@@ -23,8 +23,9 @@ public final class King extends AbstractObject
 	}
 	
 	@Override
-	public void buildPath()
+	public void buildPaths()
 	{
+		// No extended path since it can only go 1 spot toward each direction.
 		_path.clear();
 		
 		final ChessCell myCell = BOARD.getCell(this);
@@ -114,7 +115,7 @@ public final class King extends AbstractObject
 		if (!attackers.isEmpty())
 		{
 			// If king can move somewhere, its a check.
-			if (!getPossiblePath().isEmpty())
+			if (!getPathToShow().isEmpty())
 				return CheckStatus.UNDER_CHECK;
 			// If target can be eaten, its a check.
 			if (BOARD.canBeEaten(attackers.get(0).getObject()))

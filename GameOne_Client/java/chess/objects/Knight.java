@@ -30,8 +30,9 @@ public final class Knight extends AbstractObject
 	}
 	
 	@Override
-	public void buildPath()
+	public void buildPaths()
 	{
+		// No extended path since knight jumps directly to final destinations.
 		_path.clear();
 		
 		final ChessCell myCell = BOARD.getCell(this);

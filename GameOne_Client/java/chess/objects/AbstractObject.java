@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import chess.CheckStatus;
 import chess.ChessBoard;
 import chess.ChessCell;
 
@@ -18,7 +17,10 @@ public abstract class AbstractObject
 	protected static final ChessBoard BOARD = ChessBoard.getInstance();
 	protected static final String IMAGE_PATH = "./images/chess/";
 	
+	// Path up to nearest available player, including that player.
 	protected final List<ChessCell> _path = new CopyOnWriteArrayList<>();
+	// The same as _path, just with 1 more object visible beyond the first one (if any).
+	protected final List<ChessCell> _extendedPath = new CopyOnWriteArrayList<>();
 	
 	private final int _initialX;
 	private final int _initialY;
@@ -68,15 +70,30 @@ public abstract class AbstractObject
 		_hasMoved = moved;
 	}
 	
-	public final List<ChessCell> getFullPath()
+	public final List<ChessCell> getPathToShow()
+	{
+		final List<ChessCell> path = new ArrayList<>();
+		for (final ChessCell cell : _path)
+			if (cell.getObject() == null || !cell.getObject().isAlly(getOwner()))
+				path.add(cell);
+		
+		return path;
+	}
+	
+	public final List<ChessCell> getPathIncludingAllies()
 	{
 		return _path;
+	}
+	
+	public final List<ChessCell> getExtendedPath()
+	{
+		return _extendedPath;
 	}
 	
 	public final List<AbstractObject> getEatableTargets()
 	{
 		final List<AbstractObject> objects = new ArrayList<>();
-		for (final ChessCell cell : getPossiblePath())
+		for (final ChessCell cell : getPathToShow())
 			if (cell.getObject() != null)
 				objects.add(cell.getObject());
 		
@@ -88,6 +105,15 @@ public abstract class AbstractObject
 		return getEatableTargets().contains(target);
 	}
 	
+	public final boolean canBlock(final List<ChessCell> pathToKing)
+	{
+		for (final ChessCell cell : getPathToShow())
+			if (pathToKing.contains(cell))
+				return true;
+		
+		return false;
+	}
+	
 	public final boolean canSee(final ChessCell target)
 	{
 		if (target.getObject() == null)
@@ -95,26 +121,7 @@ public abstract class AbstractObject
 		if (isAlly(target.getObject().getOwner()))
 			return _path.contains(target);
 		
-		return getPossiblePath().contains(target);
-	}
-	
-	public final boolean canBlock(final List<ChessCell> pathToKing)
-	{
-		for (final ChessCell cell : getPossiblePath())
-			if (pathToKing.contains(cell))
-				return true;
-		
-		return false;
-	}
-	
-	public List<ChessCell> getPossiblePath()
-	{
-		final List<ChessCell> path = new ArrayList<>();
-		for (final ChessCell cell : _path)
-			if (cell.getObject() == null || !cell.getObject().isAlly(getOwner()))
-				path.add(cell);
-		
-		return path;
+		return getPathToShow().contains(target);
 	}
 	
 	public List<ChessCell> getPathTo(final King king)
@@ -162,54 +169,55 @@ public abstract class AbstractObject
 	
 	public void validatePath()
 	{
-		final ChessCell myCell = BOARD.getCell(this);
 		final King king = BOARD.getMyKing();
 		final List<ChessCell> threats = BOARD.getThreateningCells(king);
+		// If someone has king on target.
 		if (!threats.isEmpty())
 		{
-			final List<ChessCell> pathToKing = threats.get(0).getObject().getPathTo(king);
+			// Only 1 can threat king at a certain point.
+			final AbstractObject threat = threats.get(0).getObject();
+			// Get its path to the king.
+			final List<ChessCell> pathToKing = threat.getPathTo(king);
 			
-			// If can't block path, then can't go anywhere.
-			if (!canBlock(pathToKing) && !canEat(threats.get(0).getObject()))
-				_path.removeAll(getPossiblePath());
+			// If can't block AND can't eat, this soldier is paralyzed.
+			if (!canBlock(pathToKing) && !canEat(threat))
+				_path.removeAll(getPathToShow());
 			// Allow only the paths that can block the way to king.
 			else
 			{
-				for (final ChessCell cell : getPossiblePath())
-					if (!pathToKing.contains(cell))
+				for (final ChessCell cell : getPathToShow())
+					if (!pathToKing.contains(cell) && cell != threats.get(0))
 						_path.remove(cell);
 			}
 		}
+		// Nobody has king on target.
 		else
 		{
 			final List<ChessCell> attackers = BOARD.getThreateningCells(this);
+			// If this soldier has attackers.
 			if (!attackers.isEmpty())
 			{
-				// Try moving the knight temporary to each cell in its path and check that it doesn't reveal the king to a check.
-				myCell.setObject(null, false);
-				for (final ChessCell cell : getPossiblePath())
+				final ChessCell myCell = BOARD.getCell(this);
+				final ChessCell kingCell = BOARD.getCell(king);
+				// Iterate attackers.
+				for (final ChessCell attacker : attackers)
 				{
-					final AbstractObject cellObj = cell.getObject();
-					
-					cell.setObject(this, false);
-					
-					// Rebuild paths for attackers after this object has temporary moved to see if it reavels king to attack.
-					attackers.forEach(attacker -> attacker.getObject().buildPath());
-					
-					if (king.getCheckStatus() != CheckStatus.NOT_UNDER_CHECK)
-						_path.remove(cell);
-					
-					cell.setObject(cellObj, false);
+					final List<ChessCell> extendedPath = attacker.getObject().getExtendedPath();
+					final List<ChessCell> pathTo = attacker.getObject().getPathTo(king);
+					// If attacker has king on his extended path AND this soldier is on path.
+					if (extendedPath.contains(kingCell) && pathTo.contains(myCell))
+					{
+						// Do not allow this soldier to leave the path.
+						for (final ChessCell cell : getPathToShow())
+							if (!pathTo.contains(cell))
+								_path.remove(cell);
+					}
 				}
-				myCell.setObject(this, false);
-				
-				// Finally put back paths to how they were before moving.
-				attackers.forEach(attacker -> attacker.getObject().buildPath());
 			}
 		}
 	}
 	
-	public abstract void buildPath();
+	public abstract void buildPaths();
 	
 	public abstract Image getImage();
 	

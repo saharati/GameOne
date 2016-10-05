@@ -3,14 +3,23 @@ package chess;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import chess.objects.AbstractObject;
+import chess.objects.Bishop;
+import chess.objects.King;
+import chess.objects.Knight;
+import chess.objects.Pawn;
+import chess.objects.Queen;
+import chess.objects.Rook;
 import client.Client;
 import configs.Config;
 import configs.GameConfig;
@@ -25,105 +34,231 @@ import objects.GameResult;
 public final class ChessBoard extends JPanel
 {
 	private static final long serialVersionUID = 1436714889444297854L;
+	private static final Logger LOGGER = Logger.getLogger(ChessBoard.class.getName());
 	
-	private enum CheckStatus
-	{
-		NOT_UNDER_CHECK,
-		UNDER_CHECK,
-		UNDER_CHECKMATE
-	}
-	
-	private static final int BOARD_SIZE = 8;
-	private static final String[][] BOARD_SOLDIERS = new String[BOARD_SIZE][BOARD_SIZE];
+	private static final String PACKAGE_PATH = "chess.objects.";
+	private static final List<AbstractObject> SOLDIERS = new ArrayList<>();
 	static
 	{
-		BOARD_SOLDIERS[0][4] = "king-black";
-		BOARD_SOLDIERS[7][4] = "king-white";
-		BOARD_SOLDIERS[0][3] = "queen-black";
-		BOARD_SOLDIERS[7][3] = "queen-white";
-		BOARD_SOLDIERS[0][2] = "bishop-black";
-		BOARD_SOLDIERS[0][5] = "bishop-black";
-		BOARD_SOLDIERS[7][2] = "bishop-white";
-		BOARD_SOLDIERS[7][5] = "bishop-white";
-		BOARD_SOLDIERS[0][1] = "knight-black";
-		BOARD_SOLDIERS[0][6] = "knight-black";
-		BOARD_SOLDIERS[7][1] = "knight-white";
-		BOARD_SOLDIERS[7][6] = "knight-white";
-		BOARD_SOLDIERS[0][0] = "rook-black";
-		BOARD_SOLDIERS[0][7] = "rook-black";
-		BOARD_SOLDIERS[7][0] = "rook-white";
-		BOARD_SOLDIERS[7][7] = "rook-white";
+		SOLDIERS.add(new Rook(0, 0, "black"));
+		SOLDIERS.add(new Knight(0, 1, "black"));
+		SOLDIERS.add(new Bishop(0, 2, "black"));
+		SOLDIERS.add(new Queen(0, 3, "black"));
+		SOLDIERS.add(new King(0, 4, "black"));
+		SOLDIERS.add(new Bishop(0, 5, "black"));
+		SOLDIERS.add(new Knight(0, 6, "black"));
+		SOLDIERS.add(new Rook(0, 7, "black"));
 		
-		for (int i = 0;i < BOARD_SIZE;i++)
+		SOLDIERS.add(new Rook(7, 0, "white"));
+		SOLDIERS.add(new Knight(7, 1, "white"));
+		SOLDIERS.add(new Bishop(7, 2, "white"));
+		SOLDIERS.add(new Queen(7, 3, "white"));
+		SOLDIERS.add(new King(7, 4, "white"));
+		SOLDIERS.add(new Bishop(7, 5, "white"));
+		SOLDIERS.add(new Knight(7, 6, "white"));
+		SOLDIERS.add(new Rook(7, 7, "white"));
+		
+		for (int i = 0;i < 8;i++)
 		{
-			BOARD_SOLDIERS[1][i] = "pawn-black";
-			BOARD_SOLDIERS[6][i] = "pawn-white";
+			SOLDIERS.add(new Pawn(1, i, "black"));
+			SOLDIERS.add(new Pawn(6, i, "white"));
 		}
 	}
 	
-	protected final ChessButton[][] _buttons = new ChessButton[BOARD_SIZE][BOARD_SIZE];
-	protected List<int[]> _possibleRoute;
+	protected final ChessCell[][] _cells = new ChessCell[8][8];
+	protected final int[] _inPassing = {-1, -1};
 	protected String _myColor;
 	protected boolean _myTurn;
-	protected String _selectedSoldierName;
-	protected int[] _selectedSoldierPosition;
-	private int[][] _enemyRoute;
+	protected ChessCell _selectedCell;
 	
-	// Special rook move.
-	protected boolean _canCast = true;
-	// Special pawn move.
-	protected int[] _inPassing = {-1, -1};
-	
-	public ChessBoard(final String myColor)
+	protected ChessBoard()
 	{
-		_myColor = myColor;
-		_myTurn = myColor.equals("white");
-		
-		setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
+		setLayout(new GridLayout(8, 8));
 		
 		boolean turn = false;
-		if (_myTurn)
+		for (int i = 0;i < 8;i++)
 		{
-			for (int i = 0;i < BOARD_SIZE;i++)
+			for (int j = 0;j < 8;j++)
 			{
-				for (int j = 0;j < BOARD_SIZE;j++)
-				{
-					_buttons[i][j] = new ChessButton(BOARD_SOLDIERS[i][j], turn);
-					_buttons[i][j].addMouseListener(new CellClick(i, j));
-					add(_buttons[i][j]);
-					
-					turn = !turn;
-				}
+				_cells[i][j] = new ChessCell(i, j, turn);
+				_cells[i][j].addActionListener(a -> cellClick(a));
 				
 				turn = !turn;
+			}
+			
+			turn = !turn;
+		}
+		
+		LOGGER.info("Chess board loaded!");
+	}
+	
+	public void start(final String myColor)
+	{
+		_myColor = myColor;
+		_myTurn = _myColor.equals("white");
+		
+		removeAll();
+		if (_myColor.equals("white"))
+			for (int i = 0;i < 8;i++)
+				for (int j = 0;j < 8;j++)
+					add(_cells[i][j]);
+		else
+			for (int i = 7;i >= 0;i--)
+				for (int j = 7;j >= 0;j--)
+					add(_cells[i][j]);
+		revalidate();
+		
+		for (final ChessCell[] cells : _cells)
+		{
+			for (final ChessCell cell : cells)
+			{
+				cell.setObject(null, false);
+				cell.setBackground(cell.getBackgroundColor());
 			}
 		}
-		else
+		for (final AbstractObject obj : SOLDIERS)
 		{
-			for (int i = BOARD_SIZE - 1;i >= 0;i--)
-			{
-				for (int j = BOARD_SIZE - 1;j >= 0;j--)
-				{
-					_buttons[i][j] = new ChessButton(BOARD_SOLDIERS[i][j], turn);
-					_buttons[i][j].addMouseListener(new CellClick(i, j));
-					add(_buttons[i][j]);
-					
-					turn = !turn;
-				}
-				
-				turn = !turn;
-			}
+			obj.setMoved(false);
+			
+			_cells[obj.getInitialX()][obj.getInitialY()].setObject(obj, false);
 		}
 	}
 	
-	public void changeTurnAfterPromotion(final String image, final int oldX, final int oldY, final int newX, final int newY)
+	public ChessCell getCell(final AbstractObject object)
 	{
-		_buttons[newX][newY].setImage(image, true);
+		for (final ChessCell[] cells : _cells)
+			for (final ChessCell cell : cells)
+				if (cell.getObject() == object)
+					return cell;
+		
+		return null;
+	}
+	
+	public ChessCell getCell(final int x, final int y)
+	{
+		return _cells[x][y];
+	}
+	
+	public int[] getInPassing()
+	{
+		return _inPassing;
+	}
+	
+	public boolean canBeEaten(final AbstractObject object)
+	{
+		for (final ChessCell[] cells : _cells)
+		{
+			for (final ChessCell cell : cells)
+			{
+				// Cell not owned, skip.
+				if (cell.getObject() == null)
+					continue;
+				// A king can never eat another king.
+				if (cell.getObject() instanceof King && object instanceof King)
+					continue;
+				// Cell owned by ally, skip.
+				if (cell.getObject().isAlly(object))
+					continue;
+				
+				if (cell.getObject().canEat(object))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean canBeSeenBy(final String owner, final ChessCell targetCell)
+	{
+		for (final ChessCell[] cells : _cells)
+		{
+			for (final ChessCell cell : cells)
+			{
+				// Cell not owned, skip.
+				if (cell.getObject() == null)
+					continue;
+				// Cell is owner, skip.
+				if (cell.getObject().getOwner().equals(owner))
+					continue;
+				
+				if (cell.getObject().getRoute().contains(targetCell))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean canBeBlocked(final AbstractObject ally, final List<ChessCell> pathToAlly)
+	{
+		for (final ChessCell[] cells : _cells)
+		{
+			for (final ChessCell cell : cells)
+			{
+				// Cell not owned, skip.
+				if (cell.getObject() == null)
+					continue;
+				
+				// Cell owned by ally, check if can block.
+				if (cell.getObject().isAlly(ally) && cell.getObject().canBlock(pathToAlly))
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public CheckStatus getCheckStatus(final AbstractObject king, final boolean canMove)
+	{
+		for (final ChessCell[] cells : _cells)
+		{
+			for (final ChessCell cell : cells)
+			{
+				// Cell not owned, skip.
+				if (cell.getObject() == null)
+					continue;
+				// A king can never eat another king.
+				if (cell.getObject() instanceof King)
+					continue;
+				// Cell owned by ally, skip.
+				if (cell.getObject().isAlly(king))
+					continue;
+				
+				// Found a soldier that can eat the king.
+				if (cell.getObject().canEat(king))
+				{
+					// If king can move somewhere, its a check.
+					if (canMove)
+						return CheckStatus.UNDER_CHECK;
+					// If target can be eaten, its a check.
+					if (canBeEaten(cell.getObject()))
+						return CheckStatus.UNDER_CHECK;
+					// If target can be blocked, its a check.
+					final List<ChessCell> pathToKing = cell.getObject().getPathTo(king);
+					if (canBeBlocked(king, pathToKing))
+						return CheckStatus.UNDER_CHECK;
+					
+					return CheckStatus.UNDER_CHECKMATE;
+				}
+			}
+		}
+		
+		return CheckStatus.NOT_UNDER_CHECK;
+	}
+	
+	public void changeTurnAfterPromotion(final AbstractObject object, final int oldX, final int oldY, final int newX, final int newY)
+	{
+		object.setMoved(true);
+		
+		_cells[newX][newY].setObject(object, true);
+		
+		_selectedCell = null;
+		_inPassing[0] = _inPassing[1] = -1;
 		_myTurn = false;
 		
 		final String[] images = new String[]
 		{
-			image,
+			object.getClass().getSimpleName(),
 			null
 		};
 		final int[][] positions = new int[][]
@@ -149,7 +284,7 @@ public final class ChessBoard extends JPanel
 	{
 		for (int i = 0;i < moves.length;i++)
 		{
-			if (i == 1 && images[1].isEmpty())
+			if (images[i].isEmpty())
 				break;
 			
 			if (images[i].equals("inPassing_make"))
@@ -161,22 +296,44 @@ public final class ChessBoard extends JPanel
 			{
 				if (GameConfig.CHESS_PAINT_MOVES)
 				{
-					_buttons[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
-					_buttons[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
+					_cells[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
+					_cells[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
 				}
 				
-				_buttons[moves[i][2]][moves[i][3]].setImage(null, true);
+				_cells[moves[i][2]][moves[i][3]].setObject(null, true);
 			}
 			else
 			{
 				if (GameConfig.CHESS_PAINT_MOVES)
 				{
-					_buttons[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
-					_buttons[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
+					_cells[moves[i][0]][moves[i][1]].setBackground(Color.PINK);
+					_cells[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
 				}
 				
-				_buttons[moves[i][0]][moves[i][1]].setImage(null, true);
-				_buttons[moves[i][2]][moves[i][3]].setImage(images[i], true);
+				final AbstractObject moved = _cells[moves[i][0]][moves[i][1]].getObject();
+				_cells[moves[i][0]][moves[i][1]].setObject(null, true);
+				
+				if (moved.getClass().getSimpleName().equals(images[i]))
+				{
+					_cells[moves[i][2]][moves[i][3]].setObject(moved, true);
+					
+					moved.setMoved(true);
+				}
+				else
+				{
+					// It was promoted.
+					try
+					{
+						final AbstractObject newObj = (AbstractObject) Class.forName(PACKAGE_PATH + images[i]).getConstructors()[0].newInstance(0, 0, moved.getOwner());
+						newObj.setMoved(true);
+						
+						_cells[moves[i][2]][moves[i][3]].setObject(newObj, true);
+					}
+					catch (final SecurityException | ClassNotFoundException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e)
+					{
+						LOGGER.log(Level.WARNING, "Failed creating new chess object out of promotion: ", e);
+					}
+				}
 			}
 		}
 		
@@ -185,7 +342,8 @@ public final class ChessBoard extends JPanel
 		
 		_myTurn = true;
 		
-		final CheckStatus check = isUnderCheck();
+		final AbstractObject king = getKing();
+		final CheckStatus check = getCheckStatus(king, king.getRoute().size() > 0);
 		switch (check)
 		{
 			case NOT_UNDER_CHECK:
@@ -206,875 +364,297 @@ public final class ChessBoard extends JPanel
 		return Math.max(getScoreOfColor("black"), getScoreOfColor("white"));
 	}
 	
-	protected List<int[]> movementHandler(int i, int j, final boolean withKing)
-	{
-		List<int[]> path = new ArrayList<>();
-		if (_buttons[i][j].getName().equals("king"))
-		{
-			final String color = _buttons[i][j].getColor();
-			_buttons[i][j].setImage(null, false);
-			
-			String obj;
-			for (int x = i - 1;x <= i + 1;x++)
-			{
-				for (int y = j - 1;y <= j + 1;y++)
-				{
-					if (x == i && y == j)
-						continue;
-					if (x < 0 || y < 0 || x >= BOARD_SIZE || y >= BOARD_SIZE)
-						continue;
-					if (isTakenBy(color, x, y))
-						continue;
-					
-					boolean found = true;
-					if (isTakenBy(color.equals("white") ? "black" : "white", x, y))
-					{
-						obj = _buttons[x][y].getFullName();
-						
-						_buttons[x][y].setImage(null, false);
-						if (!canBeEatenAt(x, y))
-							found = false;
-						_buttons[x][y].setImage(obj, true);
-					}
-					else if (withKing || !canBeEatenAt(x, y))
-						found = false;
-					if (found)
-						continue;
-					
-					if (_enemyRoute == null)
-						path.add(new int[] {x, y});
-					else
-					{
-						for (int k = 0;k < _enemyRoute.length && !found;k++)
-							if (_enemyRoute[k][0] == x & _enemyRoute[k][1] == y)
-								found = true;
-						
-						if (!found)
-							path.add(new int[] {x, y});
-					}
-				}
-			}
-			
-			_buttons[i][j].setImage("king-" + color, true);
-			if (color.equals(_myColor) && _canCast)
-				path = checkCast(path);
-		}
-		else if (_buttons[i][j].getName().equals("queen"))
-		{
-			// horizontal
-			for (int x = i + 1;x < BOARD_SIZE;x++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, j))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, j))
-				{
-					path.add(new int[] {x, j});
-					break;
-				}
-				
-				path.add(new int[] {x, j});
-			}
-			for (int x = i - 1;x >= 0;x--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, j))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, j))
-				{
-					path.add(new int[] {x, j});
-					break;
-				}
-				
-				path.add(new int[] {x, j});
-			}
-			// vertical
-			for (int y = j + 1;y < BOARD_SIZE;y++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), i, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", i, y))
-				{
-					path.add(new int[] {i, y});
-					break;
-				}
-				
-				path.add(new int[] {i, y});
-			}
-			for (int y = j - 1;y >= 0;y--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), i, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", i, y))
-				{
-					path.add(new int[] {i, y});
-					break;
-				}
-				
-				path.add(new int[] {i, y});
-			}
-			// main diagonal
-			for (int x = i + 1, y = j + 1;x < BOARD_SIZE && y < BOARD_SIZE;x++, y++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-			for (int x = i - 1, y = j - 1;x >= 0 && y >= 0;x--, y--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-			// sub diagonal
-			for (int x = i + 1, y = j - 1;x < BOARD_SIZE && y >= 0;x++, y--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-			for (int x = i - 1, y = j + 1;x >= 0 && y < BOARD_SIZE;x--, y++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-		}
-		else if (_buttons[i][j].getName().equals("bishop"))
-		{
-			// main diagonal
-			for (int x = i + 1, y = j + 1;x < BOARD_SIZE && y < BOARD_SIZE;x++, y++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-			for (int x = i - 1, y = j - 1;x >= 0 && y >= 0;x--, y--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-			// sub diagonal
-			for (int x = i + 1, y = j - 1;x < BOARD_SIZE && y >= 0;x++, y--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-			for (int x = i - 1, y = j + 1;x >= 0 && y < BOARD_SIZE;x--, y++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, y))
-				{
-					path.add(new int[] {x, y});
-					break;
-				}
-				
-				path.add(new int[] {x, y});
-			}
-		}
-		else if (_buttons[i][j].getName().equals("knight"))
-		{
-			i += 2;
-			if (i < BOARD_SIZE)
-			{
-				if (j + 1 < BOARD_SIZE && !isTakenBy(_buttons[i - 2][j].getColor(), i, j + 1))
-					path.add(new int[] {i, j + 1});
-				if (j - 1 >= 0 && !isTakenBy(_buttons[i - 2][j].getColor(), i, j - 1))
-					path.add(new int[] {i, j - 1});
-			}
-			i -= 4;
-			if (i >= 0)
-			{
-				if (j + 1 < BOARD_SIZE && !isTakenBy(_buttons[i + 2][j].getColor(), i, j + 1))
-					path.add(new int[] {i, j + 1});
-				if (j - 1 >= 0 && !isTakenBy(_buttons[i + 2][j].getColor(), i, j - 1))
-					path.add(new int[] {i, j - 1});
-			}
-			i += 2;
-			j += 2;
-			if (j < BOARD_SIZE)
-			{
-				if (i + 1 < BOARD_SIZE && !isTakenBy(_buttons[i][j - 2].getColor(), i + 1, j))
-					path.add(new int[] {i + 1, j});
-				if (i - 1 >= 0 && !isTakenBy(_buttons[i][j - 2].getColor(), i - 1, j))
-					path.add(new int[] {i - 1, j});
-			}
-			j -= 4;
-			if (j >= 0)
-			{
-				if (i + 1 < BOARD_SIZE && !isTakenBy(_buttons[i][j + 2].getColor(), i + 1, j))
-					path.add(new int[] {i + 1, j});
-				if (i - 1 >= 0 && !isTakenBy(_buttons[i][j + 2].getColor(), i - 1, j))
-					path.add(new int[] {i - 1, j});
-			}
-		}
-		else if (_buttons[i][j].getName().equals("rook"))
-		{
-			// horizontal
-			for (int x = i + 1;x < BOARD_SIZE;x++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, j))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, j))
-				{
-					path.add(new int[] {x, j});
-					break;
-				}
-				
-				path.add(new int[] {x, j});
-			}
-			for (int x = i - 1;x >= 0;x--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), x, j))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", x, j))
-				{
-					path.add(new int[] {x, j});
-					break;
-				}
-				
-				path.add(new int[] {x, j});
-			}
-			// vertical
-			for (int y = j + 1;y < BOARD_SIZE;y++)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), i, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", i, y))
-				{
-					path.add(new int[] {i, y});
-					break;
-				}
-				
-				path.add(new int[] {i, y});
-			}
-			for (int y = j - 1;y >= 0;y--)
-			{
-				if (isTakenBy(_buttons[i][j].getColor(), i, y))
-					break;
-				if (isTakenBy(_buttons[i][j].getColor().equals("white") ? "black" : "white", i, y))
-				{
-					path.add(new int[] {i, y});
-					break;
-				}
-				
-				path.add(new int[] {i, y});
-			}
-		}
-		else
-		{
-			if (_buttons[i][j].getColor().equals("white"))
-			{
-				i--;
-				
-				if (_myColor.equals("white"))
-				{
-					if (i == 5)
-					{
-						for (int x = i;x > i - 2;x--)
-						{
-							if (_buttons[x][j].getName() != null)
-								break;
-							
-							path.add(new int[] {x, j});
-						}
-					}
-					else if (_buttons[i][j].getName() == null)
-						path.add(new int[] {i, j});
-					
-					if (_enemyRoute == null)
-					{
-						if (j + 1 < BOARD_SIZE && isTakenBy("black", i, j + 1))
-							path.add(new int[] {i, j + 1});
-						if (j - 1 >= 0 && isTakenBy("black", i, j - 1))
-							path.add(new int[] {i, j - 1});
-					}
-					
-					if (_inPassing[0] == i && (_inPassing[1] == j - 1 || _inPassing[1] == j + 1))
-						path.add(new int[] {_inPassing[0], _inPassing[1]});
-				}
-				else
-				{
-					if (_enemyRoute == null)
-					{
-						path.add(new int[] {i, j + 1});
-						path.add(new int[] {i, j - 1});
-					}
-				}
-			}
-			else
-			{
-				i++;
-				
-				if (_myColor.equals("black"))
-				{
-					if (i == 2)
-					{
-						for (int x = i;x < i + 2;x++)
-						{
-							if (_buttons[x][j].getName() != null)
-								break;
-							
-							path.add(new int[] {x, j});
-						}
-					}
-					else if (_buttons[i][j].getName() == null)
-						path.add(new int[] {i, j});
-					
-					if (_enemyRoute == null)
-					{
-						if (j + 1 < BOARD_SIZE && isTakenBy("white", i, j + 1))
-							path.add(new int[] {i, j + 1});
-						if (j - 1 >= 0 && isTakenBy("white", i, j - 1))
-							path.add(new int[] {i, j - 1});
-					}
-					
-					if (_inPassing[0] == i && (_inPassing[1] == j - 1 || _inPassing[1] == j + 1))
-						path.add(new int[] {_inPassing[0], _inPassing[1]});
-				}
-				else
-				{
-					if (_enemyRoute == null)
-					{
-						path.add(new int[] {i, j + 1});
-						path.add(new int[] {i, j - 1});
-					}
-				}
-			}
-		}
-		
-		return path;
-	}
-	
-	private boolean isTakenBy(final String color, final int i, final int j)
-	{
-		return _buttons[i][j].getName() != null && _buttons[i][j].getColor().equals(color);
-	}
-	
-	private List<int[]> checkCast(final List<int[]> path)
-	{
-		if (_myColor.equals("white"))
-		{
-			if (canBeEatenAt(7, 4))
-				return path;
-			
-			if (_buttons[7][0].getFullName().equals("rook-white") && !_buttons[7][0].hasMoved() && _buttons[7][3].getName() == null && !canBeEatenAt(7, 3) && _buttons[7][2].getName() == null && !canBeEatenAt(7, 2) && _buttons[7][1].getName() == null && !canBeEatenAt(7, 1))
-				path.add(new int[] {7, 2});
-			if (_buttons[7][7].getFullName().equals("rook-white") && !_buttons[7][7].hasMoved() && _buttons[7][5].getName() == null && !canBeEatenAt(7, 5) && _buttons[7][6].getName() == null && !canBeEatenAt(7, 6))
-				path.add(new int[] {7, 6});
-		}
-		else
-		{
-			if (canBeEatenAt(0, 4))
-				return path;
-			
-			if (_buttons[0][0].getFullName().equals("rook-black") && !_buttons[0][0].hasMoved() && _buttons[0][3].getName() == null && !canBeEatenAt(0, 3) && _buttons[0][2].getName() == null && !canBeEatenAt(0, 2) && _buttons[0][1].getName() == null && !canBeEatenAt(0, 1))
-				path.add(new int[] {0, 2});
-			if (_buttons[0][7].getFullName().equals("rook-black") && !_buttons[0][7].hasMoved() && _buttons[0][5].getName() == null && !canBeEatenAt(0, 5) && _buttons[0][6].getName() == null && !canBeEatenAt(0, 6))
-				path.add(new int[] {0, 6});
-		}
-		
-		return path;
-	}
-	
-	protected boolean canMove(final int i, final int j)
-	{
-		for (final int[] route : _possibleRoute)
-			if (route[0] == i && route[1] == j)
-				return true;
-		
-		return false;
-	}
-	
-	protected CheckStatus isUnderCheck()
-	{
-		for (int i = 0;i < BOARD_SIZE;i++)
-		{
-			for (int j = 0;j < BOARD_SIZE;j++)
-			{
-				if (_buttons[i][j].getName() != null && _buttons[i][j].getFullName().equals("king-" + _myColor))
-				{
-					if (!canBeEatenAt(i, j))
-						return CheckStatus.NOT_UNDER_CHECK;
-					
-					if (movementHandler(i, j, false).size() > 0)
-						return CheckStatus.UNDER_CHECK;
-					
-					_enemyRoute = getThreateningSoldier(i, j);
-					_myColor = _myColor.equals("white") ? "black" : "white";
-					boolean found = false;
-					for (i = 0;i < _enemyRoute.length && !found;i++)
-						if (canBeEatenAt(_enemyRoute[i][0], _enemyRoute[i][1]))
-							found = true;
-					_myColor = _myColor.equals("white") ? "black" : "white";
-					_enemyRoute = null;
-					
-					if (found)
-						return CheckStatus.UNDER_CHECK;
-					
-					return CheckStatus.UNDER_CHECKMATE;
-				}
-			}
-		}
-		
-		return null;
-	}
-	
 	private int getScoreOfColor(final String color)
 	{
-		float score = 0;
-		for (int i = 0;i < BOARD_SIZE;i++)
-		{
-			for (int j = 0;j < BOARD_SIZE;j++)
-			{
-				final String name = _buttons[i][j].getName();
-				if (name == null)
-					continue;
-				if (!_buttons[i][j].getColor().equals(color))
-					continue;
-				
-				if (name.equals("queen"))
-					score += 5;
-				else if (name.equals("rook"))
-					score += 2;
-				else if (name.equals("bishop"))
-					score += 1.5f;
-				else if (name.equals("knight"))
-					score += 1;
-				else if (name.equals("pawn"))
-					score += 0.125f;
-			}
-		}
+		int score = 0;
+		for (final ChessCell[] cells : _cells)
+			for (final ChessCell cell : cells)
+				if (cell.getObject() != null && cell.getObject().getOwner().equals(color))
+					score += cell.getObject().getScore();
 		
-		return (int) score;
+		return score;
 	}
 	
 	private void checkForTie()
 	{
-		for (int i = 0;i < BOARD_SIZE;i++)
-			for (int j = 0;j < BOARD_SIZE;j++)
-				if (_buttons[i][j].getName() != null && _buttons[i][j].getColor().equals(_myColor) && movementHandler(i, j, false).size() != 0)
+		for (final ChessCell[] cells : _cells)
+			for (final ChessCell cell : cells)
+				if (cell.getObject() != null && cell.getObject().getOwner().equals(_myColor) && cell.getObject().getRoute().size() > 0)
 					return;
 		
 		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
 		ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
 	}
 	
-	private int[][] getThreateningSoldier(final int i, final int j)
+	private AbstractObject getKing()
 	{
-		for (int x = 0;x < BOARD_SIZE;x++)
-		{
-			for (int y = 0;y < BOARD_SIZE;y++)
-			{
-				if (_buttons[x][y].getName() == null)
-					continue;
-				if (_buttons[x][y].getColor().equals(_buttons[i][j].getColor()))
-					continue;
-				
-				if (canSeeTarget(x, y, i, j))
-				{
-					if (_buttons[x][y].getName().equals("knight"))
-						return new int[][] {{x, y}};
-					
-					int[][] ret = null;
-					if (j == y)
-					{
-						if (i > x)
-						{
-							ret = new int[i - x][2];
-							for (int z = i - 1, w = 0;z >= x;z--,w++)
-							{
-								ret[w][0] = z;
-								ret[w][1] = y;
-							}
-						}
-						else
-						{
-							ret = new int[x - i][2];
-							for (int z = i + 1, w = 0;z <= x;z++,w++)
-							{
-								ret[w][0] = z;
-								ret[w][1] = y;
-							}
-						}
-					}
-					else if (i == x)
-					{
-						if (j > y)
-						{
-							ret = new int[j - y][2];
-							for (int z = j - 1, w = 0;z >= y;z--,w++)
-							{
-								ret[w][0] = x;
-								ret[w][1] = z;
-							}
-						}
-						else
-						{
-							ret = new int[y - j][2];
-							for (int z = j + 1, w = 0;z <= y;z++,w++)
-							{
-								ret[w][0] = x;
-								ret[w][1] = z;
-							}
-						}
-					}
-					else if (x > i && y > j)
-					{
-						ret = new int[x - i][2];
-						for (int z = i + 1, w = j + 1, r = 0;z <= x && w <= y;z++,w++,r++)
-						{
-							ret[r][0] = z;
-							ret[r][1] = w;
-						}
-					}
-					else if (x < i && y < j)
-					{
-						ret = new int[i - x][2];
-						for (int z = i - 1, w = j - 1, r = 0;z >= x && w >= y;z--,w--,r++)
-						{
-							ret[r][0] = z;
-							ret[r][1] = w;
-						}
-					}
-					else if (x < i && y > j)
-					{
-						ret = new int[i - x][2];
-						for (int z = i - 1, w = j + 1, r = 0;z >= x && w <= y;z--,w++,r++)
-						{
-							ret[r][0] = z;
-							ret[r][1] = w;
-						}
-					}
-					else
-					{
-						ret = new int[x - i][2];
-						for (int z = i + 1, w = j - 1, r = 0;z <= x && w >= y;z++,w--,r++)
-						{
-							ret[r][0] = z;
-							ret[r][1] = w;
-						}
-					}
-					return ret;
-				}
-			}
-		}
+		for (final ChessCell[] cells : _cells)
+			for (final ChessCell cell : cells)
+				if (cell.getObject() instanceof King && cell.getObject().getOwner().equals(_myColor))
+					return cell.getObject();
 		
 		return null;
 	}
 	
-	private boolean canSeeTarget(final int objX, final int objY, final int targetX, final int targetY)
+	private void cellClick(final ActionEvent e)
 	{
-		final List<int[]> temp = movementHandler(objX, objY, false);
-		if (temp.size() == 0)
-			return false;
-		for (final int[] route : temp)
-			if (route[0] == targetX && route[1] == targetY)
-				return true;
-		
-		return false;
-	}
-	
-	private boolean canBeEatenAt(final int i, final int j)
-	{
-		final String color = _buttons[i][j].getName() == null ? _myColor : _buttons[i][j].getColor();
-		for (int x = 0;x < BOARD_SIZE;x++)
+		if (!_myTurn)
 		{
-			for (int y = 0;y < BOARD_SIZE;y++)
+			JOptionPane.showMessageDialog(null, "This is not your turn, please wait.", "Wait", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		final ChessCell cell = (ChessCell) e.getSource();
+		if (_selectedCell == null)
+		{
+			if (cell.getObject() == null)
 			{
-				if (_buttons[x][y].getName() == null)
-					continue;
-				if (_buttons[x][y].getColor().equals(color))
-					continue;
-				
-				final List<int[]> temp = movementHandler(x, y, true);
-				if (temp.size() == 0)
-					continue;
-				for (final int[] route : temp)
-					if (route[0] == i && route[1] == j)
-						return true;
-				
-				temp.clear();
+				JOptionPane.showMessageDialog(null, "Please select a soldier to move first.", "Select a soldier", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-		}
-		
-		return false;
-	}
-	
-	private class CellClick extends MouseAdapter
-	{
-		private int _i;
-		private int _j;
-		
-		protected CellClick(final int i, final int j)
-		{
-			_i = i;
-			_j = j;
-		}
-		
-		@Override
-		public void mousePressed(final MouseEvent e)
-		{
-			if (!_myTurn)
+			if (!cell.getObject().getOwner().equals(_myColor))
 			{
-				JOptionPane.showMessageDialog(null, "This is not your turn, please wait.", "Wait", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "This is not your soldier.", "Illegal action", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
-			if (_selectedSoldierName == null)
+			final List<ChessCell> route = cell.getObject().getRoute();
+			if (route.size() == 0)
 			{
-				if (_buttons[_i][_j].getName() == null)
-				{
-					JOptionPane.showMessageDialog(null, "Please select a soldier to move first.", "Select a soldier", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				if (!_buttons[_i][_j].getColor().equals(_myColor))
-				{
-					JOptionPane.showMessageDialog(null, "This is not your soldier.", "Illegal action", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				_possibleRoute = movementHandler(_i, _j, false);
-				if (_possibleRoute.size() == 0)
-				{
-					JOptionPane.showMessageDialog(null, "This soldier cannot move anywhere.", "Cannot move", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if (GameConfig.CHESS_PAINT_ROUTE)
-					for (final int[] route : _possibleRoute)
-						_buttons[route[0]][route[1]].setBackground(Color.YELLOW);
-				_buttons[_i][_j].setBackground(Color.ORANGE);
-				
-				_selectedSoldierName = _buttons[_i][_j].getFullName();
-				_selectedSoldierPosition = new int[] {_i, _j};
+				JOptionPane.showMessageDialog(null, "This soldier cannot move anywhere.", "Cannot move", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-			else
+			
+			if (GameConfig.CHESS_PAINT_ROUTE)
+				for (final ChessCell routeCell : route)
+					routeCell.setBackground(Color.YELLOW);
+			cell.setBackground(Color.ORANGE);
+			
+			_selectedCell = cell;
+		}
+		else if (_selectedCell == cell)
+		{
+			if (GameConfig.CHESS_PAINT_ROUTE)
+				for (final ChessCell routeCell : cell.getObject().getRoute())
+					routeCell.setBackground(routeCell.getBackgroundColor());
+			cell.setBackground(cell.getBackgroundColor());
+			
+			_selectedCell = null;
+		}
+		else
+		{
+			final List<ChessCell> route = _selectedCell.getObject().getRoute();
+			if (!route.contains(cell))
 			{
-				if (_i == _selectedSoldierPosition[0] && _j == _selectedSoldierPosition[1])
+				JOptionPane.showMessageDialog(null, "This soldier cannot move to this location.", "Cannot move", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			final AbstractObject selectedObject = _selectedCell.getObject();
+			final AbstractObject targetObject = cell.getObject();
+			
+			_selectedCell.setObject(null, true);
+			cell.setObject(selectedObject, true);
+			
+			final AbstractObject king = getKing();
+			final CheckStatus check = getCheckStatus(king, king.getRoute().size() > 0);
+			if (check == CheckStatus.UNDER_CHECK)
+			{
+				JOptionPane.showMessageDialog(null, "You are under a check.", "Check", JOptionPane.INFORMATION_MESSAGE);
+				
+				_selectedCell.setObject(selectedObject, true);
+				cell.setObject(targetObject, true);
+				return;
+			}
+			
+			for (final ChessCell[] cells : _cells)
+				for (final ChessCell c : cells)
+					c.setBackground(c.getBackgroundColor());
+			
+			final String[] images = new String[2];
+			final int[][] moves = new int[2][4];
+			if (selectedObject instanceof King)
+			{
+				// Castling.
+				if (!selectedObject.hasMoved())
 				{
-					if (GameConfig.CHESS_PAINT_ROUTE)
-						for (final int[] route : _possibleRoute)
-							_buttons[route[0]][route[1]].setBackground(_buttons[route[0]][route[1]].getBackgroundColor());
-					_buttons[_i][_j].setBackground(_buttons[_i][_j].getBackgroundColor());
-					
-					_selectedSoldierName = null;
-					_selectedSoldierPosition = null;
-					_possibleRoute.clear();
-					return;
-				}
-				if (!canMove(_i, _j))
-				{
-					JOptionPane.showMessageDialog(null, "This soldier cannot move to this location.", "Cannot move", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				for (int i = 0;i < BOARD_SIZE;i++)
-					for (int j = 0;j < BOARD_SIZE;j++)
-						_buttons[i][j].setBackground(_buttons[i][j].getBackgroundColor());
-				_possibleRoute.clear();
-				
-				String image = _selectedSoldierName;
-				final int[] xy = _selectedSoldierPosition;
-				_selectedSoldierName = null;
-				_selectedSoldierPosition = null;
-				
-				final String tempTarget = _buttons[_i][_j].getFullName();
-				
-				_buttons[xy[0]][xy[1]].setImage(null, true);
-				_buttons[_i][_j].setImage(image, true);
-				
-				final CheckStatus check = isUnderCheck();
-				if (check == CheckStatus.UNDER_CHECK)
-				{
-					JOptionPane.showMessageDialog(null, "You are under a check.", "Check", JOptionPane.INFORMATION_MESSAGE);
-					
-					_buttons[_i][_j].setImage(tempTarget, true);
-					_buttons[xy[0]][xy[1]].setImage(image, true);
-					return;
-				}
-				
-				final String[] images = new String[2];
-				final int[][] moves = new int[2][4];
-				if (image.startsWith("rook"))
-					_buttons[xy[0]][xy[1]].setMoved();
-				else if (image.startsWith("king"))
-				{
-					if (_canCast)
+					if (cell.getCellY() == 6)
 					{
-						if (check == CheckStatus.NOT_UNDER_CHECK)
+						images[0] = _cells[cell.getCellX()][7].getObject().getClass().getSimpleName();
+						
+						moves[0][0] = cell.getCellX();
+						moves[0][1] = 7;
+						moves[0][2] = cell.getCellX();
+						moves[0][3] = 5;
+						
+						_cells[cell.getCellX()][5].setObject(_cells[cell.getCellX()][7].getObject(), true);
+						_cells[cell.getCellX()][7].setObject(null, true);
+						
+						_cells[cell.getCellX()][5].getObject().setMoved(true);
+					}
+					else if (cell.getCellY() == 2)
+					{
+						images[0] = _cells[cell.getCellX()][0].getObject().getClass().getSimpleName();
+						
+						moves[0][0] = cell.getCellX();
+						moves[0][1] = 0;
+						moves[0][2] = cell.getCellX();
+						moves[0][3] = 3;
+						
+						_cells[cell.getCellX()][3].setObject(_cells[cell.getCellX()][0].getObject(), true);
+						_cells[cell.getCellX()][0].setObject(null, true);
+						
+						_cells[cell.getCellX()][3].getObject().setMoved(true);
+					}
+				}
+			}
+			else if (selectedObject instanceof Pawn)
+			{
+				if (selectedObject.getOwner().equals("white"))
+				{
+					// Promotion.
+					if (cell.getCellX() == 0)
+					{
+						if (GameConfig.CHOOSE_ON_PROMOTE)
 						{
-							if (_j == 6)
-							{
-								images[0] = _buttons[_i][7].getFullName();
-								
-								moves[0][0] = _i;
-								moves[0][1] = 7;
-								moves[0][2] = _i;
-								moves[0][3] = 5;
-								
-								_buttons[_i][5].setImage(_buttons[_i][7].getFullName(), true);
-								_buttons[_i][7].setImage(null, true);
-							}
-							else if (_j == 2)
-							{
-								images[0] = _buttons[_i][0].getFullName();
-								
-								moves[0][0] = _i;
-								moves[0][1] = 0;
-								moves[0][2] = _i;
-								moves[0][3] = 3;
-								
-								_buttons[_i][3].setImage(_buttons[_i][0].getFullName(), true);
-								_buttons[_i][0].setImage(null, true);
-							}
+							ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, _selectedCell.getCellX(), _selectedCell.getCellY(), cell.getCellX(), cell.getCellY());
+							return;
 						}
 						
-						_canCast = false;
+						cell.setObject(new Queen(0, 0, selectedObject.getOwner()), true);
+						cell.getObject().setMoved(true);
 					}
-				}
-				else if (image.startsWith("pawn"))
-				{
-					if (_myColor.equals("white"))
+					// EnPassing creation, if a pawn tries to avoid a kill by enemy pawn going 2 steps forward.
+					// Then enemy pawn can go behind it to make a kill.
+					else if (cell.getCellX() == _selectedCell.getCellX() - 2)
 					{
-						if (_i == 0)
+						boolean makeInPassing = false;
+						if (cell.getCellY() - 1 >= 0)
 						{
-							_inPassing[0] = _inPassing[1] = -1;
-							
-							if (GameConfig.CHOOSE_ON_PROMOTE)
-							{
-								ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, xy[0], xy[1], _i, _j);
-								return;
-							}
-							
-							image = "queen-white";
-							_buttons[_i][_j].setImage("queen-white", true);
+							final ChessCell enemyCell = _cells[cell.getCellX()][cell.getCellY() - 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(selectedObject))
+								makeInPassing = true;
 						}
-						else if (_i == xy[0] - 2 && (_j - 1 >= 0 && _buttons[_i][_j - 1].getName() != null && _buttons[_i][_j - 1].getFullName().equals("pawn-black") || _j + 1 < BOARD_SIZE && _buttons[_i][_j + 1].getName() != null && _buttons[_i][_j + 1].getFullName().equals("pawn-black")))
+						if (!makeInPassing && cell.getCellY() + 1 < 8)
+						{
+							final ChessCell enemyCell = _cells[cell.getCellX()][cell.getCellY() + 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(selectedObject))
+								makeInPassing = true;
+						}
+						if (makeInPassing)
 						{
 							images[0] = "inPassing_make";
 							
 							moves[0][0] = -1;
 							moves[0][1] = -1;
-							moves[0][2] = _i + 1;
-							moves[0][3] = _j;
-						}
-						else if (_inPassing[0] != -1 && _inPassing[1] != -1 && _inPassing[0] == _i && _inPassing[1] == _j)
-						{
-							_buttons[_i + 1][_j].setImage(null, true);
-							
-							images[0] = "inPassing_kill";
-							
-							moves[0][0] = xy[0];
-							moves[0][1] = xy[1];
-							moves[0][2] = _i + 1;
-							moves[0][3] = _j;
+							moves[0][2] = cell.getCellX() + 1;
+							moves[0][3] = cell.getCellY();
 						}
 					}
-					else
+					// EnPassing kill.
+					else if (_inPassing[0] != -1 && _inPassing[1] != -1 && _inPassing[0] == cell.getCellX() && _inPassing[1] == cell.getCellY())
 					{
-						if (_i == BOARD_SIZE - 1)
-						{
-							_inPassing[0] = _inPassing[1] = -1;
-							
-							if (GameConfig.CHOOSE_ON_PROMOTE)
-							{
-								ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, xy[0], xy[1], _i, _j);
-								return;
-							}
-							
-							image = "queen-black";
-							_buttons[_i][_j].setImage("queen-black", true);
-						}
-						else if (_i == xy[0] + 2 && (_j - 1 >= 0 && _buttons[_i][_j - 1].getName() != null && _buttons[_i][_j - 1].getFullName().equals("pawn-white") || _j + 1 < BOARD_SIZE && _buttons[_i][_j + 1].getName() != null && _buttons[_i][_j + 1].getFullName().equals("pawn-white")))
-						{
-							images[0] = "inPassing_make";
-							
-							moves[0][0] = -1;
-							moves[0][1] = -1;
-							moves[0][2] = _i - 1;
-							moves[0][3] = _j;
-						}
-						else if (_inPassing[0] != -1 && _inPassing[1] != -1 && _inPassing[0] == _i && _inPassing[1] == _j)
-						{
-							_buttons[_i - 1][_j].setImage(null, true);
-							
-							images[0] = "inPassing_kill";
-							
-							moves[0][0] = xy[0];
-							moves[0][1] = xy[1];
-							moves[0][2] = _i - 1;
-							moves[0][3] = _j;
-						}
+						_cells[cell.getCellX() + 1][cell.getCellY()].setObject(null, true);
+						
+						images[0] = "inPassing_kill";
+						
+						moves[0][0] = _selectedCell.getCellX();
+						moves[0][1] = _selectedCell.getCellY();
+						moves[0][2] = cell.getCellX() + 1;
+						moves[0][3] = cell.getCellY();
 					}
-				}
-				
-				if (images[0] == null)
-				{
-					images[0] = image;
-					moves[0][0] = xy[0];
-					moves[0][1] = xy[1];
-					moves[0][2] = _i;
-					moves[0][3] = _j;
-					moves[1] = new int[] {-1, -1, -1, -1};
 				}
 				else
 				{
-					images[1] = image;
-					moves[1][0] = xy[0];
-					moves[1][1] = xy[1];
-					moves[1][2] = _i;
-					moves[1][3] = _j;
+					// Promotion.
+					if (cell.getCellX() == 7)
+					{
+						if (GameConfig.CHOOSE_ON_PROMOTE)
+						{
+							ChessScreen.getInstance().getPromotionPanel().showSelectionWindow(_myColor, _selectedCell.getCellX(), _selectedCell.getCellY(), cell.getCellX(), cell.getCellY());
+							return;
+						}
+						
+						cell.setObject(new Queen(0, 0, selectedObject.getOwner()), true);
+						cell.getObject().setMoved(true);
+					}
+					// EnPassing creation, if a pawn tries to avoid a kill by enemy pawn going 2 steps forward.
+					// Then enemy pawn can go behind it to make a kill.
+					else if (cell.getCellX() == _selectedCell.getCellX() + 2)
+					{
+						boolean makeInPassing = false;
+						if (cell.getCellY() - 1 >= 0)
+						{
+							final ChessCell enemyCell = _cells[cell.getCellX()][cell.getCellY() - 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(selectedObject))
+								makeInPassing = true;
+						}
+						if (!makeInPassing && cell.getCellY() + 1 < 8)
+						{
+							final ChessCell enemyCell = _cells[cell.getCellX()][cell.getCellY() + 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(selectedObject))
+								makeInPassing = true;
+						}
+						if (makeInPassing)
+						{
+							images[0] = "inPassing_make";
+							
+							moves[0][0] = -1;
+							moves[0][1] = -1;
+							moves[0][2] = cell.getCellX() - 1;
+							moves[0][3] = cell.getCellY();
+						}
+					}
+					// EnPassing kill.
+					else if (_inPassing[0] != -1 && _inPassing[1] != -1 && _inPassing[0] == cell.getCellX() && _inPassing[1] == cell.getCellY())
+					{
+						_cells[cell.getCellX() - 1][cell.getCellY()].setObject(null, true);
+						
+						images[0] = "inPassing_kill";
+						
+						moves[0][0] = _selectedCell.getCellX();
+						moves[0][1] = _selectedCell.getCellY();
+						moves[0][2] = cell.getCellX() - 1;
+						moves[0][3] = cell.getCellY();
+					}
 				}
-				
-				_inPassing[0] = _inPassing[1] = -1;
-				_myTurn = false;
-				
-				Client.getInstance().sendPacket(new RequestTurnChange(images, moves));
 			}
+			
+			if (images[0] == null)
+			{
+				images[0] = selectedObject.getClass().getSimpleName();
+				moves[0][0] = _selectedCell.getCellX();
+				moves[0][1] = _selectedCell.getCellY();
+				moves[0][2] = cell.getCellX();
+				moves[0][3] = cell.getCellY();
+				moves[1] = new int[] {-1, -1, -1, -1};
+			}
+			else
+			{
+				images[1] = selectedObject.getClass().getSimpleName();
+				moves[1][0] = _selectedCell.getCellX();
+				moves[1][1] = _selectedCell.getCellY();
+				moves[1][2] = cell.getCellX();
+				moves[1][3] = cell.getCellY();
+			}
+			
+			selectedObject.setMoved(true);
+			
+			_selectedCell = null;
+			_inPassing[0] = _inPassing[1] = -1;
+			_myTurn = false;
+			
+			Client.getInstance().sendPacket(new RequestTurnChange(images, moves));
 		}
+	}
+	
+	public static ChessBoard getInstance()
+	{
+		return SingletonHolder.INSTANCE;
+	}
+	
+	private static class SingletonHolder
+	{
+		protected static final ChessBoard INSTANCE = new ChessBoard();
 	}
 }

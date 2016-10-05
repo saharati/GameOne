@@ -1,7 +1,7 @@
 package network.response;
 
 import checkers.CheckersScreen;
-import chess.ChessScreen;
+import chess.ChessBoard;
 import client.Client;
 import network.PacketReader;
 import sal.SalScreen;
@@ -66,7 +66,7 @@ public final class TurnChangeResponse extends PacketReader<Client>
 		switch (client.getCurrentGame())
 		{
 			case CHESS_MP:
-				ChessScreen.getInstance().getBoard().updateData(_images, _positions);
+				ChessBoard.getInstance().updateData(_images, _positions);
 				break;
 			case LAMA:
 				if (!SalScreen.getInstance().isVisible())

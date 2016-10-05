@@ -1,10 +1,7 @@
 IPConfig - IPv6 support.
 RequestUpdateGameScore - TODO.
 
-games to add:
-* fish hunt
-* yu gi oh
-* monopol
-* red alert
-* lottery
-* brick breaker
+Games to add:
+* Monopol.
+* Lottery.
+* Brick Breaker.

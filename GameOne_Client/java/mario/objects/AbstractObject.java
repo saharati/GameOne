@@ -202,7 +202,7 @@ public abstract class AbstractObject extends JPanel
 	}
 	
 	@Override
-	protected void paintComponent(final Graphics g)
+	protected final void paintComponent(final Graphics g)
 	{
 		super.paintComponent(g);
 		

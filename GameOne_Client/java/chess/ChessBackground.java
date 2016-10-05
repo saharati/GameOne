@@ -17,7 +17,7 @@ public final class ChessBackground extends JOptionPane
 	private static final long serialVersionUID = -8749668351445304451L;
 	
 	private static final Dimension BACKGROUND_SIZE = new Dimension(600, 450);
-	private static final String BACKGROUND_PATH = ChessScreen.IMAGE_PATH + "backgrounds/";
+	private static final String BACKGROUND_PATH = "./images/chess/backgrounds/";
 	
 	public static final Image WON = new ImageIcon(BACKGROUND_PATH + "won.jpg").getImage();
 	public static final Image LOST = new ImageIcon(BACKGROUND_PATH + "lost.jpg").getImage();

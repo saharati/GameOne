@@ -1,13 +1,8 @@
 package chess;
 
 import java.awt.CardLayout;
-import java.awt.Image;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -29,28 +24,21 @@ public final class ChessScreen extends JFrame
 	
 	public static final String PROMOTION = "promotion";
 	public static final String BOARD = "board";
-	public static final String IMAGE_PATH = "./images/chess/";
-	public static final Map<String, Image> IMAGES = new HashMap<>();
-	static
-	{
-		for (final File file : new File(IMAGE_PATH).listFiles())
-			if (file.isFile())
-				IMAGES.put(file.getName().substring(0, file.getName().lastIndexOf('.')), new ImageIcon(file.getAbsolutePath()).getImage());
-	}
 	
 	private final CardLayout _layout = new CardLayout();
 	private final ChessPromotion _promotionPanel = new ChessPromotion();
-	private ChessBoard _board;
 	
 	protected ChessScreen()
 	{
 		super("GameOne Client - Chess");
 		
 		setLayout(_layout);
+		
+		add(ChessBoard.getInstance(), BOARD);
+		add(_promotionPanel, PROMOTION);
+		
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
-		add(_promotionPanel, PROMOTION);
 		
 		LOGGER.info("Chess screen loaded.");
 	}
@@ -60,19 +48,15 @@ public final class ChessScreen extends JFrame
 	{
 		super.dispose();
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LEAVE, _board.calcScore()));
+		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LEAVE, ChessBoard.getInstance().calcScore()));
 		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, false);
 	}
 	
 	public void start(final String myColor)
 	{
-		if (_board != null)
-			remove(_board);
-		
-		_board = new ChessBoard(myColor);
-		add(_board, BOARD);
-		
 		_layout.show(getContentPane(), BOARD);
+		
+		ChessBoard.getInstance().start(myColor);
 		
 		pack();
 		setLocationRelativeTo(null);
@@ -93,7 +77,7 @@ public final class ChessScreen extends JFrame
 				ChessBackground.getInstance().showDialog("Victory", ChessBackground.OFF);
 				break;
 			case EXIT:
-				Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.EXIT, _board.calcScore()));
+				Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.EXIT, ChessBoard.getInstance().calcScore()));
 				return;
 		}
 		
@@ -103,14 +87,9 @@ public final class ChessScreen extends JFrame
 		Client.getInstance().sendPacket(new RequestWaitingRoom(GameId.CHESS_MP));
 	}
 	
-	public void switchPanels(final String panel)
+	public void switchPanel(final String switchTo)
 	{
-		_layout.show(getContentPane(), panel);
-	}
-	
-	public ChessBoard getBoard()
-	{
-		return _board;
+		_layout.show(getContentPane(), switchTo);
 	}
 	
 	public ChessPromotion getPromotionPanel()

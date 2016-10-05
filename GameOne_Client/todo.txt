@@ -1,5 +1,16 @@
-add a readme telling that external program is needed to create the exe called launch4j.
-in any case include the already built program in the source.
-add icon.
+* Add a readme telling that launch4j is needed in order to create exe out of jar file.
+* Include already built exe file in the source.
+* Add icon for the exe.
+* Add prefs.reg to build.xml
 
-add prefs.reg to build.xml
+* Update waiting rooms to show game configs.
+* Add latest matches to waiting rooms.
+
+Chess:
+* Computer shouldn't make a move that reveals the king to a check.
+* Implement special moves to computer (castling and enPassin).
+* Fix methods visibility when 100% finished.
+Slide a Lama:
+* Add animations.
+
+Continue from Game Configs part 2.

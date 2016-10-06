@@ -6,18 +6,7 @@
 * Update waiting rooms to show game configs.
 * Add latest matches to waiting rooms.
 
-Chess:
-* Computer shouldn't make a move that reveals the king to a check.
-* Implement special moves to computer (castling and enPassin).
-* Fix methods visibility when 100% finished.
 Slide a Lama:
 * Add animations.
 
 Continue from Game Configs part 2.
-
-* Continue testing both SP/MP.
-
-Problems in SP:
-* When computer pawn reach end by eating it doesn't evolve.
-* Sometimes computer reveals its king to check.
-* Can computer do castling/enPassing?

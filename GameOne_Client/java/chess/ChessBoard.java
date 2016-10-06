@@ -167,6 +167,11 @@ public final class ChessBoard extends JPanel
 			computerMove();
 	}
 	
+	public boolean isSingleplayer()
+	{
+		return _singlePlayer;
+	}
+	
 	public ChessCell[][] getCells()
 	{
 		return _cells;
@@ -194,6 +199,9 @@ public final class ChessBoard extends JPanel
 	
 	public King getMyKing()
 	{
+		if (_singlePlayer && !_myTurn)
+			return _computerKing;
+		
 		return _myKing;
 	}
 	
@@ -334,7 +342,7 @@ public final class ChessBoard extends JPanel
 					_cells[moves[i][2]][moves[i][3]].setBackground(Color.MAGENTA);
 				}
 				
-				_allies.remove(_cells[moves[i][2]][moves[i][3]]);
+				_allies.remove(_cells[moves[i][2]][moves[i][3]].getObject());
 				
 				_cells[moves[i][2]][moves[i][3]].setObject(null);
 			}
@@ -427,10 +435,15 @@ public final class ChessBoard extends JPanel
 	
 	private void checkForTie()
 	{
-		for (final ChessCell[] cells : _cells)
-			for (final ChessCell cell : cells)
-				if (cell.getObject() != null && cell.getObject().getOwner().equals(_myColor) && !cell.getObject().getPathToShow().isEmpty())
-					return;
+		// If only kings left its a tie for sure.
+		// Otherwise check for movements.
+		if (_allies.size() != 1 || _enemies.size() != 1)
+		{
+			for (final ChessCell[] cells : _cells)
+				for (final ChessCell cell : cells)
+					if (cell.getObject() != null && cell.getObject().getOwner().equals(_myColor) && !cell.getObject().getPathToShow().isEmpty())
+						return;
+		}
 		
 		if (_singlePlayer)
 		{
@@ -461,6 +474,12 @@ public final class ChessBoard extends JPanel
 		for (final AbstractObject obj : _enemies)
 			obj.validatePath();
 		
+		ChessCell passingCell = null;
+		if (_inPassing[0] != -1 && _inPassing[1] != -1)
+			passingCell = getCell(_inPassing[0], _inPassing[1]);
+		
+		_inPassing[0] = _inPassing[1] = -1;
+		
 		CheckStatus check = _computerKing.getCheckStatus();
 		if (check == CheckStatus.UNDER_CHECKMATE)
 		{
@@ -473,6 +492,8 @@ public final class ChessBoard extends JPanel
 		}
 		else
 		{
+			ChessCell fromCell = null;
+			ChessCell toCell = null;
 			// Highest priority is to guard king if its under attack.
 			if (check == CheckStatus.UNDER_CHECK)
 			{
@@ -481,19 +502,8 @@ public final class ChessBoard extends JPanel
 				final List<ChessCell> defenders = getThreateningCells(attacker.getObject());
 				if (!defenders.isEmpty())
 				{
-					final ChessCell defender = defenders.get(0);
-					defender.getObject().setMoved(true);
-					
-					if (GameConfig.CHESS_PAINT_MOVES)
-					{
-						defender.setBackground(Color.PINK);
-						attacker.setBackground(Color.MAGENTA);
-					}
-					
-					_allies.remove(attacker.getObject());
-					
-					attacker.setObject(defender.getObject());
-					defender.setObject(null);
+					fromCell = defenders.get(0);
+					toCell = attacker;
 				}
 				else
 				{
@@ -501,21 +511,8 @@ public final class ChessBoard extends JPanel
 					final List<ChessCell> kingPath = _computerKing.getPathToShow();
 					if (!kingPath.isEmpty())
 					{
-						_computerKing.setMoved(true);
-						
-						final ChessCell from = getCell(_computerKing);
-						final ChessCell to = Rnd.get(kingPath);
-						if (GameConfig.CHESS_PAINT_MOVES)
-						{
-							from.setBackground(Color.PINK);
-							to.setBackground(Color.MAGENTA);
-						}
-						
-						if (to.getObject() != null)
-							_allies.remove(to.getObject());
-						
-						to.setObject(_computerKing);
-						from.setObject(null);
+						fromCell = getCell(_computerKing);
+						toCell = Rnd.get(kingPath);
 					}
 					else
 					{
@@ -535,20 +532,8 @@ public final class ChessBoard extends JPanel
 								
 								if (objPath.contains(cell))
 								{
-									obj.setMoved(true);
-									
-									final ChessCell from = getCell(obj);
-									if (GameConfig.CHESS_PAINT_MOVES)
-									{
-										from.setBackground(Color.PINK);
-										cell.setBackground(Color.MAGENTA);
-									}
-									
-									if (cell.getObject() != null)
-										_allies.remove(cell.getObject());
-									
-									cell.setObject(obj);
-									from.setObject(null);
+									fromCell = getCell(obj);
+									toCell = cell;
 									
 									done = true;
 								}
@@ -577,10 +562,30 @@ public final class ChessBoard extends JPanel
 						{
 							moved = true;
 							
-							if (attackableObject[1] == null || enemyObj.getScore() > attackableObject[1].getObject().getScore())
+							// attackableObject[1] is null on first iteration, as there's nothing to compare.
+							// attackableObject[1].getObject() is null if the saved cell is enPassing cell (no object on it).
+							// But since we know that such a cell score is always 1 (its a pawn), we don't mind putting in new object without checking.
+							if (attackableObject[1] == null || attackableObject[1].getObject() == null || enemyObj.getScore() > attackableObject[1].getObject().getScore())
 							{
 								attackableObject[0] = getCell(myObj);
 								attackableObject[1] = getCell(enemyObj);
+							}
+						}
+						else if (myObj instanceof Pawn && enemyObj instanceof Pawn && passingCell != null && myObj.canSee(passingCell, false))
+						{
+							final ChessCell pawnCell = getCell(enemyObj);
+							if (pawnCell.getCellY() == passingCell.getCellY() && (pawnCell.getCellX() - 1 == passingCell.getCellX() || pawnCell.getCellX() + 1 == passingCell.getCellX()))
+							{
+								moved = true;
+								
+								// attackableObject[1] is null on first iteration, as there's nothing to compare.
+								// attackableObject[1].getObject() is null if the saved cell is enPassing cell (no object on it).
+								// But since we know that such a cell score is always 1 (its a pawn), we don't mind putting in new object without checking.
+								if (attackableObject[1] == null || attackableObject[1].getObject() == null || enemyObj.getScore() > attackableObject[1].getObject().getScore())
+								{
+									attackableObject[0] = getCell(myObj);
+									attackableObject[1] = passingCell;
+								}
 							}
 						}
 					}
@@ -589,18 +594,8 @@ public final class ChessBoard extends JPanel
 				// Kill enemy with highest score.
 				if (moved)
 				{
-					attackableObject[0].getObject().setMoved(true);
-					
-					if (GameConfig.CHESS_PAINT_MOVES)
-					{
-						attackableObject[0].setBackground(Color.PINK);
-						attackableObject[1].setBackground(Color.MAGENTA);
-					}
-					
-					_allies.remove(attackableObject[1].getObject());
-					
-					attackableObject[1].setObject(attackableObject[0].getObject());
-					attackableObject[0].setObject(null);
+					fromCell = attackableObject[0];
+					toCell = attackableObject[1];
 				}
 				// Didn't find any target.
 				else
@@ -619,17 +614,8 @@ public final class ChessBoard extends JPanel
 								if (canBeSeenBy(obj.getEnemy(), cell, false))
 									continue;
 								
-								obj.setMoved(true);
-								
-								final ChessCell from = getCell(obj);
-								if (GameConfig.CHESS_PAINT_MOVES)
-								{
-									from.setBackground(Color.PINK);
-									cell.setBackground(Color.MAGENTA);
-								}
-								
-								cell.setObject(obj);
-								from.setObject(null);
+								fromCell = getCell(obj);
+								toCell = cell;
 								
 								moved = true;
 								break;
@@ -639,7 +625,8 @@ public final class ChessBoard extends JPanel
 					// No target is under attack, normal move.
 					if (!moved)
 					{
-						if (_enemies.size() == 1 && _computerKing.getPathToShow().isEmpty())
+						// If both players has only kings left OR computer has only king left and it cannot make any move, tie.
+						if (_enemies.size() == 1 && (_allies.size() == 1 || _computerKing.getPathToShow().isEmpty()))
 						{
 							ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
 							
@@ -649,7 +636,7 @@ public final class ChessBoard extends JPanel
 							Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 							return;
 						}
-						do
+						while (true)
 						{
 							final AbstractObject randomObj = Rnd.get(_enemies);
 							if (randomObj.getPathToShow().isEmpty())
@@ -659,38 +646,152 @@ public final class ChessBoard extends JPanel
 							if (canBeSeenBy(randomObj.getEnemy(), randomCell, false))
 								continue;
 							
-							randomObj.setMoved(true);
-							
-							final ChessCell from = getCell(randomObj);
-							if (GameConfig.CHESS_PAINT_MOVES)
-							{
-								from.setBackground(Color.PINK);
-								randomCell.setBackground(Color.MAGENTA);
-							}
-							
-							randomCell.setObject(randomObj);
-							from.setObject(null);
-							
-							if (randomObj instanceof Pawn)
-							{
-								// Always pick queen if should be upgraded.
-								if (randomCell.getCellX() == 0 || randomCell.getCellX() == 7)
-								{
-									final Queen queen = new Queen(0, 0, randomObj.getOwner());
-									queen.setMoved(true);
-									
-									_enemies.remove(randomObj);
-									_enemies.add(queen);
-									
-									randomCell.setObject(queen);
-								}
-							}
-							
+							fromCell = getCell(randomObj);
+							toCell = randomCell;
 							break;
-						} while (true);
+						}
 					}
 				}
 			}
+			
+			if (fromCell == null || toCell == null)
+				throw new NullPointerException("fromCell and toCell are not allowed to be null at this point.");
+			
+			if (GameConfig.CHESS_PAINT_MOVES)
+			{
+				fromCell.setBackground(Color.PINK);
+				toCell.setBackground(Color.MAGENTA);
+			}
+			
+			if (toCell.getObject() != null)
+				_allies.remove(toCell.getObject());
+			
+			toCell.setObject(fromCell.getObject());
+			fromCell.setObject(null);
+			
+			final AbstractObject soldierMoved = toCell.getObject();
+			if (soldierMoved instanceof King)
+			{
+				// Castling.
+				if (!soldierMoved.hasMoved())
+				{
+					if (toCell.getCellY() == 6)
+					{
+						_cells[toCell.getCellX()][7].setBackground(Color.PINK);
+						_cells[toCell.getCellX()][5].setBackground(Color.MAGENTA);
+						
+						_cells[toCell.getCellX()][5].setObject(_cells[toCell.getCellX()][7].getObject());
+						_cells[toCell.getCellX()][7].setObject(null);
+						
+						_cells[toCell.getCellX()][5].getObject().setMoved(true);
+					}
+					else if (toCell.getCellY() == 2)
+					{
+						_cells[toCell.getCellX()][0].setBackground(Color.PINK);
+						_cells[toCell.getCellX()][3].setBackground(Color.MAGENTA);
+						
+						_cells[toCell.getCellX()][3].setObject(_cells[toCell.getCellX()][0].getObject());
+						_cells[toCell.getCellX()][0].setObject(null);
+						
+						_cells[toCell.getCellX()][3].getObject().setMoved(true);
+					}
+				}
+			}
+			else if (soldierMoved instanceof Pawn)
+			{
+				if (soldierMoved.getOwner().equals("white"))
+				{
+					// Promotion.
+					if (toCell.getCellX() == 0)
+					{
+						final Queen queen = new Queen(0, 0, soldierMoved.getOwner());
+						queen.setMoved(true);
+						
+						_enemies.remove(toCell.getObject());
+						_enemies.add(queen);
+						
+						toCell.setObject(queen);
+					}
+					// EnPassing creation, if a pawn tries to avoid a kill by enemy pawn going 2 steps forward.
+					// Then enemy pawn can go behind it to make a kill.
+					else if (toCell.getCellX() == fromCell.getCellX() - 2)
+					{
+						boolean makeInPassing = false;
+						if (toCell.getCellY() - 1 >= 0)
+						{
+							final ChessCell enemyCell = _cells[toCell.getCellX()][toCell.getCellY() - 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(soldierMoved.getOwner()))
+								makeInPassing = true;
+						}
+						if (!makeInPassing && toCell.getCellY() + 1 < 8)
+						{
+							final ChessCell enemyCell = _cells[toCell.getCellX()][toCell.getCellY() + 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(soldierMoved.getOwner()))
+								makeInPassing = true;
+						}
+						if (makeInPassing)
+						{
+							_inPassing[0] = toCell.getCellX() + 1;
+							_inPassing[1] = toCell.getCellY();
+						}
+					}
+					// EnPassing kill.
+					else if (passingCell != null && passingCell.getCellX() == toCell.getCellX() && passingCell.getCellY() == toCell.getCellY())
+					{
+						_allies.remove(_cells[toCell.getCellX() + 1][toCell.getCellY()].getObject());
+						
+						_cells[toCell.getCellX() + 1][toCell.getCellY()].setBackground(Color.MAGENTA);
+						_cells[toCell.getCellX() + 1][toCell.getCellY()].setObject(null);
+					}
+				}
+				else
+				{
+					// Promotion.
+					if (toCell.getCellX() == 7)
+					{
+						final Queen queen = new Queen(0, 0, soldierMoved.getOwner());
+						queen.setMoved(true);
+						
+						_enemies.remove(toCell.getObject());
+						_enemies.add(queen);
+						
+						toCell.setObject(queen);
+					}
+					// EnPassing creation, if a pawn tries to avoid a kill by enemy pawn going 2 steps forward.
+					// Then enemy pawn can go behind it to make a kill.
+					else if (toCell.getCellX() == fromCell.getCellX() + 2)
+					{
+						boolean makeInPassing = false;
+						if (toCell.getCellY() - 1 >= 0)
+						{
+							final ChessCell enemyCell = _cells[toCell.getCellX()][toCell.getCellY() - 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(soldierMoved.getOwner()))
+								makeInPassing = true;
+						}
+						if (!makeInPassing && toCell.getCellY() + 1 < 8)
+						{
+							final ChessCell enemyCell = _cells[toCell.getCellX()][toCell.getCellY() + 1];
+							if (enemyCell.getObject() instanceof Pawn && !enemyCell.getObject().isAlly(soldierMoved.getOwner()))
+								makeInPassing = true;
+						}
+						if (makeInPassing)
+						{
+							_inPassing[0] = toCell.getCellX() - 1;
+							_inPassing[1] = toCell.getCellY();
+						}
+					}
+					// EnPassing kill.
+					else if (passingCell != null && passingCell.getCellX() == toCell.getCellX() && passingCell.getCellY() == toCell.getCellY())
+					{
+						_allies.remove(_cells[toCell.getCellX() - 1][toCell.getCellY()].getObject());
+						
+						_cells[toCell.getCellX() - 1][toCell.getCellY()].setBackground(Color.MAGENTA);
+						_cells[toCell.getCellX() - 1][toCell.getCellY()].setObject(null);
+					}
+				}
+			}
+			
+			soldierMoved.setMoved(true);
 			
 			// Build paths, enemies first.
 			for (final AbstractObject obj : _enemies)
@@ -974,7 +1075,13 @@ public final class ChessBoard extends JPanel
 			selectedObject.setMoved(true);
 			
 			_selectedCell = null;
-			_inPassing[0] = _inPassing[1] = -1;
+			if (_singlePlayer && images[0].equals("inPassing_make"))
+			{
+				_inPassing[0] = moves[0][2];
+				_inPassing[1] = moves[0][3];
+			}
+			else
+				_inPassing[0] = _inPassing[1] = -1;
 			_myTurn = false;
 			
 			if (_singlePlayer)

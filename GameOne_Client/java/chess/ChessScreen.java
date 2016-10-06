@@ -11,6 +11,7 @@ import network.request.RequestUpdateGameScore;
 import network.request.RequestWaitingRoom;
 import objects.GameId;
 import objects.GameResult;
+import windows.GameSelect;
 import windows.WaitingRoom;
 
 /**
@@ -48,8 +49,13 @@ public final class ChessScreen extends JFrame
 	{
 		super.dispose();
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LEAVE, ChessBoard.getInstance().calcScore()));
-		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, false);
+		if (ChessBoard.getInstance().isSingleplayer())
+			Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+		else
+		{
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LEAVE, ChessBoard.getInstance().calcScore()));
+			Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, false);
+		}
 	}
 	
 	public void start(final String myColor, final boolean sp)

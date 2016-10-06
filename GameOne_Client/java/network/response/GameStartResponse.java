@@ -33,7 +33,7 @@ public final class GameStartResponse extends PacketReader<Client>
 			case CHESS_MP:
 				client.setCurrentDetails(ChessScreen.getInstance(), GameId.CHESS_MP, false);
 				
-				ChessScreen.getInstance().start(_isStarting ? "white" : "black");
+				ChessScreen.getInstance().start(_isStarting ? "white" : "black", false);
 				break;
 			case LAMA:
 				client.setCurrentDetails(SalScreen.getInstance(), GameId.LAMA, false);

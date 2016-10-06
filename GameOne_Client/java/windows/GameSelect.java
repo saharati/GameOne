@@ -21,6 +21,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.text.AbstractDocument;
 
+import chess.ChessScreen;
 import client.Client;
 import configs.Config;
 import gui.SpringUtilities;
@@ -97,7 +98,9 @@ public final class GameSelect extends JFrame
 		final JButton s2048 = new JButton("2048 (SP)");
 		s2048.addActionListener(a -> Client.getInstance().setCurrentDetails(S2048.getInstance(), GameId.G2048, true));
 		_buttonsPanel.add(s2048);
-		_buttonsPanel.add(DUMMY);
+		final JButton spChess = new JButton("Chess (SP)");
+		spChess.addActionListener(a -> Client.getInstance().setCurrentDetails(ChessScreen.getInstance(), GameId.CHESS_SP, true));
+		_buttonsPanel.add(spChess);
 		
 		SpringUtilities.makeCompactGrid(_buttonsPanel, 3, 3, 10, 10, 10, 10);
 		

@@ -49,47 +49,62 @@ public final class King extends AbstractObject
 	public void validatePath()
 	{
 		for (final ChessCell cell : _path)
-			if (BOARD.canBeSeenBy(getEnemy(), cell))
+			if (BOARD.canBeSeenBy(getEnemy(), cell, false))
 				_path.remove(cell);
 		
-		// Castling move.
 		final ChessCell myCell = BOARD.getCell(this);
-		if (!hasMoved() && getCheckStatus() == CheckStatus.NOT_UNDER_CHECK)
+		final CheckStatus check = getCheckStatus();
+		if (check == CheckStatus.NOT_UNDER_CHECK)
 		{
-			final ChessCell leftRookCell = BOARD.getCell(myCell.getCellX(), 0);
-			final ChessCell rightRookCell = BOARD.getCell(myCell.getCellX(), 7);
-			
-			// Check that left object is still a Rook, hasn't moved, cannot be eaten and can see all the way to the king.
-			if (leftRookCell.getObject() instanceof Rook && !leftRookCell.getObject().hasMoved() && leftRookCell.getObject().canSee(myCell))
+			// Castling move.
+			if (!hasMoved())
 			{
-				// All way must be clear from enemies.
-				boolean clear = true;
-				for (int y = 0;y < myCell.getCellY();y++)
+				final ChessCell leftRookCell = BOARD.getCell(myCell.getCellX(), 0);
+				final ChessCell rightRookCell = BOARD.getCell(myCell.getCellX(), 7);
+				
+				// Check that left object is still a Rook, hasn't moved, cannot be eaten and can see all the way to the king.
+				if (leftRookCell.getObject() instanceof Rook && !leftRookCell.getObject().hasMoved() && leftRookCell.getObject().canSee(myCell, false))
 				{
-					if (BOARD.canBeSeenBy(getEnemy(), BOARD.getCell(myCell.getCellX(), y)))
+					// All way must be clear from enemies.
+					boolean clear = true;
+					for (int y = 0;y < myCell.getCellY();y++)
 					{
-						clear = false;
-						break;
+						if (BOARD.canBeSeenBy(getEnemy(), BOARD.getCell(myCell.getCellX(), y), false))
+						{
+							clear = false;
+							break;
+						}
 					}
+					if (clear)
+						_path.add(BOARD.getCell(myCell.getCellX(), 2));
 				}
-				if (clear)
-					_path.add(BOARD.getCell(myCell.getCellX(), 2));
+				// Check that right object is still a Rook, hasn't moved, cannot be eaten and can see all the way to the king.
+				if (rightRookCell.getObject() instanceof Rook && !rightRookCell.getObject().hasMoved() && rightRookCell.getObject().canSee(myCell, false))
+				{
+					// All way must be clear from enemies.
+					boolean clear = true;
+					for (int y = rightRookCell.getCellY();y > myCell.getCellY();y--)
+					{
+						if (BOARD.canBeSeenBy(getEnemy(), BOARD.getCell(myCell.getCellX(), y), false))
+						{
+							clear = false;
+							break;
+						}
+					}
+					if (clear)
+						_path.add(BOARD.getCell(myCell.getCellX(), 6));
+				}
 			}
-			// Check that right object is still a Rook, hasn't moved, cannot be eaten and can see all the way to the king.
-			if (rightRookCell.getObject() instanceof Rook && !rightRookCell.getObject().hasMoved() && rightRookCell.getObject().canSee(myCell))
+		}
+		else
+		{
+			final List<ChessCell> attackers = BOARD.getThreateningCells(this);
+			if (!attackers.isEmpty())
 			{
-				// All way must be clear from enemies.
-				boolean clear = true;
-				for (int y = rightRookCell.getCellY();y > myCell.getCellY();y--)
-				{
-					if (BOARD.canBeSeenBy(getEnemy(), BOARD.getCell(myCell.getCellX(), y)))
-					{
-						clear = false;
-						break;
-					}
-				}
-				if (clear)
-					_path.add(BOARD.getCell(myCell.getCellX(), 6));
+				final ChessCell attacker = attackers.get(0);
+				for (final ChessCell cell : _path)
+					if (attacker.getObject().canSee(cell, true))
+						_path.remove(cell);
 			}
 		}
 	}

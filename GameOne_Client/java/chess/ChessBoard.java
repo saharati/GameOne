@@ -27,6 +27,8 @@ import configs.GameConfig;
 import network.request.RequestTurnChange;
 import network.request.RequestUpdateGameScore;
 import objects.GameResult;
+import util.random.Rnd;
+import windows.GameSelect;
 
 /**
  * Chess board.
@@ -68,13 +70,14 @@ public final class ChessBoard extends JPanel
 	
 	private final List<AbstractObject> _allies = new CopyOnWriteArrayList<>();
 	private final List<AbstractObject> _enemies = new CopyOnWriteArrayList<>();
-	
 	private final ChessCell[][] _cells = new ChessCell[8][8];
 	private final int[] _inPassing = {-1, -1};
 	private String _myColor;
 	private King _myKing;
+	private King _computerKing;
 	private boolean _myTurn;
 	private ChessCell _selectedCell;
+	private boolean _singlePlayer;
 	
 	protected ChessBoard()
 	{
@@ -97,11 +100,12 @@ public final class ChessBoard extends JPanel
 		LOGGER.info("Chess board loaded!");
 	}
 	
-	public void start(final String myColor)
+	public void start(final String myColor, final boolean sp)
 	{
-		// Set color and turn.
+		// Set color, turn and mode.
 		_myColor = myColor;
 		_myTurn = _myColor.equals("white");
+		_singlePlayer = sp;
 		
 		// Replace components.
 		removeAll();
@@ -136,21 +140,31 @@ public final class ChessBoard extends JPanel
 					_myKing = (King) obj;
 			}
 			else
+			{
 				_enemies.add(obj);
+				
+				if (obj instanceof King)
+					_computerKing = (King) obj;
+			}
 			
 			obj.setMoved(false);
 			
 			_cells[obj.getInitialX()][obj.getInitialY()].setObject(obj);
 		}
 		
-		// Build paths, enemies first.
-		for (final AbstractObject obj : _enemies)
-			obj.buildPaths(true);
-		for (final AbstractObject obj : _allies)
-			obj.buildPaths(false);
-		// Validate paths for ally soldiers only.
-		for (final AbstractObject obj : _allies)
-			obj.validatePath();
+		if (_myTurn)
+		{
+			// Build paths, enemies first.
+			for (final AbstractObject obj : _enemies)
+				obj.buildPaths(true);
+			for (final AbstractObject obj : _allies)
+				obj.buildPaths(false);
+			// Validate paths for ally soldiers only.
+			for (final AbstractObject obj : _allies)
+				obj.validatePath();
+		}
+		else if (_singlePlayer)
+			computerMove();
 	}
 	
 	public ChessCell[][] getCells()
@@ -205,7 +219,7 @@ public final class ChessBoard extends JPanel
 		return threatCells;
 	}
 	
-	public boolean canBeSeenBy(final String owner, final ChessCell targetCell)
+	public boolean canBeSeenBy(final String owner, final ChessCell targetCell, final boolean extendedPath)
 	{
 		for (final ChessCell[] cells : _cells)
 		{
@@ -218,7 +232,7 @@ public final class ChessBoard extends JPanel
 				if (!cell.getObject().isAlly(owner))
 					continue;
 				
-				if (cell.getObject().canSee(targetCell))
+				if (cell.getObject().canSee(targetCell, extendedPath))
 					return true;
 			}
 		}
@@ -266,28 +280,33 @@ public final class ChessBoard extends JPanel
 			_inPassing[0] = _inPassing[1] = -1;
 			_myTurn = false;
 			
-			final String[] images = new String[]
+			if (_singlePlayer)
+				computerMove();
+			else
 			{
-				className,
-				null
-			};
-			final int[][] positions = new int[][]
-			{
+				final String[] images = new String[]
 				{
-					oldX,
-					oldY,
-					newX,
-					newY
-				},
+					className,
+					null
+				};
+				final int[][] positions = new int[][]
 				{
-					-1,
-					-1,
-					-1,
-					-1
-				}
-			};
-			
-			Client.getInstance().sendPacket(new RequestTurnChange(images, positions));
+					{
+						oldX,
+						oldY,
+						newX,
+						newY
+					},
+					{
+						-1,
+						-1,
+						-1,
+						-1
+					}
+				};
+				
+				Client.getInstance().sendPacket(new RequestTurnChange(images, positions));
+			}
 		}
 		catch (final SecurityException | ClassNotFoundException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e)
 		{
@@ -413,8 +432,296 @@ public final class ChessBoard extends JPanel
 				if (cell.getObject() != null && cell.getObject().getOwner().equals(_myColor) && !cell.getObject().getPathToShow().isEmpty())
 					return;
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
-		ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
+		if (_singlePlayer)
+		{
+			ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
+			
+			ChessScreen.getInstance().setVisible(false);
+			
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
+			Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+		}
+		else
+		{
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
+			ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
+		}
+	}
+	
+	private void computerMove()
+	{
+		// Note that for computer, allies are considered enemies.
+		
+		// Build paths, enemies first.
+		for (final AbstractObject obj : _allies)
+			obj.buildPaths(true);
+		for (final AbstractObject obj : _enemies)
+			obj.buildPaths(false);
+		// Validate paths for ally soldiers only.
+		for (final AbstractObject obj : _enemies)
+			obj.validatePath();
+		
+		CheckStatus check = _computerKing.getCheckStatus();
+		if (check == CheckStatus.UNDER_CHECKMATE)
+		{
+			ChessBackground.getInstance().showDialog("Checkmate", ChessBackground.WON);
+			
+			ChessScreen.getInstance().setVisible(false);
+			
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.WIN, calcScore()));
+			Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+		}
+		else
+		{
+			// Highest priority is to guard king if its under attack.
+			if (check == CheckStatus.UNDER_CHECK)
+			{
+				// Highest priority to kill the attacking soldier.
+				final ChessCell attacker = getThreateningCells(_computerKing).get(0);
+				final List<ChessCell> defenders = getThreateningCells(attacker.getObject());
+				if (!defenders.isEmpty())
+				{
+					final ChessCell defender = defenders.get(0);
+					defender.getObject().setMoved(true);
+					
+					if (GameConfig.CHESS_PAINT_MOVES)
+					{
+						defender.setBackground(Color.PINK);
+						attacker.setBackground(Color.MAGENTA);
+					}
+					
+					_allies.remove(attacker.getObject());
+					
+					attacker.setObject(defender.getObject());
+					defender.setObject(null);
+				}
+				else
+				{
+					// Next priority is to try moving king somewhere.
+					final List<ChessCell> kingPath = _computerKing.getPathToShow();
+					if (!kingPath.isEmpty())
+					{
+						_computerKing.setMoved(true);
+						
+						final ChessCell from = getCell(_computerKing);
+						final ChessCell to = Rnd.get(kingPath);
+						if (GameConfig.CHESS_PAINT_MOVES)
+						{
+							from.setBackground(Color.PINK);
+							to.setBackground(Color.MAGENTA);
+						}
+						
+						if (to.getObject() != null)
+							_allies.remove(to.getObject());
+						
+						to.setObject(_computerKing);
+						from.setObject(null);
+					}
+					else
+					{
+						// Last priority is to block the way to the king.
+						final List<ChessCell> pathToKing = attacker.getObject().getPathTo(_computerKing);
+						boolean done = false;
+						for (final AbstractObject obj : _enemies)
+						{
+							if (done)
+								break;
+							
+							final List<ChessCell> objPath = obj.getPathToShow();
+							for (final ChessCell cell : pathToKing)
+							{
+								if (done)
+									break;
+								
+								if (objPath.contains(cell))
+								{
+									obj.setMoved(true);
+									
+									final ChessCell from = getCell(obj);
+									if (GameConfig.CHESS_PAINT_MOVES)
+									{
+										from.setBackground(Color.PINK);
+										cell.setBackground(Color.MAGENTA);
+									}
+									
+									if (cell.getObject() != null)
+										_allies.remove(cell.getObject());
+									
+									cell.setObject(obj);
+									from.setObject(null);
+									
+									done = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			// Next check if there's any attackable target.
+			else
+			{
+				// Get all my soldiers who are able to make a move.
+				final List<AbstractObject> moveableObjects = new ArrayList<>();
+				for (final AbstractObject obj : _enemies)
+					if (!obj.getPathToShow().isEmpty())
+						moveableObjects.add(obj);
+				
+				// Scan for a target that can be killed with the highest score.
+				final ChessCell[] attackableObject = new ChessCell[2];
+				boolean moved = false;
+				for (final AbstractObject enemyObj : _allies)
+				{
+					for (final AbstractObject myObj : moveableObjects)
+					{
+						if (myObj.canEat(enemyObj))
+						{
+							moved = true;
+							
+							if (attackableObject[1] == null || enemyObj.getScore() > attackableObject[1].getObject().getScore())
+							{
+								attackableObject[0] = getCell(myObj);
+								attackableObject[1] = getCell(enemyObj);
+							}
+						}
+					}
+				}
+				
+				// Kill enemy with highest score.
+				if (moved)
+				{
+					attackableObject[0].getObject().setMoved(true);
+					
+					if (GameConfig.CHESS_PAINT_MOVES)
+					{
+						attackableObject[0].setBackground(Color.PINK);
+						attackableObject[1].setBackground(Color.MAGENTA);
+					}
+					
+					_allies.remove(attackableObject[1].getObject());
+					
+					attackableObject[1].setObject(attackableObject[0].getObject());
+					attackableObject[0].setObject(null);
+				}
+				// Didn't find any target.
+				else
+				{
+					// Check if some target is under attack.
+					for (final AbstractObject obj : _enemies)
+					{
+						if (moved)
+							break;
+						
+						if (canBeEaten(obj))
+						{
+							final List<ChessCell> cells = obj.getPathToShow();
+							for (final ChessCell cell : cells)
+							{
+								if (canBeSeenBy(obj.getEnemy(), cell, false))
+									continue;
+								
+								obj.setMoved(true);
+								
+								final ChessCell from = getCell(obj);
+								if (GameConfig.CHESS_PAINT_MOVES)
+								{
+									from.setBackground(Color.PINK);
+									cell.setBackground(Color.MAGENTA);
+								}
+								
+								cell.setObject(obj);
+								from.setObject(null);
+								
+								moved = true;
+								break;
+							}
+						}
+					}
+					// No target is under attack, normal move.
+					if (!moved)
+					{
+						if (_enemies.size() == 1 && _computerKing.getPathToShow().isEmpty())
+						{
+							ChessBackground.getInstance().showDialog("Tie", ChessBackground.TIE);
+							
+							ChessScreen.getInstance().setVisible(false);
+							
+							Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.TIE, 0));
+							Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+							return;
+						}
+						do
+						{
+							final AbstractObject randomObj = Rnd.get(_enemies);
+							if (randomObj.getPathToShow().isEmpty())
+								continue;
+							
+							final ChessCell randomCell = Rnd.get(randomObj.getPathToShow());
+							if (canBeSeenBy(randomObj.getEnemy(), randomCell, false))
+								continue;
+							
+							randomObj.setMoved(true);
+							
+							final ChessCell from = getCell(randomObj);
+							if (GameConfig.CHESS_PAINT_MOVES)
+							{
+								from.setBackground(Color.PINK);
+								randomCell.setBackground(Color.MAGENTA);
+							}
+							
+							randomCell.setObject(randomObj);
+							from.setObject(null);
+							
+							if (randomObj instanceof Pawn)
+							{
+								// Always pick queen if should be upgraded.
+								if (randomCell.getCellX() == 0 || randomCell.getCellX() == 7)
+								{
+									final Queen queen = new Queen(0, 0, randomObj.getOwner());
+									queen.setMoved(true);
+									
+									_enemies.remove(randomObj);
+									_enemies.add(queen);
+									
+									randomCell.setObject(queen);
+								}
+							}
+							
+							break;
+						} while (true);
+					}
+				}
+			}
+			
+			// Build paths, enemies first.
+			for (final AbstractObject obj : _enemies)
+				obj.buildPaths(true);
+			for (final AbstractObject obj : _allies)
+				obj.buildPaths(false);
+			// Validate paths for ally soldiers only.
+			for (final AbstractObject obj : _allies)
+				obj.validatePath();
+			
+			_myTurn = true;
+			
+			check = _myKing.getCheckStatus();
+			switch (check)
+			{
+				case NOT_UNDER_CHECK:
+					checkForTie();
+					break;
+				case UNDER_CHECK:
+					JOptionPane.showMessageDialog(null, "You are under a check.", "Check", JOptionPane.INFORMATION_MESSAGE);
+					break;
+				case UNDER_CHECKMATE:
+					ChessBackground.getInstance().showDialog("Checkmate", ChessBackground.LOST);
+					
+					ChessScreen.getInstance().setVisible(false);
+					
+					Client.getInstance().sendPacket(new RequestUpdateGameScore(GameResult.LOSE, calcScore()));
+					Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
+					break;
+			}
+		}
 	}
 	
 	private void cellClick(final ActionEvent e)
@@ -670,7 +977,10 @@ public final class ChessBoard extends JPanel
 			_inPassing[0] = _inPassing[1] = -1;
 			_myTurn = false;
 			
-			Client.getInstance().sendPacket(new RequestTurnChange(images, moves));
+			if (_singlePlayer)
+				computerMove();
+			else
+				Client.getInstance().sendPacket(new RequestTurnChange(images, moves));
 		}
 	}
 	

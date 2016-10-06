@@ -103,8 +103,8 @@ public final class ChessPromotion extends JPanel
 		@Override
 		public void mousePressed(final MouseEvent me)
 		{
-			ChessBoard.getInstance().changeTurnAfterPromotion(_className, _oldX, _oldY, _newX, _newY);
 			ChessScreen.getInstance().switchPanel(ChessScreen.BOARD);
+			ChessBoard.getInstance().changeTurnAfterPromotion(_className, _oldX, _oldY, _newX, _newY);
 		}
 	}
 }

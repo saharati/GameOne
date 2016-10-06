@@ -14,3 +14,10 @@ Slide a Lama:
 * Add animations.
 
 Continue from Game Configs part 2.
+
+* Continue testing both SP/MP.
+
+Problems in SP:
+* When computer pawn reach end by eating it doesn't evolve.
+* Sometimes computer reveals its king to check.
+* Can computer do castling/enPassing?

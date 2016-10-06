@@ -1,5 +1,6 @@
 package network.response;
 
+import chess.ChessScreen;
 import client.Client;
 import network.PacketReader;
 import network.request.RequestWaitingRoom;
@@ -7,6 +8,7 @@ import objects.GameId;
 import s2048.S2048;
 import snake.SnakeScreen;
 import tetris.TetrisScreen;
+import util.random.Rnd;
 import windows.GameSelect;
 
 /**
@@ -51,6 +53,9 @@ public final class GameResponse extends PacketReader<Client>
 					break;
 				case TETRIS:
 					TetrisScreen.getInstance().start();
+					break;
+				case CHESS_SP:
+					ChessScreen.getInstance().start(Rnd.nextBoolean() ? "white" : "black", true);
 					break;
 			}
 		}

@@ -13,5 +13,6 @@ public enum GameId
 	LAMA,
 	SNAKE,
 	G2048,
-	CHECKERS
+	CHECKERS,
+	CHESS_SP
 }

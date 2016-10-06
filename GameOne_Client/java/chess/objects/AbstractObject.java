@@ -114,8 +114,10 @@ public abstract class AbstractObject
 		return false;
 	}
 	
-	public final boolean canSee(final ChessCell target)
+	public final boolean canSee(final ChessCell target, final boolean extendedPath)
 	{
+		if (extendedPath)
+			return _extendedPath.contains(target);
 		if (target.getObject() == null)
 			return _path.contains(target);
 		if (isAlly(target.getObject().getOwner()))

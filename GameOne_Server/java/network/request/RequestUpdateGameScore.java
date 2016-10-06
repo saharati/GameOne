@@ -53,6 +53,7 @@ public final class RequestUpdateGameScore extends PacketReader<GameClient>
 			case TETRIS:
 			case SNAKE:
 			case G2048:
+			case CHESS_SP:
 				gs.setScore(Math.max(_score, gs.getScore()));
 				break;
 			case CHESS_MP:

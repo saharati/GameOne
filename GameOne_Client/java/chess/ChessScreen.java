@@ -52,11 +52,11 @@ public final class ChessScreen extends JFrame
 		Client.getInstance().setCurrentDetails(WaitingRoom.getInstance(), GameId.CHESS_MP, false);
 	}
 	
-	public void start(final String myColor)
+	public void start(final String myColor, final boolean sp)
 	{
 		_layout.show(getContentPane(), BOARD);
 		
-		ChessBoard.getInstance().start(myColor);
+		ChessBoard.getInstance().start(myColor, sp);
 		
 		pack();
 		setLocationRelativeTo(null);

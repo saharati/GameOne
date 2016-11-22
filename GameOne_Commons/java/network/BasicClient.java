@@ -18,6 +18,8 @@ import util.threadpool.ThreadPool;
  */
 public abstract class BasicClient
 {
+	public static final int PACKET_SIZE = 32768;
+	
 	private static final Logger LOGGER = Logger.getLogger(BasicClient.class.getName());
 	
 	private final ReadHandler<BasicClient> _readHandler;
@@ -31,7 +33,7 @@ public abstract class BasicClient
 	
 	protected BasicClient()
 	{
-		_readBuffer = ByteBuffer.allocateDirect(32768);
+		_readBuffer = ByteBuffer.allocateDirect(PACKET_SIZE);
 		_readHandler = new ReadHandler<>();
 		_writeHandler = new WriteHandler<>();
 		_sendQueue = new ConcurrentLinkedQueue<>();
@@ -116,15 +118,22 @@ public abstract class BasicClient
 					ThreadPool.execute(() ->
 					{
 						final Queue<PacketWriter> copy = new ConcurrentLinkedQueue<>();
-						while (!_sendQueue.isEmpty())
-							copy.add(_sendQueue.poll());
-						
 						int bytes = 0;
-						for (final PacketWriter packet : copy)
+						while (!_sendQueue.isEmpty())
+						{
+							final PacketWriter packet = _sendQueue.peek();
+							if (bytes + packet.getBuffer().limit() > PACKET_SIZE)
+								break;
+							
+							copy.add(packet);
+							_sendQueue.remove(packet);
+							
 							bytes += packet.getBuffer().limit();
+						}
+						
 						final ByteBuffer toSend = ByteBuffer.allocateDirect(bytes);
 						for (final PacketWriter packet : copy)
-							toSend.put(packet.getBuffer().duplicate());
+							toSend.put(packet.getBuffer());
 						toSend.flip();
 						
 						_channel.write(toSend, this, _writeHandler);

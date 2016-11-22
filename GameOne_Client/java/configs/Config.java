@@ -48,7 +48,7 @@ public final class Config
 		// Load Network.properties file (if exists)
 		final ExProperties network = new ExProperties(NETWORK_FILE);
 		
-		SERVER_IP = network.getProperty("EnableUPnP", "127.0.0.1");
+		SERVER_IP = network.getProperty("ServerIP", "127.0.0.1");
 		PORT = network.getProperty("Port", 777);
 		
 		// Load Chat.properties file (if exists)

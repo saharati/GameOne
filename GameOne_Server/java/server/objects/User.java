@@ -69,6 +69,11 @@ public final class User
 		return _gameStats.get(gameId);
 	}
 	
+	public Map<GameId, GameStat> getGameStats()
+	{
+		return _gameStats;
+	}
+	
 	public AccessLevel getAccessLevel()
 	{
 		return _accessLevel;

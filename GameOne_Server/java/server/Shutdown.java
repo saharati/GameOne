@@ -10,7 +10,8 @@ import network.ConnectionManager;
 import util.Broadcast;
 import util.StringUtil;
 import util.UPnPService;
-import util.database.Database;
+import util.database.AccessDatabase;
+import util.database.MysqlDatabase;
 import util.threadpool.ThreadPool;
 
 /**
@@ -165,7 +166,8 @@ public final class Shutdown extends Thread
 		ThreadPool.shutdown();
 		LOGGER.info("ThreadPool: Shut down.");
 		
-		Database.shutdown();
+		MysqlDatabase.shutdown();
+		AccessDatabase.shutdown();
 		LOGGER.info("Database: Connection closed.");
 		
 		// Server will quit, when this function ends.

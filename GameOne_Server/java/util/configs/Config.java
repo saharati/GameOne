@@ -30,11 +30,14 @@ public final class Config
 	// --------------------------------------------------
 	// Database Settings
 	// --------------------------------------------------
-	public static String DATABASE_URL;
-	public static String DATABASE_LOGIN;
-	public static String DATABASE_PASSWORD;
 	public static int DATABASE_MAX_CONNECTIONS;
 	public static int DATABASE_MAX_IDLE_TIME;
+	public static String MYSQL_URL;
+	public static String MYSQL_LOGIN;
+	public static String MYSQL_PASSWORD;
+	public static String ACCESS_URL;
+	public static String ACCESS_LOGIN;
+	public static String ACCESS_PASSWORD;
 	
 	// --------------------------------------------------
 	// Server Settings
@@ -60,11 +63,14 @@ public final class Config
 		// Load Database.properties file (if exists)
 		final ExProperties database = new ExProperties(DATABASE_FILE);
 		
-		DATABASE_URL = database.getProperty("URL", "jdbc:mysql://localhost/gameOne");
-		DATABASE_LOGIN = database.getProperty("Login", "root");
-		DATABASE_PASSWORD = database.getProperty("Password", "");
 		DATABASE_MAX_CONNECTIONS = database.getProperty("MaximumDbConnections", 10);
 		DATABASE_MAX_IDLE_TIME = database.getProperty("MaximumDbIdleTime", 0);
+		MYSQL_URL = database.getProperty("MysqlUrl", "jdbc:mysql://localhost/gameOne");
+		MYSQL_LOGIN = database.getProperty("MysqlLogin", "root");
+		MYSQL_PASSWORD = database.getProperty("MysqlPassword", "");
+		ACCESS_URL = database.getProperty("AccessUrl", "jdbc:ucanaccess://gameOne.accdb;");
+		ACCESS_LOGIN = database.getProperty("AccessLogin", "");
+		ACCESS_PASSWORD = database.getProperty("AccessPassword", "");
 		
 		// Load Server.properties file (if exists)
 		final ExProperties server = new ExProperties(SERVER_FILE);

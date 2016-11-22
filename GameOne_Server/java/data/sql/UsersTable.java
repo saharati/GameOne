@@ -20,6 +20,7 @@ import server.objects.AccessLevel;
 import server.objects.GameStat;
 import server.objects.User;
 import util.configs.Config;
+import util.database.AccessDatabase;
 import util.database.Database;
 
 /**
@@ -33,6 +34,10 @@ public final class UsersTable
 	private static final String SELECT_USER = "SELECT * FROM users";
 	private static final String SELECT_STATS = "SELECT gameId, score, wins, loses FROM user_games WHERE userId=?";
 	private static final String INSERT_USER = "INSERT INTO users (username, password, lastIp, lastMac, accessLevel) VALUES (?, ?, ?, ?, ?)";
+	private static final String SYNC_DELETE_USERS = "DELETE FROM users";
+	private static final String SYNC_DELETE_USER_GAMES = "DELETE FROM user_games";
+	private static final String SYNC_ADD_USER = "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String SYNC_ADD_USER_GAME = "INSERT INTO user_games VALUES (?, ?, ?, ?, ?)";
 	
 	private final Map<Integer, User> _users = new HashMap<>();
 	
@@ -66,6 +71,50 @@ public final class UsersTable
 		catch (final SQLException e)
 		{
 			LOGGER.log(Level.WARNING, "Failed loading UsersTable: ", e);
+		}
+	}
+	
+	public void sync()
+	{
+		try (final Connection con = AccessDatabase.getConnection())
+		{
+			try (final PreparedStatement ps = con.prepareStatement(SYNC_DELETE_USERS);
+				final PreparedStatement ps2 = con.prepareStatement(SYNC_DELETE_USER_GAMES))
+			{
+				ps.execute();
+				ps2.execute();
+			}
+			try (final PreparedStatement ps = con.prepareStatement(SYNC_ADD_USER);
+				final PreparedStatement ps2 = con.prepareStatement(SYNC_ADD_USER_GAME))
+			{
+				for (final User user : _users.values())
+				{
+					ps.setInt(1, user.getId());
+					ps.setString(2, user.getUsername());
+					ps.setString(3, user.getPassword());
+					ps.setString(4, user.getIp());
+					ps.setString(5, user.getMac());
+					ps.setInt(6, user.getAccessLevel().ordinal());
+					ps.addBatch();
+					
+					ps2.setInt(1, user.getId());
+					for (final GameStat gameStat : user.getGameStats().values())
+					{
+						ps2.setInt(2, gameStat.getGameId().ordinal());
+						ps2.setInt(3, gameStat.getScore());
+						ps2.setInt(4, gameStat.getWins());
+						ps2.setInt(5, gameStat.getLoses());
+						ps2.addBatch();
+					}
+				}
+				
+				ps.executeBatch();
+				ps2.executeBatch();
+			}
+		}
+		catch (final SQLException e)
+		{
+			LOGGER.log(Level.WARNING, "Failed syncing UsersTable: ", e);
 		}
 	}
 	

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import objects.mario.MarioObject;
 import objects.mario.MarioType;
+import util.database.AccessDatabase;
 import util.database.Database;
 
 /**
@@ -44,7 +45,34 @@ public final class MarioTable
 			LOGGER.log(Level.WARNING, "Failed loading MarioTable: ", e);
 		}
 	}
-
+	
+	public void sync()
+	{
+		try (final Connection con = AccessDatabase.getConnection())
+		{
+			try (final PreparedStatement ps = con.prepareStatement(CLEAR))
+			{
+				ps.execute();
+			}
+			try (final PreparedStatement ps = con.prepareStatement(INSERT))
+			{
+				for (final MarioObject o : _objects)
+				{
+					ps.setInt(1, o.getX());
+					ps.setInt(2, o.getY());
+					ps.setInt(3, o.getType().ordinal());
+					ps.addBatch();
+				}
+				
+				ps.executeBatch();
+			}
+		}
+		catch (final SQLException e)
+		{
+			LOGGER.log(Level.WARNING, "Failed syncing MarioTable: ", e);
+		}
+	}
+	
 	public boolean updateDatabase(final List<MarioObject> objects)
 	{
 		try (final Connection con = Database.getConnection())
@@ -62,6 +90,7 @@ public final class MarioTable
 					ps.setInt(3, o.getType().ordinal());
 					ps.addBatch();
 				}
+				
 				ps.executeBatch();
 			}
 			

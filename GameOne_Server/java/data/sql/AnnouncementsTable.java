@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +14,7 @@ import java.util.logging.Logger;
 import network.response.MessageResponse;
 import server.objects.GameClient;
 import util.StringUtil;
+import util.database.AccessDatabase;
 import util.database.Database;
 
 /**
@@ -25,8 +28,10 @@ public final class AnnouncementsTable
 	private static final String SELECT_ANNOUNCEMENTS = "SELECT * FROM announcements";
 	private static final String DELETE_ANNOUNCEMENT = "DELETE FROM announcements WHERE `order`=?";
 	private static final String ADD_ANNOUNCEMENT = "INSERT INTO announcements VALUES (?, ?)";
+	private static final String SYNC_DELETE_ANNOUNCEMENTS = "DELETE FROM announcements";
 	
 	private final Map<Integer, MessageResponse> _announcements = new ConcurrentSkipListMap<>();
+	private final Map<Integer, String> _syncAnnouncements = new HashMap<>();
 	
 	protected AnnouncementsTable()
 	{
@@ -40,6 +45,7 @@ public final class AnnouncementsTable
 				final MessageResponse packet = new MessageResponse(msg);
 				
 				_announcements.put(rs.getInt("order"), packet);
+				_syncAnnouncements.put(rs.getInt("order"), rs.getString("msg"));
 			}
 			
 			LOGGER.info("Loaded " + _announcements.size() + " announcements from database.");
@@ -47,6 +53,32 @@ public final class AnnouncementsTable
 		catch (final SQLException e)
 		{
 			LOGGER.log(Level.WARNING, "Failed loading announcements: ", e);
+		}
+	}
+	
+	public void sync()
+	{
+		try (final Connection con = AccessDatabase.getConnection())
+		{
+			try (final PreparedStatement ps = con.prepareStatement(SYNC_DELETE_ANNOUNCEMENTS))
+			{
+				ps.execute();
+			}
+			try (final PreparedStatement ps = con.prepareStatement(ADD_ANNOUNCEMENT))
+			{
+				for (final Entry<Integer, String> ann : _syncAnnouncements.entrySet())
+				{
+					ps.setInt(1, ann.getKey());
+					ps.setString(2, ann.getValue());
+					ps.addBatch();
+				}
+				
+				ps.executeBatch();
+			}
+		}
+		catch (final SQLException e)
+		{
+			LOGGER.log(Level.WARNING, "Failed syncing AnnouncementsTable: ", e);
 		}
 	}
 	

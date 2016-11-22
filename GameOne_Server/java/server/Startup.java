@@ -1,7 +1,9 @@
 package server;
 
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.Socket;
 import java.util.logging.Logger;
 
 import data.sql.AnnouncementsTable;
@@ -17,7 +19,9 @@ import util.configs.CommonConfig;
 import util.configs.Config;
 import util.configs.GameConfig;
 import util.configs.IPConfig;
+import util.database.AccessDatabase;
 import util.database.Database;
+import util.database.MysqlDatabase;
 import util.parsers.xml.XmlFactory;
 import util.threadpool.ThreadPool;
 
@@ -40,11 +44,25 @@ public final class Startup
 		XmlFactory.load();
 		
 		StringUtil.printSection("Database");
-		Database.load();
+		AccessDatabase.load();
+		try (final Socket mysql = new Socket("127.0.0.1", 3306))
+		{
+			MysqlDatabase.load();
+			Database.setSource(MysqlDatabase.getSource());
+		}
+		catch (final IOException e)
+		{
+			LOGGER.warning("Warning: MySQL is not running on current machine, a backup database will be used.");
+			LOGGER.warning("While using the backup database, no information will be stored!");
+			
+			Database.setSource(AccessDatabase.getSource());
+		}
 		AnnouncementsTable.getInstance();
 		UsersTable.getInstance();
 		PacmanTable.getInstance();
 		MarioTable.getInstance();
+		if (Database.getSource() == MysqlDatabase.getSource())
+			Database.syncData();
 		
 		StringUtil.printSection("ThreadPool");
 		ThreadPool.load();

@@ -5,11 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import objects.pacman.PacmanObject;
+import util.database.AccessDatabase;
 import util.database.Database;
 
 /**
@@ -23,6 +25,7 @@ public final class PacmanTable
 	private static final String SELECT_MAP = "SELECT i, j, type FROM pacman WHERE mapId=?";
 	private static final String INSERT_OBJECT = "INSERT INTO pacman VALUES (?, ?, ?, ?)";
 	private static final String DELETE_MAP = "DELETE FROM pacman WHERE mapId=?";
+	private static final String SYNC_DELETE_PACMAN = "DELETE FROM pacman";
 	
 	public static final int[] ARRAY_DIMENSIONS = {16, 12};
 	
@@ -57,6 +60,42 @@ public final class PacmanTable
 		catch (final SQLException e)
 		{
 			LOGGER.log(Level.WARNING, "Failed loading PacmanTable: ", e);
+		}
+	}
+	
+	public void sync()
+	{
+		try (final Connection con = AccessDatabase.getConnection())
+		{
+			try (final PreparedStatement ps = con.prepareStatement(SYNC_DELETE_PACMAN))
+			{
+				ps.execute();
+			}
+			try (final PreparedStatement ps = con.prepareStatement(INSERT_OBJECT))
+			{
+				for (final Entry<Integer, PacmanObject[][]> map : _maps.entrySet())
+				{
+					ps.setInt(1, map.getKey());
+					
+					final PacmanObject[][] objects = map.getValue();
+					for (int i = 0;i < objects.length;i++)
+					{
+						for (int j = 0;j < objects[i].length;j++)
+						{
+							ps.setInt(2, i);
+							ps.setInt(3, j);
+							ps.setInt(4, objects[i][j].ordinal());
+							ps.addBatch();
+						}
+					}
+				}
+				
+				ps.executeBatch();
+			}
+		}
+		catch (final SQLException e)
+		{
+			LOGGER.log(Level.WARNING, "Failed syncing PacmanTable: ", e);
 		}
 	}
 	

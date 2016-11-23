@@ -10,8 +10,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import util.threadpool.ThreadPool;
-
 /**
  * BasicClient should be extended by both client/server.
  * @author Sahar
@@ -115,29 +113,26 @@ public abstract class BasicClient
 				{
 					_pendingWrite = true;
 					
-					ThreadPool.execute(() ->
+					final Queue<PacketWriter> copy = new ConcurrentLinkedQueue<>();
+					int bytes = 0;
+					while (!_sendQueue.isEmpty())
 					{
-						final Queue<PacketWriter> copy = new ConcurrentLinkedQueue<>();
-						int bytes = 0;
-						while (!_sendQueue.isEmpty())
-						{
-							final PacketWriter packet = _sendQueue.peek();
-							if (bytes + packet.getBuffer().limit() > PACKET_SIZE)
-								break;
-							
-							copy.add(packet);
-							_sendQueue.remove(packet);
-							
-							bytes += packet.getBuffer().limit();
-						}
+						final PacketWriter packet = _sendQueue.peek();
+						if (bytes + packet.getBuffer().limit() > PACKET_SIZE)
+							break;
 						
-						final ByteBuffer toSend = ByteBuffer.allocateDirect(bytes);
-						for (final PacketWriter packet : copy)
-							toSend.put(packet.getBuffer());
-						toSend.flip();
+						copy.add(packet);
+						_sendQueue.remove(packet);
 						
-						_channel.write(toSend, this, _writeHandler);
-					});
+						bytes += packet.getBuffer().limit();
+					}
+					
+					final ByteBuffer toSend = ByteBuffer.allocateDirect(bytes);
+					for (final PacketWriter packet : copy)
+						toSend.put(packet.getBuffer().duplicate());
+					toSend.flip();
+					
+					_channel.write(toSend, this, _writeHandler);
 				}
 			}
 			finally

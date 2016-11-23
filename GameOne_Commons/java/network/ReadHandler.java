@@ -5,8 +5,6 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import util.threadpool.ThreadPool;
-
 /**
  * Handler used for reading packets.
  * @author Sahar
@@ -19,7 +17,7 @@ public final class ReadHandler<T extends BasicClient> implements CompletionHandl
 	@Override
 	public void completed(final Integer result, final T attachment)
 	{
-		ThreadPool.execute(() -> attachment.readPacket());
+		attachment.readPacket();
 	}
 	
 	@Override

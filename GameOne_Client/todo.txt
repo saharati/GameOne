@@ -10,7 +10,6 @@
 * When white queen should've burned it didn't burn for not eating (Checkers).
 * If a queen is blocked by a soldier and that soldier moves and that queen now can eat something, the soldier anyways gets burned.
 * Enlarge checkers window.
-* Improve the lags in Mario.
 * You fall from the elevator if you are level 2 or above and a cannon shoots you.
 * Chat //list line breaks are fucked up.
 * Shutdown doesn't disconnect players.

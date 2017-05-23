@@ -3,6 +3,7 @@
 	<name>GameOne_Server</name>
 	<comment></comment>
 	<projects>
+		<project>GameOne_Commons</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

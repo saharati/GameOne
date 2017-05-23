@@ -6,6 +6,7 @@
 * Add latest matches to waiting rooms.
 * Add animations to Slide a Lama.
 * Continue from Game Configs part 2.
+* Reduce lags in Super Mario.
 * A soldier that is already blocking another soldier has to block a certain additional soldier.
 * When white queen should've burned it didn't burn for not eating (Checkers).
 * If a queen is blocked by a soldier and that soldier moves and that queen now can eat something, the soldier anyways gets burned.

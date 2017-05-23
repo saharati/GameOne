@@ -100,9 +100,9 @@ public final class Startup extends JFrame
 		
 		StringUtil.printSection("Objects");
 		Client.getInstance().setCurrentDetails(this, null, false);
+		Client.getInstance().sendPacket(RequestGameConfigs.STATIC_PACKET);
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.MARIO));
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.PACMAN));
-		Client.getInstance().sendPacket(RequestGameConfigs.STATIC_PACKET);
 		
 		_progressBar.setValue(4);
 	}

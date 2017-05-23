@@ -21,6 +21,7 @@ public final class ConnectionManager
 {
 	private static final Logger LOGGER = Logger.getLogger(ConnectionManager.class.getName());
 	
+	@SuppressWarnings("resource")
 	public static void open()
 	{
 		try

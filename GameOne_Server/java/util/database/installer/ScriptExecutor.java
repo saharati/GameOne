@@ -51,6 +51,7 @@ public final class ScriptExecutor implements FileFilter
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public void execSqlFile(final File file, final boolean skipErrors)
 	{
 		_frame.appendToProgressArea("Installing " + file.getName());
@@ -104,6 +105,7 @@ public final class ScriptExecutor implements FileFilter
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public void createDump()
 	{
 		try (final Formatter form = new Formatter())

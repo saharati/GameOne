@@ -1,9 +1,7 @@
 package server.objects;
 
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.logging.Logger;
 
 import network.BasicClient;
 import network.PacketInfo;
@@ -22,8 +20,6 @@ import util.StringUtil;
  */
 public final class GameClient extends BasicClient
 {
-	private static final Logger LOGGER = Logger.getLogger(GameClient.class.getName());
-	
 	private final SocketAddress _remoteAddr;
 	private User _user;
 	
@@ -89,21 +85,19 @@ public final class GameClient extends BasicClient
 	@Override
 	public void readPacket()
 	{
-		final ByteBuffer buffer = getReadBuffer();
-		buffer.flip();
-		
-		while (buffer.hasRemaining())
+		_readBuffer.flip();
+		while (_readBuffer.hasRemaining())
 		{
-			final int opCode = buffer.getInt();
+			final int opCode = _readBuffer.getInt();
 			final PacketInfo inf = PacketInfo.values()[opCode];
 			final PacketReader<BasicClient> packet = inf.getReadPacket();
-			packet.setBuffer(buffer);
+			packet.setBuffer(_readBuffer);
 			packet.read();
 			packet.run(this);
 		}
-		buffer.clear();
+		_readBuffer.clear();
 		
-		getChannel().read(buffer, this, getReadHandler());
+		getChannel().read(_readBuffer, this, _readHandler);
 	}
 	
 	@Override

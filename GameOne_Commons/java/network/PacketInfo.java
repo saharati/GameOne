@@ -4,10 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * List of all possible packets.
- * @author Sahar
- */
 public enum PacketInfo
 {
 	LOGIN("RequestLogin", "LoginResponse"),

@@ -5,23 +5,18 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Handler used for reading packets.
- * @author Sahar
- * @param <T> The client type being used.
- */
-public final class ReadHandler<T extends BasicClient> implements CompletionHandler<Integer, T>
+public final class ReadHandler implements CompletionHandler<Integer, BasicClient>
 {
 	private static final Logger LOGGER = Logger.getLogger(ReadHandler.class.getName());
 	
 	@Override
-	public void completed(final Integer result, final T attachment)
+	public void completed(final Integer result, final BasicClient attachment)
 	{
 		attachment.readPacket();
 	}
 	
 	@Override
-	public void failed(final Throwable exc, final T attachment)
+	public void failed(final Throwable exc, final BasicClient attachment)
 	{
 		try
 		{

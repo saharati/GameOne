@@ -1,8 +1,6 @@
 package client;
 
-import java.nio.ByteBuffer;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
@@ -23,8 +21,6 @@ import windows.Startup;
  */
 public final class Client extends BasicClient
 {
-	private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
-	
 	private String _username;
 	private String _password;
 	
@@ -33,11 +29,6 @@ public final class Client extends BasicClient
 	
 	private GameId _currentGame;
 	private JFrame _currentWindow;
-	
-	protected Client()
-	{
-		
-	}
 	
 	public void setLoginDetails(final String username, final String password)
 	{
@@ -104,22 +95,20 @@ public final class Client extends BasicClient
 	@Override
 	public void readPacket()
 	{
-		final ByteBuffer buffer = getReadBuffer();
-		buffer.flip();
-		
-		while (buffer.hasRemaining())
+		_readBuffer.flip();
+		while (_readBuffer.hasRemaining())
 		{
-			final int opCode = buffer.getInt();
+			final int opCode = _readBuffer.getInt();
 			final PacketInfo inf = PacketInfo.values()[opCode];
 			final PacketReader<BasicClient> packet = inf.getReadPacket();
 			
-			packet.setBuffer(buffer);
+			packet.setBuffer(_readBuffer);
 			packet.read();
 			packet.run(this);
 		}
-		buffer.clear();
+		_readBuffer.clear();
 		
-		getChannel().read(buffer, this, getReadHandler());
+		getChannel().read(_readBuffer, this, _readHandler);
 	}
 	
 	@Override

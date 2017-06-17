@@ -5,24 +5,19 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Handler used for writing packets.
- * @author Sahar
- * @param <T> The client type being used.
- */
-public final class WriteHandler<T extends BasicClient> implements CompletionHandler<Integer, T>
+public final class WriteHandler implements CompletionHandler<Integer, BasicClient>
 {
 	private static final Logger LOGGER = Logger.getLogger(WriteHandler.class.getName());
 	
 	@Override
-	public void completed(final Integer result, final T attachment)
+	public void completed(final Integer result, final BasicClient attachment)
 	{
 		attachment.setPendingWrite(false);
 		attachment.executeWriteTask();
 	}
 	
 	@Override
-	public void failed(final Throwable exc, final T attachment)
+	public void failed(final Throwable exc, final BasicClient attachment)
 	{
 		try
 		{

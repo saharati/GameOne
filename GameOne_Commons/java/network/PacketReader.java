@@ -2,10 +2,6 @@ package network;
 
 import java.nio.ByteBuffer;
 
-/**
- * A nicer version of ByteBuffer.
- * @author Sahar
- */
 public abstract class PacketReader<T extends BasicClient>
 {
 	private ByteBuffer _buf;

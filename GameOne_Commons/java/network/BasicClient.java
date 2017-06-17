@@ -10,48 +10,21 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * BasicClient should be extended by both client/server.
- * @author Sahar
- */
 public abstract class BasicClient
 {
 	public static final int PACKET_SIZE = 32768;
 	
-	private static final Logger LOGGER = Logger.getLogger(BasicClient.class.getName());
+	protected static final Logger LOGGER = Logger.getLogger(BasicClient.class.getName());
 	
-	private final ReadHandler<BasicClient> _readHandler;
-	private final WriteHandler<BasicClient> _writeHandler;
-	private final Queue<PacketWriter> _sendQueue;
-	private final ReentrantLock _writeLock;
-	private final ByteBuffer _readBuffer;
+	protected final ByteBuffer _readBuffer = ByteBuffer.allocateDirect(PACKET_SIZE);
+	protected final ReadHandler _readHandler = new ReadHandler();
+	
+	private final WriteHandler _writeHandler = new WriteHandler();
+	private final Queue<PacketWriter> _sendQueue = new ConcurrentLinkedQueue<>();
+	private final ReentrantLock _writeLock = new ReentrantLock();
 	
 	private AsynchronousSocketChannel _channel;
 	private boolean _pendingWrite;
-	
-	protected BasicClient()
-	{
-		_readBuffer = ByteBuffer.allocateDirect(PACKET_SIZE);
-		_readHandler = new ReadHandler<>();
-		_writeHandler = new WriteHandler<>();
-		_sendQueue = new ConcurrentLinkedQueue<>();
-		_writeLock = new ReentrantLock();
-	}
-	
-	public ByteBuffer getReadBuffer()
-	{
-		return _readBuffer;
-	}
-	
-	public final ReadHandler<BasicClient> getReadHandler()
-	{
-		return _readHandler;
-	}
-	
-	public final WriteHandler<BasicClient> getWriteHandler()
-	{
-		return _writeHandler;
-	}
 	
 	public final void setChannel(final AsynchronousSocketChannel channel)
 	{

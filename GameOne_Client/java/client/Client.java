@@ -7,26 +7,18 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import network.BasicClient;
-import network.PacketInfo;
-import network.PacketReader;
 import network.request.RequestGame;
 import objects.GameId;
 import objects.mario.MarioObject;
 import pacman.objects.PacmanMap;
 import windows.Startup;
 
-/**
- * Class holding info regarding client such as current socket, records, user etc.
- * @author Sahar
- */
 public final class Client extends BasicClient
 {
 	private String _username;
 	private String _password;
-	
 	private MarioObject[] _marioObjects;
 	private Map<Integer, PacmanMap> _pacmanMaps;
-	
 	private GameId _currentGame;
 	private JFrame _currentWindow;
 	
@@ -47,8 +39,6 @@ public final class Client extends BasicClient
 	public void setMarioObjects(final MarioObject[] marioObjects)
 	{
 		_marioObjects = marioObjects;
-		
-		LOGGER.info("Received " + marioObjects.length + " mario objects from server.");
 	}
 	
 	public MarioObject[] getMarioObjects()
@@ -59,8 +49,6 @@ public final class Client extends BasicClient
 	public void setPacmanMaps(final Map<Integer, PacmanMap> pacmanMaps)
 	{
 		_pacmanMaps = pacmanMaps;
-		
-		LOGGER.info("Received " + pacmanMaps.size() + " pacman maps from server.");
 	}
 	
 	public Map<Integer, PacmanMap> getPacmanMaps()
@@ -90,25 +78,6 @@ public final class Client extends BasicClient
 	public GameId getCurrentGame()
 	{
 		return _currentGame;
-	}
-	
-	@Override
-	public void readPacket()
-	{
-		_readBuffer.flip();
-		while (_readBuffer.hasRemaining())
-		{
-			final int opCode = _readBuffer.getInt();
-			final PacketInfo inf = PacketInfo.values()[opCode];
-			final PacketReader<BasicClient> packet = inf.getReadPacket();
-			
-			packet.setBuffer(_readBuffer);
-			packet.read();
-			packet.run(this);
-		}
-		_readBuffer.clear();
-		
-		getChannel().read(_readBuffer, this, _readHandler);
 	}
 	
 	@Override

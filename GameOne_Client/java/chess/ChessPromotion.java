@@ -20,13 +20,10 @@ import chess.objects.Knight;
 import chess.objects.Queen;
 import chess.objects.Rook;
 
-/**
- * Upgrade soldier selection panel.
- * @author Sahar
- */
 public final class ChessPromotion extends JPanel
 {
 	private static final long serialVersionUID = -3888253234095447430L;
+	
 	private static final Logger LOGGER = Logger.getLogger(ChessPromotion.class.getName());
 	
 	private final JPanel _cardPanel = new JPanel(new CardLayout());

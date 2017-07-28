@@ -6,10 +6,6 @@ import javax.swing.ImageIcon;
 
 import chess.ChessCell;
 
-/**
- * Chess Rook.
- * @author Sahar
- */
 public final class Rook extends AbstractObject
 {
 	private static final Image WHITE_ROOK = new ImageIcon(IMAGE_PATH + "rook-white.png").getImage();

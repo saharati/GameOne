@@ -6,15 +6,9 @@ import java.awt.Graphics;
 
 import javax.swing.JButton;
 
-/**
- * A single button in the checkers board.
- * @author Sahar
- */
 public final class CheckersButton extends JButton
 {
 	private static final long serialVersionUID = 608473057363743650L;
-	
-	private static final Dimension BLOCK_SIZE = new Dimension(50, 50);
 	
 	private final Color _bgColor;
 	private String _color;
@@ -31,7 +25,6 @@ public final class CheckersButton extends JButton
 		
 		_bgColor = turn ? Color.WHITE : Color.BLACK;
 		
-		setPreferredSize(BLOCK_SIZE);
 		setBackground(_bgColor);
 		setOpaque(true);
 	}
@@ -76,6 +69,9 @@ public final class CheckersButton extends JButton
 		super.paintComponent(g);
 		
 		if (getName() != null)
-			g.drawImage(CheckersScreen.IMAGES.get(getFullName()), 0, 0, null);
+		{
+			final Dimension dim = getParent().getSize();
+			g.drawImage(CheckersScreen.IMAGES.get(getFullName()), 0, 0, dim.width / CheckersScreen.BOARD_SIZE, dim.height / CheckersScreen.BOARD_SIZE, null);
+		}
 	}
 }

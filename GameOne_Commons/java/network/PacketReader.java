@@ -10,29 +10,14 @@ public abstract class PacketReader<T extends BasicClient>
 	
 	public abstract void run(final T client);
 	
-	public void setBuffer(final ByteBuffer buf)
+	public final void setBuffer(final ByteBuffer buf)
 	{
 		_buf = buf;
-	}
-	
-	public ByteBuffer getBuffer()
-	{
-		return _buf;
-	}
-	
-	public int getRemainingBytes()
-	{
-		return _buf.remaining();
 	}
 	
 	protected byte readByte()
 	{
 		return _buf.get();
-	}
-	
-	protected short readShort()
-	{
-		return _buf.getShort();
 	}
 	
 	protected int readInt()
@@ -45,19 +30,9 @@ public abstract class PacketReader<T extends BasicClient>
 		return _buf.getLong();
 	}
 	
-	protected float readFloat()
-	{
-		return _buf.getFloat();
-	}
-	
 	protected double readDouble()
 	{
 		return _buf.getDouble();
-	}
-	
-	protected char readChar()
-	{
-		return _buf.getChar();
 	}
 	
 	protected boolean readBoolean()
@@ -73,12 +48,5 @@ public abstract class PacketReader<T extends BasicClient>
 			sb.append(chr);
 		
 		return sb.toString();
-	}
-	
-	protected byte[] readBytes(final int length)
-	{
-		final byte[] result = new byte[length];
-		_buf.get(result);
-		return result;
 	}
 }

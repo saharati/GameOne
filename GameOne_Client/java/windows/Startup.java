@@ -58,7 +58,6 @@ public final class Startup extends JFrame
 		add(_currentLoad);
 		_progressBar.setBounds(5, 40, 300, 30);
 		_progressBar.setFont(font);
-		_progressBar.setMaximum(5);
 		add(_progressBar);
 		
 		getRootPane().setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -76,7 +75,7 @@ public final class Startup extends JFrame
 		StringUtil.printSection("Network");
 		ConnectionManager.open();
 		
-		_progressBar.setValue(1);
+		_progressBar.setValue(20);
 		
 		// XMLs
 		_currentLoad.setText("Initializing XMLs...");
@@ -84,7 +83,7 @@ public final class Startup extends JFrame
 		StringUtil.printSection("Parsers");
 		XmlFactory.load();
 		
-		_progressBar.setValue(2);
+		_progressBar.setValue(40);
 		
 		// ThreadPool
 		_currentLoad.setText("Initializing ThreadPools...");
@@ -93,7 +92,7 @@ public final class Startup extends JFrame
 		ThreadPool.load();
 		MarioTaskManager.getInstance();
 		
-		_progressBar.setValue(3);
+		_progressBar.setValue(60);
 		
 		// Objects
 		_currentLoad.setText("Loading Objects...");
@@ -104,7 +103,7 @@ public final class Startup extends JFrame
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.MARIO));
 		Client.getInstance().sendPacket(new RequestGameObjects(GameId.PACMAN));
 		
-		_progressBar.setValue(4);
+		_progressBar.setValue(80);
 	}
 	
 	public void progress()
@@ -127,7 +126,7 @@ public final class Startup extends JFrame
 		ChessBackground.getInstance();
 		ChessBoard.getInstance();
 		
-		_progressBar.setValue(5);
+		_progressBar.setValue(100);
 		
 		Client.getInstance().getCurrentWindow().setVisible(false);
 		Client.getInstance().setCurrentDetails(Login.getInstance(), null, false);

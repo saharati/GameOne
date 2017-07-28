@@ -6,10 +6,6 @@ import javax.swing.ImageIcon;
 
 import chess.ChessCell;
 
-/**
- * Chess Bishop.
- * @author Sahar
- */
 public final class Bishop extends AbstractObject
 {
 	private static final Image WHITE_BISHOP = new ImageIcon(IMAGE_PATH + "bishop-white.png").getImage();

@@ -1,6 +1,8 @@
 package checkers;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -30,22 +32,19 @@ import objects.GameResult;
 import util.Direction;
 import windows.WaitingRoom;
 
-/**
- * Checkers main frame.
- * @author Sahar
- */
 public final class CheckersScreen extends JFrame
 {
 	private static final long serialVersionUID = -4162982244689099156L;
 	private static final Logger LOGGER = Logger.getLogger(CheckersScreen.class.getName());
 	private static final String IMAGE_PATH = "./images/checkers/";
-	private static final int BOARD_SIZE = 8;
 	
+	public static final int BOARD_SIZE = 8;
 	public static final Map<String, Image> IMAGES = new HashMap<>();
 	static
 	{
 		for (final File file : new File(IMAGE_PATH).listFiles())
-			IMAGES.put(file.getName().substring(0, file.getName().lastIndexOf('.')), new ImageIcon(file.getAbsolutePath()).getImage());
+			if (file.isFile())
+				IMAGES.put(file.getName().substring(0, file.getName().lastIndexOf('.')), new ImageIcon(file.getAbsolutePath()).getImage());
 	}
 	
 	protected final CheckersButton[][] _buttons = new CheckersButton[BOARD_SIZE][BOARD_SIZE];
@@ -61,7 +60,7 @@ public final class CheckersScreen extends JFrame
 		super("GameOne Client - Checkers");
 		
 		setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
-		setResizable(false);
+		setMinimumSize(new Dimension(600, 600));
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		LOGGER.info("Checkers screen loaded.");
@@ -157,6 +156,7 @@ public final class CheckersScreen extends JFrame
 		revalidate();
 		pack();
 		setLocationRelativeTo(null);
+		setExtendedState(Frame.MAXIMIZED_BOTH);
 		setVisible(true);
 	}
 	

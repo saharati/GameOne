@@ -9,10 +9,6 @@ import java.util.logging.Logger;
 
 import util.configs.CommonConfig;
 
-/**
- * Generic thread pool manager.
- * @author Sahar
- */
 public final class ThreadPool
 {
 	private static final Logger LOGGER = Logger.getLogger(ThreadPool.class.getName());

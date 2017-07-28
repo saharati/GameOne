@@ -8,10 +8,6 @@ import javax.swing.JButton;
 
 import chess.objects.AbstractObject;
 
-/**
- * A single button in the chess board.
- * @author Sahar
- */
 public final class ChessCell extends JButton
 {
 	private static final long serialVersionUID = 608473057363743650L;
@@ -21,7 +17,6 @@ public final class ChessCell extends JButton
 	private final int _cellX;
 	private final int _cellY;
 	private final Color _backgroundColor;
-	
 	private AbstractObject _object;
 	
 	public ChessCell(final int cellX, final int cellY, final boolean turn)

@@ -6,10 +6,6 @@ import javax.swing.ImageIcon;
 
 import chess.ChessCell;
 
-/**
- * Chess Pawn.
- * @author Sahar
- */
 public final class Pawn extends AbstractObject
 {
 	private static final Image WHITE_PAWN = new ImageIcon(IMAGE_PATH + "pawn-white.png").getImage();

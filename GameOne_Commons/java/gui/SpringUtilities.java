@@ -13,7 +13,6 @@ public final class SpringUtilities
 	{
 		final SpringLayout layout = (SpringLayout) parent.getLayout();
 		
-		// Align all cells in each column and make them the same width.
 		Spring x = Spring.constant(initialX);
 		for (int c = 0;c < cols;c++)
 		{
@@ -31,7 +30,6 @@ public final class SpringUtilities
 			x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
 		}
 		
-		// Align all cells in each row and make them the same height.
 		Spring y = Spring.constant(initialY);
 		for (int r = 0;r < rows;r++)
 		{
@@ -49,7 +47,6 @@ public final class SpringUtilities
 			y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
 		}
 		
-		// Set the parent's size.
 		final Constraints pCons = layout.getConstraints(parent);
 		pCons.setConstraint(SpringLayout.SOUTH, y);
 		pCons.setConstraint(SpringLayout.EAST, x);

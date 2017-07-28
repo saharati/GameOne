@@ -8,10 +8,6 @@ import javax.swing.ImageIcon;
 
 import chess.ChessCell;
 
-/**
- * Chess Knight.
- * @author Sahar
- */
 public final class Knight extends AbstractObject
 {
 	private static final Image WHITE_KNIGHT = new ImageIcon(IMAGE_PATH + "knight-white.png").getImage();

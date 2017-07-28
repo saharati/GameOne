@@ -30,15 +30,11 @@ import objects.GameResult;
 import util.random.Rnd;
 import windows.GameSelect;
 
-/**
- * Chess board.
- * @author Sahar
- */
 public final class ChessBoard extends JPanel
 {
 	private static final long serialVersionUID = 1436714889444297854L;
-	private static final Logger LOGGER = Logger.getLogger(ChessBoard.class.getName());
 	
+	private static final Logger LOGGER = Logger.getLogger(ChessBoard.class.getName());
 	private static final String PACKAGE_PATH = "chess.objects.";
 	private static final List<AbstractObject> SOLDIERS = new ArrayList<>();
 	static

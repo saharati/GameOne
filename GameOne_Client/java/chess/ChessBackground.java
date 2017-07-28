@@ -8,10 +8,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-/**
- * Class used to make imba dialogs for chess.
- * @author Sahar
- */
 public final class ChessBackground extends JOptionPane
 {
 	private static final long serialVersionUID = -8749668351445304451L;

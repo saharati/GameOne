@@ -12,7 +12,7 @@ public final class WriteHandler implements CompletionHandler<Integer, BasicClien
 	@Override
 	public void completed(final Integer result, final BasicClient attachment)
 	{
-		attachment.setPendingWrite(false);
+		attachment.resetPendingWrite();
 		attachment.executeWriteTask();
 	}
 	

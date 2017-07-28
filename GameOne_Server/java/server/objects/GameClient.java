@@ -2,10 +2,9 @@ package server.objects;
 
 import java.net.SocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.logging.Logger;
 
 import network.BasicClient;
-import network.PacketInfo;
-import network.PacketReader;
 import network.response.GameScoreUpdateResponse;
 import network.response.MessageResponse;
 import network.response.WaitingRoomResponse;
@@ -20,6 +19,8 @@ import util.StringUtil;
  */
 public final class GameClient extends BasicClient
 {
+	private static final Logger LOGGER = Logger.getLogger(GameClient.class.getName());
+	
 	private final SocketAddress _remoteAddr;
 	private User _user;
 	
@@ -80,24 +81,6 @@ public final class GameClient extends BasicClient
 		final MessageResponse packet = new MessageResponse(refinedMsg);
 		
 		sendPacket(packet);
-	}
-	
-	@Override
-	public void readPacket()
-	{
-		_readBuffer.flip();
-		while (_readBuffer.hasRemaining())
-		{
-			final int opCode = _readBuffer.getInt();
-			final PacketInfo inf = PacketInfo.values()[opCode];
-			final PacketReader<BasicClient> packet = inf.getReadPacket();
-			packet.setBuffer(_readBuffer);
-			packet.read();
-			packet.run(this);
-		}
-		_readBuffer.clear();
-		
-		getChannel().read(_readBuffer, this, _readHandler);
 	}
 	
 	@Override

@@ -6,10 +6,6 @@ import javax.swing.ImageIcon;
 
 import chess.ChessCell;
 
-/**
- * Chess Queen.
- * @author Sahar
- */
 public final class Queen extends AbstractObject
 {
 	private static final Image WHITE_QUEEN = new ImageIcon(IMAGE_PATH + "queen-white.png").getImage();

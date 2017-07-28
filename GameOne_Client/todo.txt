@@ -1,21 +1,36 @@
-* Add a Readme.txt telling that launch4j is needed in order to create exe out of jar file.
-* Include already built exe file in the source.
-* Add icon for the exe.
-* Add prefs.reg to build.xml
-* Update waiting rooms to show game configs.
-* Add latest matches to waiting rooms.
-* Add animations to Slide a Lama.
-* Continue from Game Configs part 2.
-* Reduce lags in Super Mario.
+Project:
+* In github Readme.md explain about the whole project in details.
+* Add prefs.reg to client build.xml, why is this file in commons project?
+* Continue from Game Configs part II commit.
+
+.exe file:
+* In github Readme add info that tells that launch4j is needed in order to create exe out of a jar file.
+* Include already built in exe file in the source once GameOne is finished.
+* Add icon for the exe (the two crossed m16 icon).
+
+Waiting rooms:
+* Show current game configurations.
+* Add latest matches.
+
+Slide a lama:
+* Add animations.
+
+Super mario:
+* Reduce lags by not broadcasting the whole screen, only what is in range.
+* You fall from the elevator if you are level 2 or above and a cannon shoots you.
+
+Checkers/chess:
 * A soldier that is already blocking another soldier has to block a certain additional soldier.
 * When white queen should've burned it didn't burn for not eating (Checkers).
 * If a queen is blocked by a soldier and that soldier moves and that queen now can eat something, the soldier anyways gets burned.
-* Enlarge checkers window.
-* You fall from the elevator if you are level 2 or above and a cannon shoots you.
-* Chat //list line breaks are fucked up.
-* Shutdown doesn't disconnect players.
 * If a soldier blocks way to king for a threatening soldier, that soldier who's blocking can still move to any direction and cause bug (SP Only?)
+* In chess what happens if a queen eats a solder that is blocking way to king?
 
+Chat:
+* //list line breaks are fucked up.
+* Shutdown doesn't disconnect players.
+
+Errors:
 Exception in thread "pool-9-thread-1" java.lang.NullPointerException
 	at network.request.RequestGameStart.run(RequestGameStart.java:30)
 	at network.request.RequestGameStart.run(RequestGameStart.java:13)
@@ -24,7 +39,6 @@ Exception in thread "pool-9-thread-1" java.lang.NullPointerException
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
 	at java.lang.Thread.run(Thread.java:745)
-
 Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
 	at mario.objects.AbstractObject.getNearbyObjects(AbstractObject.java:71)
 	at mario.SuperMario$Movement.keyPressed(SuperMario.java:485)

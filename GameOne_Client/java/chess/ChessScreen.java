@@ -14,13 +14,10 @@ import objects.GameResult;
 import windows.GameSelect;
 import windows.WaitingRoom;
 
-/**
- * Chess main frame.
- * @author Sahar
- */
 public final class ChessScreen extends JFrame
 {
 	private static final long serialVersionUID = -7018309977842760132L;
+	
 	private static final Logger LOGGER = Logger.getLogger(ChessScreen.class.getName());
 	
 	public static final String PROMOTION = "promotion";

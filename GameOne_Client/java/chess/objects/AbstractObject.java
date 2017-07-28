@@ -8,10 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import chess.ChessBoard;
 import chess.ChessCell;
 
-/**
- * A soldier on chess board.
- * @author Sahar
- */
 public abstract class AbstractObject
 {
 	protected static final ChessBoard BOARD = ChessBoard.getInstance();
@@ -25,7 +21,6 @@ public abstract class AbstractObject
 	private final int _initialX;
 	private final int _initialY;
 	private final String _owner;
-	
 	private boolean _hasMoved;
 	
 	protected AbstractObject(final int initialX, final int initialY, final String owner)

@@ -17,7 +17,7 @@ public final class CommonConfig
 	// --------------------------------------------------
 	// Property File Definitions
 	// --------------------------------------------------
-	private static final String THREADS_FILE = "./configs/Threads2.properties";
+	private static final String THREADS_FILE = "./configs/Threads.properties";
 	private static final String LOGS_FILE = "./configs/Log.properties";
 	
 	// --------------------------------------------------

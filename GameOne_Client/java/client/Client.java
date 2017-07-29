@@ -39,6 +39,8 @@ public final class Client extends BasicClient
 	public void setMarioObjects(final MarioObject[] marioObjects)
 	{
 		_marioObjects = marioObjects;
+		
+		LOGGER.info("Received " + marioObjects.length + " mario objects from server.");
 	}
 	
 	public MarioObject[] getMarioObjects()
@@ -49,6 +51,8 @@ public final class Client extends BasicClient
 	public void setPacmanMaps(final Map<Integer, PacmanMap> pacmanMaps)
 	{
 		_pacmanMaps = pacmanMaps;
+		
+		LOGGER.info("Received " + pacmanMaps.size() + " pacman maps from server.");
 	}
 	
 	public Map<Integer, PacmanMap> getPacmanMaps()

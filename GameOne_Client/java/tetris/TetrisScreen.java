@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -32,8 +33,8 @@ public final class TetrisScreen extends JFrame implements Runnable
 	private static final int ROWS = 20;
 	private static final int COLS = 10;
 	private static final int SHAPE_SIZE = 4;
-	private static final int SLOW_SPEED = 250;
-	private static final int FAST_SPEED = 50;
+	private static final int SLOW_SPEED_MILLIS = 250;
+	private static final int FAST_SPEED_MILLIS = 50;
 	
 	protected ScheduledFuture<?> _moveTask;
 	protected boolean _keyDownPressed;
@@ -73,7 +74,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 	{
 		setVisible(true);
 		
-		_moveTask = ThreadPool.schedule(this, SLOW_SPEED);
+		_moveTask = ThreadPool.schedule(this, SLOW_SPEED_MILLIS, TimeUnit.MILLISECONDS);
 	}
 	
 	public void reset()
@@ -130,7 +131,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 			_align = 0;
 		}
 		
-		_moveTask = ThreadPool.schedule(this, _keyDownPressed ? FAST_SPEED : SLOW_SPEED);
+		_moveTask = ThreadPool.schedule(this, _keyDownPressed ? FAST_SPEED_MILLIS : SLOW_SPEED_MILLIS, TimeUnit.MILLISECONDS);
 	}
 	
 	private boolean tryPositionNextShape()
@@ -604,7 +605,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 	protected void pause()
 	{
 		if (_moveTask.isCancelled())
-			_moveTask = ThreadPool.schedule(this, _keyDownPressed ? FAST_SPEED : SLOW_SPEED);
+			_moveTask = ThreadPool.schedule(this, _keyDownPressed ? FAST_SPEED_MILLIS : SLOW_SPEED_MILLIS, TimeUnit.MILLISECONDS);
 		else
 			_moveTask.cancel(false);
 	}

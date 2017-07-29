@@ -1,10 +1,15 @@
 package server;
 
 import java.awt.Toolkit;
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import data.sql.AnnouncementsTable;
 import data.sql.MarioTable;
@@ -22,7 +27,7 @@ import util.configs.IPConfig;
 import util.database.AccessDatabase;
 import util.database.Database;
 import util.database.MysqlDatabase;
-import util.parsers.xml.XmlFactory;
+import util.parsers.XmlFactory;
 import util.threadpool.ThreadPool;
 
 /**
@@ -33,7 +38,7 @@ public final class Startup
 {
 	private static final Logger LOGGER = Logger.getLogger(Startup.class.getName());
 	
-	public static void main(final String[] args) throws Exception
+	public static void main(final String[] args) throws SecurityException, URISyntaxException, IOException, PropertyVetoException, SQLException, ParserConfigurationException
 	{
 		CommonConfig.load();
 		IPConfig.load();

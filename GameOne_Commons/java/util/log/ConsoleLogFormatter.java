@@ -3,10 +3,6 @@ package util.log;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-/**
- * Formatter for console logs.
- * @author Sahar
- */
 public final class ConsoleLogFormatter extends Formatter
 {
 	private static final String CRLF = "\r\n";

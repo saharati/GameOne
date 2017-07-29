@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
-import gui.SpringUtilities;
+import util.ComponentUtil;
 import util.database.installer.MySqlConnect;
 import util.database.installer.RunTasks;
 
@@ -135,7 +135,7 @@ public final class DBConfigGUI extends JFrame
 		
 		setLayout(new SpringLayout());
 		
-		SpringUtilities.makeCompactGrid(getContentPane(), 6, 2, 5, 5, 5, 5);
+		ComponentUtil.makeCompactGrid(getContentPane(), 6, 2, 5, 5, 5, 5);
 		
 		pack();
 		setLocationRelativeTo(null);

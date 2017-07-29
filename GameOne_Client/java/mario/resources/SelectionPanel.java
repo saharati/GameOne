@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -130,7 +131,7 @@ public final class SelectionPanel extends JPanel
 		@Override
 		public void mousePressed(final MouseEvent e)
 		{
-			_future = ThreadPool.scheduleAtFixedRate(this, 0, 10);
+			_future = ThreadPool.scheduleAtFixedRate(this, 0, 10, TimeUnit.MILLISECONDS);
 		}
 		
 		@Override

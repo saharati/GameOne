@@ -2,6 +2,7 @@ package network.response;
 
 import network.PacketInfo;
 import network.PacketWriter;
+import objects.LoginResult;
 
 /**
  * Packet responsible for telling the client the login status.
@@ -9,16 +10,16 @@ import network.PacketWriter;
  */
 public final class LoginResponse extends PacketWriter
 {
-	public static final LoginResponse LOGIN_OK = new LoginResponse((byte) 1);
-	public static final LoginResponse LOGIN_FAILED = new LoginResponse((byte) -1);
-	public static final LoginResponse SERVER_FULL = new LoginResponse((byte) -2);
-	public static final LoginResponse SERVER_ERROR = new LoginResponse((byte) -3);
-	public static final LoginResponse ALREADY_ONLINE = new LoginResponse((byte) -4);
-	public static final LoginResponse USER_BANNED = new LoginResponse((byte) -5);
+	public static final LoginResponse LOGIN_OK = new LoginResponse(LoginResult.LOGIN_OK);
+	public static final LoginResponse LOGIN_FAILED = new LoginResponse(LoginResult.LOGIN_FAILED);
+	public static final LoginResponse SERVER_FULL = new LoginResponse(LoginResult.SERVER_FULL);
+	public static final LoginResponse SERVER_ERROR = new LoginResponse(LoginResult.SERVER_ERROR);
+	public static final LoginResponse ALREADY_ONLINE = new LoginResponse(LoginResult.ALREADY_ONLINE);
+	public static final LoginResponse USER_BANNED = new LoginResponse(LoginResult.USER_BANNED);
 	
-	private final byte _result;
+	private final LoginResult _result;
 	
-	private LoginResponse(final byte result)
+	private LoginResponse(final LoginResult result)
 	{
 		_result = result;
 	}
@@ -28,6 +29,6 @@ public final class LoginResponse extends PacketWriter
 	{
 		writeInt(PacketInfo.LOGIN.ordinal());
 		
-		writeByte(_result);
+		writeInt(_result.ordinal());
 	}
 }

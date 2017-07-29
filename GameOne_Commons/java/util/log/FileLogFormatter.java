@@ -4,10 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-/**
- * Formatter for file logs.
- * @author Sahar
- */
 public final class FileLogFormatter extends Formatter
 {
 	private static final String CRLF = "\r\n";

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -323,7 +324,7 @@ public final class SuperMario extends JFrame implements Runnable
 	{
 		_background.changeBackground(newBackground);
 		
-		_fallTask = ThreadPool.scheduleAtFixedRate(this, 0, 2000);
+		_fallTask = ThreadPool.scheduleAtFixedRate(this, 0, 2, TimeUnit.SECONDS);
 	}
 	
 	protected Component getNearestObject(final int x, final int y)

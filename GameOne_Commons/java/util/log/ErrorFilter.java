@@ -3,10 +3,6 @@ package util.log;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
 
-/**
- * Filter for error logs.
- * @author Sahar
- */
 public final class ErrorFilter implements Filter
 {
 	@Override

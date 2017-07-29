@@ -1,8 +1,10 @@
 package server.objects;
 
+import java.io.IOException;
 import java.net.SocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import network.BasicClient;
 import network.response.GameScoreUpdateResponse;
@@ -19,13 +21,20 @@ import util.StringUtil;
  */
 public final class GameClient extends BasicClient
 {
-	private static final Logger LOGGER = Logger.getLogger(GameClient.class.getName());
-	
 	private final SocketAddress _remoteAddr;
 	private User _user;
 	
 	public GameClient(final AsynchronousSocketChannel channel, final SocketAddress remoteAddress)
 	{
+		try
+		{
+			channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+		}
+		catch (final IOException e)
+		{
+			LOGGER.log(Level.WARNING, "Failed setting socket options: ", e);
+		}
+		
 		super.setChannel(channel);
 		
 		_remoteAddr = remoteAddress;

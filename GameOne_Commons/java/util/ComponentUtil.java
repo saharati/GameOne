@@ -1,14 +1,64 @@
-package gui;
+package util;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
+import java.awt.Font;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SpringLayout.Constraints;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
-public final class SpringUtilities
+public final class ComponentUtil
 {
+	protected static final Logger LOGGER = Logger.getLogger(ComponentUtil.class.getName());
+	
+	public static void showHyperLinkPopup(final String title, final String text, final int messageType)
+	{
+		final JLabel label = new JLabel();
+		final Font font = label.getFont();
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<html><body style=\"");
+		sb.append("font-family:" + font.getFamily() + ";font-weight:" + (font.isBold() ? "bold" : "normal") + ";font-size:" + font.getSize() + "pt");
+		sb.append("\">");
+		sb.append(text);
+		sb.append("</body></html>");
+		
+		final JEditorPane ep = new JEditorPane("text/html", sb.toString());
+		ep.setEditable(false);
+		ep.setBackground(label.getBackground());
+		ep.addHyperlinkListener(new HyperlinkListener()
+		{
+			@Override
+			public void hyperlinkUpdate(final HyperlinkEvent e)
+			{
+				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED) && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.BROWSE))
+				{
+					try
+					{
+						Desktop.getDesktop().browse(e.getURL().toURI());
+					}
+					catch (final IOException | URISyntaxException e1)
+					{
+						LOGGER.log(Level.WARNING, "Couldn't open url in browser: ", e);
+					}
+				}
+			}
+		});
+		
+		JOptionPane.showMessageDialog(null, ep, title, messageType);
+	}
+	
 	public static void makeCompactGrid(final Container parent, final int rows, final int cols, final int initialX, final int initialY, final int xPad, final int yPad)
 	{
 		final SpringLayout layout = (SpringLayout) parent.getLayout();

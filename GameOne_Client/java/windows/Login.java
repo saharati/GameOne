@@ -25,8 +25,8 @@ import javax.swing.SwingConstants;
 
 import client.Client;
 import configs.Config;
-import gui.SpringUtilities;
 import network.request.RequestLogin;
+import util.ComponentUtil;
 
 /**
  * Login screen implementation.
@@ -83,7 +83,7 @@ public final class Login extends JFrame
 		
 		setLayout(new SpringLayout());
 		
-		SpringUtilities.makeCompactGrid(getContentPane(), 3, 2, 5, 5, 5, 5);
+		ComponentUtil.makeCompactGrid(getContentPane(), 3, 2, 5, 5, 5, 5);
 		
 		getContentPane().setBackground(Config.UI_COLOR);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

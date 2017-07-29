@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import util.parsers.properties.ExProperties;
+import util.parsers.PropertiesParser;
 
 /**
  * Load all game configurations files to be sent to the client.
@@ -29,7 +29,7 @@ public final class GameConfig
 		CONFIGS.clear();
 		
 		// Load Games.properties file (if exists)
-		final ExProperties games = new ExProperties(GAMES_FILE);
+		final PropertiesParser games = new PropertiesParser(GAMES_FILE);
 		
 		// Checkers
 		CONFIGS.put("QueenSingleStep", games.getProperty("QueenSingleStep", "False"));

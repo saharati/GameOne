@@ -1,8 +1,6 @@
 package network;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public enum PacketInfo
 {
@@ -22,7 +20,6 @@ public enum PacketInfo
 	private static final String REQUEST_PACKAGE = "network.request";
 	private static final String RESPONSE_PACKAGE = "network.response";
 	
-	private final Logger _logger = Logger.getLogger(PacketInfo.class.getName());
 	private PacketReader<BasicClient> _readPacket;
 	
 	@SuppressWarnings("unchecked")
@@ -38,7 +35,7 @@ public enum PacketInfo
 		}
 		catch (final InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e)
 		{
-			_logger.log(Level.WARNING, "Failed initializing PacketInfo: ", e);
+			throw new ExceptionInInitializerError(e);
 		}
 	}
 	

@@ -2,7 +2,7 @@ package util.configs;
 
 import java.util.logging.Logger;
 
-import util.parsers.properties.ExProperties;
+import util.parsers.PropertiesParser;
 
 /**
  * Load all server configurations files.
@@ -54,14 +54,14 @@ public final class Config
 	public static void load()
 	{
 		// Load Deadlock.properties file (if exists)
-		final ExProperties deadlock = new ExProperties(DEADLOCK_FILE);
+		final PropertiesParser deadlock = new PropertiesParser(DEADLOCK_FILE);
 		
 		DEADLOCK_DETECTOR = deadlock.getProperty("DeadLockDetector", true);
 		RESTART_ON_DEADLOCK = deadlock.getProperty("RestartOnDeadlock", false);
 		DEADLOCK_CHECK_INTERVAL = deadlock.getProperty("DeadLockCheckInterval", 20) * 1000;
 		
 		// Load Database.properties file (if exists)
-		final ExProperties database = new ExProperties(DATABASE_FILE);
+		final PropertiesParser database = new PropertiesParser(DATABASE_FILE);
 		
 		DATABASE_MAX_CONNECTIONS = database.getProperty("MaximumDbConnections", 10);
 		DATABASE_MAX_IDLE_TIME = database.getProperty("MaximumDbIdleTime", 0);
@@ -73,13 +73,13 @@ public final class Config
 		ACCESS_PASSWORD = database.getProperty("AccessPassword", "");
 		
 		// Load Server.properties file (if exists)
-		final ExProperties server = new ExProperties(SERVER_FILE);
+		final PropertiesParser server = new PropertiesParser(SERVER_FILE);
 		
 		MAXIMUM_ONLINE_USERS = server.getProperty("MaximumOnlineUsers", 100);
 		AUTO_CREATE_ACCOUNTS = server.getProperty("AutoCreateAccounts", false);
 		
 		// Load Network.properties file (if exists)
-		final ExProperties network = new ExProperties(NETWORK_FILE);
+		final PropertiesParser network = new PropertiesParser(NETWORK_FILE);
 		
 		ENABLE_UPNP = network.getProperty("EnableUPnP", true);
 		PORT = network.getProperty("Port", 777);

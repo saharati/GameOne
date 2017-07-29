@@ -7,10 +7,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-/**
- * Class representing all mario object types.
- * @author Sahar
- */
 public enum MarioType
 {
 	ALIEN("alien.png", "Alien"),

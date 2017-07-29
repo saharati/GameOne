@@ -508,7 +508,7 @@ public final class ChessBoard extends JPanel
 					if (!kingPath.isEmpty())
 					{
 						fromCell = getCell(_computerKing);
-						toCell = Rnd.get(kingPath);
+						toCell = kingPath.get(Rnd.get(kingPath.size()));
 					}
 					else
 					{
@@ -634,11 +634,12 @@ public final class ChessBoard extends JPanel
 						}
 						while (true)
 						{
-							final AbstractObject randomObj = Rnd.get(_enemies);
+							final AbstractObject randomObj = _enemies.get(Rnd.get(_enemies.size()));
 							if (randomObj.getPathToShow().isEmpty())
 								continue;
 							
-							final ChessCell randomCell = Rnd.get(randomObj.getPathToShow());
+							final List<ChessCell> cellPath = randomObj.getPathToShow();
+							final ChessCell randomCell = cellPath.get(Rnd.get(cellPath.size()));
 							if (canBeSeenBy(randomObj.getEnemy(), randomCell, false))
 								continue;
 							

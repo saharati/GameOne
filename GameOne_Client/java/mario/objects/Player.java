@@ -150,7 +150,8 @@ public final class Player extends AbstractObject
 				
 				if (_swallowCount == 0)
 				{
-					final TubeExit rnd = Rnd.get(SuperMario.getInstance().getExitTubes());
+					final List<TubeExit> tubes = SuperMario.getInstance().getExitTubes();
+					final TubeExit rnd = tubes.get(Rnd.get(tubes.size()));
 					
 					setLocation(rnd.getX() + (rnd.getWidth() - getWidth()) / 2, rnd.getY() + rnd.getHeight() - getHeight());
 					

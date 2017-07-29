@@ -4,47 +4,42 @@ import java.nio.ByteBuffer;
 
 public abstract class PacketReader<T extends BasicClient>
 {
-	private ByteBuffer _buf;
+	private ByteBuffer _buffer;
 	
 	public abstract void read();
 	
 	public abstract void run(final T client);
 	
-	public final void setBuffer(final ByteBuffer buf)
+	public final void setBuffer(final ByteBuffer buffer)
 	{
-		_buf = buf;
+		_buffer = buffer;
 	}
 	
-	protected byte readByte()
+	protected final int readInt()
 	{
-		return _buf.get();
+		return _buffer.getInt();
 	}
 	
-	protected int readInt()
+	protected final long readLong()
 	{
-		return _buf.getInt();
+		return _buffer.getLong();
 	}
 	
-	protected long readLong()
+	protected final double readDouble()
 	{
-		return _buf.getLong();
+		return _buffer.getDouble();
 	}
 	
-	protected double readDouble()
+	protected final boolean readBoolean()
 	{
-		return _buf.getDouble();
+		return _buffer.get() == 1;
 	}
 	
-	protected boolean readBoolean()
-	{
-		return _buf.get() == 1;
-	}
-	
-	protected String readString()
+	protected final String readString()
 	{
 		final StringBuilder sb = new StringBuilder();
 		char chr;
-		while ((chr = _buf.getChar()) != '\000')
+		while ((chr = _buffer.getChar()) != '\000')
 			sb.append(chr);
 		
 		return sb.toString();

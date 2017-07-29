@@ -4,6 +4,7 @@ import data.sql.UsersTable;
 import network.PacketReader;
 import network.response.DuelInviteResponse;
 import network.response.WaitingRoomResponse;
+import objects.DuelInviteResult;
 import server.objects.GameClient;
 import server.objects.User;
 import server.objects.UserGroup;
@@ -66,7 +67,7 @@ public final class RequestInviteToDuel extends PacketReader<GameClient>
 					target.setGroup(user.getGroup());
 					
 					client.sendPacket(DuelInviteResponse.WAIT);
-					target.sendPacket(new DuelInviteResponse(DuelInviteResponse.RESPOND, user.getUsername()));
+					target.sendPacket(new DuelInviteResponse(DuelInviteResult.RESPOND, user.getUsername()));
 				}
 			}
 		}

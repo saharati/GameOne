@@ -1,6 +1,6 @@
 package util.threadpool;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -13,76 +13,47 @@ public final class ThreadPool
 {
 	private static final Logger LOGGER = Logger.getLogger(ThreadPool.class.getName());
 	
-	private static int _threadPoolRandomizer;
-	private static ScheduledThreadPoolExecutor[] _scheduledPools;
-	private static ThreadPoolExecutor[] _instantPools;
+	private static ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR;
+	private static ThreadPoolExecutor INSTANT_THREAD_POOL_EXECUTOR;
 	
 	public static void load()
 	{
-		// Feed scheduled pool.
-		int poolCount = CommonConfig.SCHEDULED_THREAD_POOL_COUNT;
-		if (poolCount == -1)
-			poolCount = Runtime.getRuntime().availableProcessors();
+		final int scheduledThreadPoolSize = CommonConfig.SCHEDULED_THREAD_POOL_SIZE == -1 ? Runtime.getRuntime().availableProcessors() * 4 : CommonConfig.SCHEDULED_THREAD_POOL_SIZE;
+		final int instantThreadPoolSize = CommonConfig.INSTANT_THREAD_POOL_SIZE == -1 ? Runtime.getRuntime().availableProcessors() * 2 : CommonConfig.INSTANT_THREAD_POOL_SIZE;
 		
-		_scheduledPools = new ScheduledThreadPoolExecutor[poolCount];
-		for (int i = 0; i < poolCount; i++)
-			_scheduledPools[i] = new ScheduledThreadPoolExecutor(CommonConfig.THREADS_PER_SCHEDULED_THREAD_POOL);
+		SCHEDULED_THREAD_POOL_EXECUTOR = new ScheduledThreadPoolExecutor(scheduledThreadPoolSize);
+		INSTANT_THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(instantThreadPoolSize, instantThreadPoolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
 		
-		// Feed instant pool.
-		poolCount = CommonConfig.INSTANT_THREAD_POOL_COUNT;
-		if (poolCount == -1)
-			poolCount = Runtime.getRuntime().availableProcessors();
+		SCHEDULED_THREAD_POOL_EXECUTOR.prestartAllCoreThreads();
+		INSTANT_THREAD_POOL_EXECUTOR.prestartAllCoreThreads();
 		
-		_instantPools = new ThreadPoolExecutor[poolCount];
-		for (int i = 0; i < poolCount; i++)
-			_instantPools[i] = new ThreadPoolExecutor(CommonConfig.THREADS_PER_INSTANT_THREAD_POOL, CommonConfig.THREADS_PER_INSTANT_THREAD_POOL, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100000));
-		
-		// Prestart core threads.
-		for (final ScheduledThreadPoolExecutor threadPool : _scheduledPools)
-			threadPool.prestartAllCoreThreads();
-		
-		for (final ThreadPoolExecutor threadPool : _instantPools)
-			threadPool.prestartAllCoreThreads();
-		
-		// Launch purge task.
 		scheduleAtFixedRate(() ->
 		{
-			for (final ScheduledThreadPoolExecutor threadPool : _scheduledPools)
-				threadPool.purge();
-			
-			for (final ThreadPoolExecutor threadPool : _instantPools)
-				threadPool.purge();
-		}, 600000, 600000);
+			SCHEDULED_THREAD_POOL_EXECUTOR.purge();
+			INSTANT_THREAD_POOL_EXECUTOR.purge();
+		}, 1, 1, TimeUnit.MINUTES);
 		
-		LOGGER.info("Initialized " + (_scheduledPools.length * CommonConfig.THREADS_PER_SCHEDULED_THREAD_POOL) + " scheduled, " + (_instantPools.length * CommonConfig.THREADS_PER_INSTANT_THREAD_POOL) + " instant thread(s).");
+		LOGGER.info("Initialized " + scheduledThreadPoolSize + " scheduled, " + instantThreadPoolSize + " instant thread(s).");
 	}
 	
-	public static ScheduledFuture<?> schedule(final Runnable r, final long delay)
+	public static ScheduledFuture<?> schedule(final Runnable r, final long delay, final TimeUnit timeUnit)
 	{
-		return getPool(_scheduledPools).schedule(r, delay, TimeUnit.MILLISECONDS);
+		return SCHEDULED_THREAD_POOL_EXECUTOR.schedule(r, delay, timeUnit);
 	}
 	
-	public static ScheduledFuture<?> scheduleAtFixedRate(final Runnable r, final long delay, final long period)
+	public static ScheduledFuture<?> scheduleAtFixedRate(final Runnable r, final long delay, final long period, final TimeUnit timeUnit)
 	{
-		return getPool(_scheduledPools).scheduleAtFixedRate(r, delay, period, TimeUnit.MILLISECONDS);
+		return SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(r, delay, period, timeUnit);
 	}
 	
 	public static void execute(final Runnable r)
 	{
-		getPool(_instantPools).execute(r);
+		INSTANT_THREAD_POOL_EXECUTOR.execute(r);
 	}
 	
 	public static void shutdown()
 	{
-		for (final ScheduledThreadPoolExecutor threadPool : _scheduledPools)
-			threadPool.shutdownNow();
-		
-		for (final ThreadPoolExecutor threadPool : _instantPools)
-			threadPool.shutdownNow();
-	}
-	
-	private static <T> T getPool(final T[] threadPools)
-	{
-		return threadPools[_threadPoolRandomizer++ % threadPools.length];
+		SCHEDULED_THREAD_POOL_EXECUTOR.shutdownNow();
+		INSTANT_THREAD_POOL_EXECUTOR.shutdownNow();
 	}
 }

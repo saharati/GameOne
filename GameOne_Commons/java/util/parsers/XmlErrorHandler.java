@@ -1,12 +1,8 @@
-package util.parsers.xml;
+package util.parsers;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
-/**
- * XML error handler.
- * @author Sahar
- */
 public final class XmlErrorHandler implements ErrorHandler
 {
 	@Override

@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 
 import client.Client;
 import network.PacketReader;
+import objects.LoginResult;
 import windows.GameSelect;
 
 /**
@@ -12,19 +13,12 @@ import windows.GameSelect;
  */
 public final class LoginResponse extends PacketReader<Client>
 {
-	private static final byte LOGIN_OK = 1;
-	private static final byte LOGIN_FAILED = -1;
-	private static final byte SERVER_FULL = -2;
-	private static final byte SERVER_ERROR = -3;
-	private static final byte ALREADY_ONLINE = -4;
-	private static final byte USER_BANNED = -5;
-	
-	private byte _result;
+	private LoginResult _result;
 	
 	@Override
 	public void read()
 	{
-		_result = readByte();
+		_result = LoginResult.values()[readInt()];
 	}
 	
 	@Override

@@ -1,9 +1,5 @@
 package objects;
 
-/**
- * Enum representing each game.
- * @author Sahar
- */
 public enum GameId
 {
 	PACMAN,

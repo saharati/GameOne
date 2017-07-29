@@ -2,6 +2,7 @@ package mario;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import mario.objects.AbstractObject;
 import util.threadpool.ThreadPool;
@@ -23,7 +24,7 @@ public final class MarioTaskManager extends CopyOnWriteArrayList<AbstractObject>
 	
 	public void start()
 	{
-		_future = ThreadPool.scheduleAtFixedRate(this, 3, 3);
+		_future = ThreadPool.scheduleAtFixedRate(this, 3, 3, TimeUnit.MILLISECONDS);
 	}
 	
 	public void stop()

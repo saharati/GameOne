@@ -1,9 +1,5 @@
 package objects.mario;
 
-/**
- * Class representing a single mario object.
- * @author Sahar
- */
 public final class MarioObject
 {
 	private final int _x;

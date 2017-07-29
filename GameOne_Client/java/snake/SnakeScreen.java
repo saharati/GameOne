@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -32,7 +33,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 	
 	private static final Logger LOGGER = Logger.getLogger(SnakeScreen.class.getName());
 	private static final int SCREEN_SIZE = 25;
-	private static final int SPEED = 75;
+	private static final int SPEED_IN_MILLISECONDS = 75;
 	private static final Dimension BLOCK_SIZE = new Dimension(20, 20);
 	
 	protected final LinkedList<int[]> _snake = new LinkedList<>();
@@ -233,7 +234,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 						if (!moveSnake())
 							Collections.reverse(_snake);
 						
-						_moveTask = ThreadPool.scheduleAtFixedRate(SnakeScreen.this, SPEED, SPEED);
+						_moveTask = ThreadPool.scheduleAtFixedRate(SnakeScreen.this, SPEED_IN_MILLISECONDS, SPEED_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
 					}
 					break;
 				case KeyEvent.VK_P:
@@ -241,7 +242,7 @@ public final class SnakeScreen extends JFrame implements Runnable
 						return;
 					
 					if (_moveTask.isCancelled())
-						_moveTask = ThreadPool.scheduleAtFixedRate(SnakeScreen.this, SPEED, SPEED);
+						_moveTask = ThreadPool.scheduleAtFixedRate(SnakeScreen.this, SPEED_IN_MILLISECONDS, SPEED_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
 					else
 						_moveTask.cancel(false);
 					break;

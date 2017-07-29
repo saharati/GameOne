@@ -8,12 +8,8 @@ import java.net.URISyntaxException;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import util.parsers.properties.ExProperties;
+import util.parsers.PropertiesParser;
 
-/**
- * Load all common configurations files.
- * @author Sahar
- */
 public final class CommonConfig
 {
 	private static final Logger LOGGER = Logger.getLogger(CommonConfig.class.getName());
@@ -21,16 +17,14 @@ public final class CommonConfig
 	// --------------------------------------------------
 	// Property File Definitions
 	// --------------------------------------------------
-	private static final String THREADS_FILE = "./configs/Threads.properties";
-	private static final String LOGS_FILE = "./configs/log.cfg";
+	private static final String THREADS_FILE = "./configs/Threads2.properties";
+	private static final String LOGS_FILE = "./configs/Log.properties";
 	
 	// --------------------------------------------------
 	// Threads Settings
 	// --------------------------------------------------
-	public static int SCHEDULED_THREAD_POOL_COUNT;
-	public static int THREADS_PER_SCHEDULED_THREAD_POOL;
-	public static int INSTANT_THREAD_POOL_COUNT;
-	public static int THREADS_PER_INSTANT_THREAD_POOL;
+	public static int SCHEDULED_THREAD_POOL_SIZE;
+	public static int INSTANT_THREAD_POOL_SIZE;
 	
 	public static void load() throws URISyntaxException, SecurityException, IOException
 	{
@@ -57,12 +51,10 @@ public final class CommonConfig
 		}
 		
 		// Load Threads.properties file (if exists)
-		final ExProperties threads = new ExProperties(threadFile);
+		final PropertiesParser threads = new PropertiesParser(threadFile);
 		
-		SCHEDULED_THREAD_POOL_COUNT = threads.getProperty("ScheduledThreadPoolCount", -1);
-		THREADS_PER_SCHEDULED_THREAD_POOL = threads.getProperty("ThreadsPerScheduledThreadPool", 4);
-		INSTANT_THREAD_POOL_COUNT = threads.getProperty("InstantThreadPoolCount", -1);
-		THREADS_PER_INSTANT_THREAD_POOL = threads.getProperty("ThreadsPerInstantThreadPool", 2);
+		SCHEDULED_THREAD_POOL_SIZE = threads.getProperty("ScheduledThreadPoolSize", -1);
+		INSTANT_THREAD_POOL_SIZE = threads.getProperty("InstantThreadPoolSize", -1);
 		
 		LOGGER.info("CommonConfig loaded!");
 	}

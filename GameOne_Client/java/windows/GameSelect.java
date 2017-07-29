@@ -24,7 +24,6 @@ import javax.swing.text.AbstractDocument;
 import chess.ChessScreen;
 import client.Client;
 import configs.Config;
-import gui.SpringUtilities;
 import mario.SuperMario;
 import network.request.RequestLogout;
 import network.request.RequestMessage;
@@ -33,6 +32,7 @@ import pacman.PacmanBuilder;
 import s2048.S2048;
 import snake.SnakeScreen;
 import tetris.TetrisScreen;
+import util.ComponentUtil;
 import util.LengthDocumentFilter;
 
 /**
@@ -102,7 +102,7 @@ public final class GameSelect extends JFrame
 		spChess.addActionListener(a -> Client.getInstance().setCurrentDetails(ChessScreen.getInstance(), GameId.CHESS_SP, true));
 		_buttonsPanel.add(spChess);
 		
-		SpringUtilities.makeCompactGrid(_buttonsPanel, 3, 3, 10, 10, 10, 10);
+		ComponentUtil.makeCompactGrid(_buttonsPanel, 3, 3, 10, 10, 10, 10);
 		
 		_buttonsPanel.setBackground(Config.UI_COLOR);
 		add(_buttonsPanel, BorderLayout.CENTER);

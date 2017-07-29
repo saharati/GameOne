@@ -2,51 +2,42 @@ package network;
 
 import java.nio.ByteBuffer;
 
-/**
- * Outgoing packet implementation.
- * @author Sahar
- */
 public abstract class PacketWriter
 {
-	private final ByteBuffer _buf = ByteBuffer.allocateDirect(BasicClient.PACKET_SIZE);
+	private final ByteBuffer _buffer = ByteBuffer.allocateDirect(BasicClient.PACKET_SIZE);
 	
 	public abstract void write();
 	
 	public final ByteBuffer getBuffer()
 	{
-		return _buf;
-	}
-	
-	protected final void writeByte(final byte val)
-	{
-		_buf.put(val);
+		return _buffer;
 	}
 	
 	protected final void writeInt(final int val)
 	{
-		_buf.putInt(val);
+		_buffer.putInt(val);
 	}
 	
 	protected final void writeLong(final long val)
 	{
-		_buf.putLong(val);
+		_buffer.putLong(val);
 	}
 	
 	protected final void writeDouble(final double val)
 	{
-		_buf.putDouble(val);
+		_buffer.putDouble(val);
 	}
 	
 	protected final void writeBoolean(final boolean val)
 	{
-		_buf.put((byte) (val ? 1 : 0));
+		_buffer.put((byte) (val ? 1 : 0));
 	}
 	
 	protected final void writeString(final String val)
 	{
 		if (val != null)
-			for (int i = 0;i < val.length();i++)
-				_buf.putChar(val.charAt(i));
-		_buf.putChar('\000');
+			for (final char ch : val.toCharArray())
+				_buffer.putChar(ch);
+		_buffer.putChar('\000');
 	}
 }

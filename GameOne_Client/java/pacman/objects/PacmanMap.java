@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -341,9 +342,9 @@ public final class PacmanMap extends JFrame
 			{
 				_nextMoves[0] = ch;
 				
-				_schedules[0] = ThreadPool.scheduleAtFixedRate(new Animation(), 500, 500);
-				_schedules[1] = ThreadPool.scheduleAtFixedRate(new PlayerMove(), 3, 3);
-				_schedules[2] = ThreadPool.scheduleAtFixedRate(new MobMove(), 3, 3);
+				_schedules[0] = ThreadPool.scheduleAtFixedRate(new Animation(), 500, 500, TimeUnit.MILLISECONDS);
+				_schedules[1] = ThreadPool.scheduleAtFixedRate(new PlayerMove(), 3, 3, TimeUnit.MILLISECONDS);
+				_schedules[2] = ThreadPool.scheduleAtFixedRate(new MobMove(), 3, 3, TimeUnit.MILLISECONDS);
 			}
 			else if (_nextMoves[0] == ch)
 				_nextMoves[1] = 0;
@@ -535,7 +536,7 @@ public final class PacmanMap extends JFrame
 				int toY = entry.getKey().getY();
 				entry.setValue(getRandomDirectionChange(toX, toY, entry.getValue()));
 				if (entry.getValue() == '0')
-					entry.setValue(Rnd.get(DIRECTIONS));
+					entry.setValue(DIRECTIONS.get(Rnd.get(DIRECTIONS.size())));
 				
 				PacmanMapObject finalTarget = null;
 				switch (entry.getValue())

@@ -44,7 +44,7 @@ public final class UserGroup
 	
 	public User getRandomMember()
 	{
-		return Rnd.get(_members);
+		return _members.get(Rnd.get(_members.size()));
 	}
 	
 	public Stream<User> getUsersExcept(final User user)

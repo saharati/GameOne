@@ -4,10 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
-/**
- * Heaven for string related functions.
- * @author Sahar
- */
 public final class StringUtil
 {
 	private static final Logger LOGGER = Logger.getLogger(StringUtil.class.getName());

@@ -1,7 +1,8 @@
 Project:
 * In github Readme.md explain about the whole project in details.
-* Add prefs.reg to client build.xml, why is this file in commons project?
+* Add prefs.reg to client/server build.xml.
 * Continue from Game Configs part II commit.
+* What happens if the user renames/moves/deletes the images or any data file in the future (such as XMLs).
 
 .exe file:
 * In github Readme add info that tells that launch4j is needed in order to create exe out of a jar file.

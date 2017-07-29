@@ -1,9 +1,5 @@
 package objects.pacman;
 
-/**
- * Class representing a single pacman object.
- * @author Sahar
- */
 public enum PacmanObject
 {
 	EMPTY("empty.png"),

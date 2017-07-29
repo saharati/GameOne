@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 
 import client.Client;
 import network.PacketReader;
+import objects.DuelInviteResult;
 import windows.WaitingRoom;
 
 /**
@@ -12,19 +13,13 @@ import windows.WaitingRoom;
  */
 public final class DuelInviteResponse extends PacketReader<Client>
 {
-	private static final byte CANNOT_INVITE_SELF = -1;
-	private static final byte TARGET_UNAVAILABLE = -2;
-	private static final byte CANCELLED = -3;
-	private static final byte WAIT = 1;
-	private static final byte RESPOND = 2;
-	
-	private byte _response;
+	private DuelInviteResult _response;
 	private String _username;
 	
 	@Override
 	public void read()
 	{
-		_response = readByte();
+		_response = DuelInviteResult.values()[readInt()];
 		_username = readString();
 	}
 	

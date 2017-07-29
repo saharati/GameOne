@@ -2,6 +2,7 @@ package network.response;
 
 import network.PacketInfo;
 import network.PacketWriter;
+import objects.DuelInviteResult;
 
 /**
  * Writing a response for a duel invitation.
@@ -9,21 +10,20 @@ import network.PacketWriter;
  */
 public final class DuelInviteResponse extends PacketWriter
 {
-	public static final DuelInviteResponse CANNOT_INVITE_SELF = new DuelInviteResponse((byte) -1);
-	public static final DuelInviteResponse TARGET_UNAVAILABLE = new DuelInviteResponse((byte) -2);
-	public static final DuelInviteResponse CANCELLED = new DuelInviteResponse((byte) -3);
-	public static final DuelInviteResponse WAIT = new DuelInviteResponse((byte) 1);
-	public static final byte RESPOND = (byte) 2;
+	public static final DuelInviteResponse CANNOT_INVITE_SELF = new DuelInviteResponse(DuelInviteResult.CANNOT_INVITE_SELF);
+	public static final DuelInviteResponse TARGET_UNAVAILABLE = new DuelInviteResponse(DuelInviteResult.TARGET_UNAVAILABLE);
+	public static final DuelInviteResponse CANCELLED = new DuelInviteResponse(DuelInviteResult.CANCELLED);
+	public static final DuelInviteResponse WAIT = new DuelInviteResponse(DuelInviteResult.WAIT);
 	
-	private final byte _result;
+	private final DuelInviteResult _result;
 	private final String _username;
 	
-	private DuelInviteResponse(final byte result)
+	private DuelInviteResponse(final DuelInviteResult result)
 	{
 		this(result, null);
 	}
 	
-	public DuelInviteResponse(final byte result, final String username)
+	public DuelInviteResponse(final DuelInviteResult result, final String username)
 	{
 		_result = result;
 		_username = username;
@@ -34,7 +34,7 @@ public final class DuelInviteResponse extends PacketWriter
 	{
 		writeInt(PacketInfo.INVITE.ordinal());
 		
-		writeByte(_result);
+		writeInt(_result.ordinal());
 		writeString(_username);
 	}
 }

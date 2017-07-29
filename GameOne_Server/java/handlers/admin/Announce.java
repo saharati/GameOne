@@ -6,10 +6,6 @@ import data.sql.AnnouncementsTable;
 import handlers.IAdminCommandHandler;
 import server.objects.User;
 
-/**
- * Announce related admin commands.
- * @author Sahar
- */
 public final class Announce implements IAdminCommandHandler
 {
 	private static final String[] COMMANDS = {"addAnnounce", "deleteAnnounce"};

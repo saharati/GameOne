@@ -20,7 +20,7 @@ public enum PacketInfo
 	private static final String REQUEST_PACKAGE = "network.request";
 	private static final String RESPONSE_PACKAGE = "network.response";
 	
-	private PacketReader<BasicClient> _readPacket;
+	private final PacketReader<BasicClient> _readPacket;
 	
 	@SuppressWarnings("unchecked")
 	private PacketInfo(final String requestPacket, final String responsePacket)

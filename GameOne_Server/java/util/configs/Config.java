@@ -76,7 +76,7 @@ public final class Config
 		final PropertiesParser server = new PropertiesParser(SERVER_FILE);
 		
 		MAXIMUM_ONLINE_USERS = server.getProperty("MaximumOnlineUsers", 100);
-		AUTO_CREATE_ACCOUNTS = server.getProperty("AutoCreateAccounts", false);
+		AUTO_CREATE_ACCOUNTS = server.getProperty("AutoCreateAccounts", true);
 		
 		// Load Network.properties file (if exists)
 		final PropertiesParser network = new PropertiesParser(NETWORK_FILE);

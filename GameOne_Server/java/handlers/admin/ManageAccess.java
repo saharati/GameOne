@@ -8,10 +8,6 @@ import network.response.LogoutResponse;
 import server.objects.AccessLevel;
 import server.objects.User;
 
-/**
- * Announce related admin commands.
- * @author Sahar
- */
 public final class ManageAccess implements IAdminCommandHandler
 {
 	private static final String[] COMMANDS = {"kick", "ban", "unban", "setgm", "removegm"};
@@ -26,6 +22,7 @@ public final class ManageAccess implements IAdminCommandHandler
 			user.sendPacket("Server", "Required syntax: " + cmd + " <username>");
 			return false;
 		}
+		
 		final String username = st.nextToken().trim();
 		final User target = UsersTable.getInstance().getUserByName(username);
 		if (target == null)

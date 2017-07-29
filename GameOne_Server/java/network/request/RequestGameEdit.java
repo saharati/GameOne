@@ -35,13 +35,12 @@ public final class RequestGameEdit extends PacketReader<GameClient>
 	@Override
 	public void read()
 	{
-		final MarioType[] marioValues = MarioType.values();
-		final PacmanObject[] pacmanValues = PacmanObject.values();
-		
 		_gameId = GameId.values()[readInt()];
 		switch (_gameId)
 		{
 			case MARIO:
+				final MarioType[] marioValues = MarioType.values();
+				
 				_addedObjects = new MarioObject[readInt()];
 				for (int i = 0;i < _addedObjects.length;i++)
 					_addedObjects[i] = new MarioObject(readInt(), readInt(), marioValues[readInt()]);
@@ -50,6 +49,8 @@ public final class RequestGameEdit extends PacketReader<GameClient>
 					_removedObjects[i] = new MarioObject(readInt(), readInt(), marioValues[readInt()]);
 				break;
 			case PACMAN:
+				final PacmanObject[] pacmanValues = PacmanObject.values();
+				
 				_objects = new PacmanObject[PacmanTable.ARRAY_DIMENSIONS[0]][PacmanTable.ARRAY_DIMENSIONS[1]];
 				_mapId = readInt();
 				for (int i = 0;i < _objects.length;i++)

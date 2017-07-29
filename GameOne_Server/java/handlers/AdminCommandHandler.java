@@ -6,10 +6,6 @@ import java.util.Set;
 
 import handlers.admin.*;
 
-/**
- * Class containing admin commands.
- * @author Sahar
- */
 public final class AdminCommandHandler
 {
 	private final Map<String, IAdminCommandHandler> _datatable = new HashMap<>();

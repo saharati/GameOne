@@ -14,17 +14,12 @@ import objects.mario.MarioType;
 import util.database.AccessDatabase;
 import util.database.Database;
 
-/**
- * Mario game objects.
- * @author Sahar
- */
 public final class MarioTable
 {
 	private static final Logger LOGGER = Logger.getLogger(MarioTable.class.getName());
-	
-	private static final String SELECT = "SELECT * FROM mario";
-	private static final String CLEAR = "DELETE FROM mario";
-	private static final String INSERT = "INSERT INTO mario VALUES (?, ?, ?)";
+	private static final String SELECT = "SELECT * FROM `mario`";
+	private static final String CLEAR = "DELETE FROM `mario`";
+	private static final String INSERT = "INSERT INTO `mario` VALUES (?, ?, ?)";
 	
 	private final List<MarioObject> _objects = new CopyOnWriteArrayList<>();
 	

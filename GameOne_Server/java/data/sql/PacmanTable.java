@@ -14,18 +14,14 @@ import objects.pacman.PacmanObject;
 import util.database.AccessDatabase;
 import util.database.Database;
 
-/**
- * Pacman game objects.
- * @author Sahar
- */
 public final class PacmanTable
 {
 	private static final Logger LOGGER = Logger.getLogger(PacmanTable.class.getName());
-	private static final String SELECT_MAPS = "SELECT DISTINCT mapId FROM pacman";
-	private static final String SELECT_MAP = "SELECT i, j, type FROM pacman WHERE mapId=?";
-	private static final String INSERT_OBJECT = "INSERT INTO pacman VALUES (?, ?, ?, ?)";
-	private static final String DELETE_MAP = "DELETE FROM pacman WHERE mapId=?";
-	private static final String SYNC_DELETE_PACMAN = "DELETE FROM pacman";
+	private static final String SELECT_MAPS = "SELECT DISTINCT `mapId` FROM `pacman`";
+	private static final String SELECT_MAP = "SELECT `i`, `j`, `type` FROM `pacman` WHERE `mapId`=?";
+	private static final String INSERT_OBJECT = "INSERT INTO `pacman` VALUES (?, ?, ?, ?)";
+	private static final String DELETE_MAP = "DELETE FROM `pacman` WHERE `mapId`=?";
+	private static final String SYNC_DELETE_PACMAN = "DELETE FROM `pacman`";
 	
 	public static final int[] ARRAY_DIMENSIONS = {16, 12};
 	

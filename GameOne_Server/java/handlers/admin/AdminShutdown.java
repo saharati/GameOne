@@ -6,10 +6,6 @@ import handlers.IAdminCommandHandler;
 import server.Shutdown;
 import server.objects.User;
 
-/**
- * Shutdown related admin commands.
- * @author Sahar
- */
 public final class AdminShutdown implements IAdminCommandHandler
 {
 	private static final String[] COMMANDS = {"shutdown", "restart", "abort"};

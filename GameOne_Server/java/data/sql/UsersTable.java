@@ -23,21 +23,16 @@ import util.configs.Config;
 import util.database.AccessDatabase;
 import util.database.Database;
 
-/**
- * Class holding all registered users.
- * @author Sahar
- */
 public final class UsersTable
 {
 	private static final Logger LOGGER = Logger.getLogger(UsersTable.class.getName());
-	
-	private static final String SELECT_USER = "SELECT * FROM users";
-	private static final String SELECT_STATS = "SELECT gameId, score, wins, loses FROM user_games WHERE userId=?";
-	private static final String INSERT_USER = "INSERT INTO users (username, password, lastIp, lastMac, accessLevel) VALUES (?, ?, ?, ?, ?)";
-	private static final String SYNC_DELETE_USERS = "DELETE FROM users";
-	private static final String SYNC_DELETE_USER_GAMES = "DELETE FROM user_games";
-	private static final String SYNC_ADD_USER = "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)";
-	private static final String SYNC_ADD_USER_GAME = "INSERT INTO user_games VALUES (?, ?, ?, ?, ?)";
+	private static final String SELECT_USER = "SELECT * FROM `users`";
+	private static final String SELECT_STATS = "SELECT `gameId`, `score`, `wins`, `loses` FROM `user_games` WHERE `userId`=?";
+	private static final String INSERT_USER = "INSERT INTO `users` (`username`, `password`, `lastIp`, `lastMac`, `accessLevel`) VALUES (?, ?, ?, ?, ?)";
+	private static final String SYNC_DELETE_USERS = "DELETE FROM `users`";
+	private static final String SYNC_DELETE_USER_GAMES = "DELETE FROM `user_games`";
+	private static final String SYNC_ADD_USER = "INSERT INTO `users` VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String SYNC_ADD_USER_GAME = "INSERT INTO `user_games` VALUES (?, ?, ?, ?, ?)";
 	
 	private final Map<Integer, User> _users = new HashMap<>();
 	
@@ -84,35 +79,32 @@ public final class UsersTable
 				ps.execute();
 				ps2.execute();
 			}
-			if (!_users.isEmpty())
+			try (final PreparedStatement ps = con.prepareStatement(SYNC_ADD_USER);
+				final PreparedStatement ps2 = con.prepareStatement(SYNC_ADD_USER_GAME))
 			{
-				try (final PreparedStatement ps = con.prepareStatement(SYNC_ADD_USER);
-					final PreparedStatement ps2 = con.prepareStatement(SYNC_ADD_USER_GAME))
+				for (final User user : _users.values())
 				{
-					for (final User user : _users.values())
-					{
-						ps.setInt(1, user.getId());
-						ps.setString(2, user.getUsername());
-						ps.setString(3, user.getPassword());
-						ps.setString(4, user.getIp());
-						ps.setString(5, user.getMac());
-						ps.setInt(6, user.getAccessLevel().ordinal());
-						ps.addBatch();
-						
-						ps2.setInt(1, user.getId());
-						for (final GameStat gameStat : user.getGameStats().values())
-						{
-							ps2.setInt(2, gameStat.getGameId().ordinal());
-							ps2.setInt(3, gameStat.getScore());
-							ps2.setInt(4, gameStat.getWins());
-							ps2.setInt(5, gameStat.getLoses());
-							ps2.addBatch();
-						}
-					}
+					ps.setInt(1, user.getId());
+					ps.setString(2, user.getUsername());
+					ps.setString(3, user.getPassword());
+					ps.setString(4, user.getIp());
+					ps.setString(5, user.getMac());
+					ps.setInt(6, user.getAccessLevel().ordinal());
+					ps.addBatch();
 					
-					ps.executeBatch();
-					ps2.executeBatch();
+					ps2.setInt(1, user.getId());
+					for (final GameStat gameStat : user.getGameStats().values())
+					{
+						ps2.setInt(2, gameStat.getGameId().ordinal());
+						ps2.setInt(3, gameStat.getScore());
+						ps2.setInt(4, gameStat.getWins());
+						ps2.setInt(5, gameStat.getLoses());
+						ps2.addBatch();
+					}
 				}
+				
+				ps.executeBatch();
+				ps2.executeBatch();
 			}
 		}
 		catch (final SQLException e)
@@ -131,11 +123,6 @@ public final class UsersTable
 		return _users.values().stream().filter(u -> u.isOnline());
 	}
 	
-	public long getOnlineCount()
-	{
-		return getOnlineUsers().count();
-	}
-	
 	public User getUserByName(final String name)
 	{
 		return _users.values().stream().filter(u -> u.getUsername().equals(name)).findAny().orElse(null);
@@ -143,7 +130,7 @@ public final class UsersTable
 	
 	public LoginResponse tryToLogin(final String username, final String password, final String ip, final String mac)
 	{
-		if (getOnlineCount() > Config.MAXIMUM_ONLINE_USERS)
+		if (getOnlineUsers().count() > Config.MAXIMUM_ONLINE_USERS)
 			return LoginResponse.SERVER_FULL;
 		
 		final User user = getUserByName(username);
@@ -154,20 +141,18 @@ public final class UsersTable
 				try (final Connection con = Database.getConnection();
 					final PreparedStatement ps = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS))
 				{
-					final AccessLevel access = _users.isEmpty() ? AccessLevel.GM : AccessLevel.NORMAL;
-					
 					ps.setString(1, username);
 					ps.setString(2, password);
 					ps.setString(3, ip);
 					ps.setString(4, mac);
-					ps.setInt(5, access.ordinal());
+					ps.setInt(5, AccessLevel.NORMAL.ordinal());
 					ps.executeUpdate();
 					
 					try (final ResultSet rs = ps.getGeneratedKeys())
 					{
 						if (rs.next())
 						{
-							final User newUser = new User(rs.getInt(1), username, password, ip, mac, access, new HashMap<>());
+							final User newUser = new User(rs.getInt(1), username, password, ip, mac, AccessLevel.NORMAL, new HashMap<>());
 							_users.put(newUser.getId(), newUser);
 							
 							return LoginResponse.LOGIN_OK;

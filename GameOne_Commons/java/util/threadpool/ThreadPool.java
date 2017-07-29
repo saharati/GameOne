@@ -18,8 +18,8 @@ public final class ThreadPool
 	
 	public static void load()
 	{
-		final int scheduledThreadPoolSize = CommonConfig.SCHEDULED_THREAD_POOL_SIZE == -1 ? Runtime.getRuntime().availableProcessors() * 4 : CommonConfig.SCHEDULED_THREAD_POOL_SIZE;
-		final int instantThreadPoolSize = CommonConfig.INSTANT_THREAD_POOL_SIZE == -1 ? Runtime.getRuntime().availableProcessors() * 2 : CommonConfig.INSTANT_THREAD_POOL_SIZE;
+		final int scheduledThreadPoolSize = CommonConfig.SCHEDULED_THREAD_POOL_SIZE < 1 ? Runtime.getRuntime().availableProcessors() * 4 : CommonConfig.SCHEDULED_THREAD_POOL_SIZE;
+		final int instantThreadPoolSize = CommonConfig.INSTANT_THREAD_POOL_SIZE < 1 ? Runtime.getRuntime().availableProcessors() * 2 : CommonConfig.INSTANT_THREAD_POOL_SIZE;
 		
 		SCHEDULED_THREAD_POOL_EXECUTOR = new ScheduledThreadPoolExecutor(scheduledThreadPoolSize);
 		INSTANT_THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(instantThreadPoolSize, instantThreadPoolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>());

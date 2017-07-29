@@ -1,11 +1,16 @@
 package objects.mario;
 
 import java.awt.Graphics2D;
+import java.awt.MediaTracker;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import util.ComponentUtil;
 
 public enum MarioType
 {
@@ -48,6 +53,7 @@ public enum MarioType
 	TUBE2("tube2.png", "TubeExit"),
 	WALL("wall.png", "Wall");
 	
+	private static final Logger LOGGER = Logger.getLogger(MarioType.class.getName());
 	private static final String IMAGE_PATH = "./images/mario/";
 	
 	private final String _url;
@@ -90,6 +96,14 @@ public enum MarioType
 	public void initializeImageIcon()
 	{
 		_icon = new ImageIcon(IMAGE_PATH + _url);
+		if (_icon.getImageLoadStatus() == MediaTracker.ERRORED)
+		{
+			LOGGER.severe("Failed initializing super mario image icon: " + IMAGE_PATH + _url);
+			
+			ComponentUtil.showHyperLinkPopup("Initialize Error", "<html><body>Could not read file " + IMAGE_PATH + _url + ".<br>Please make sure it exists and that it is readable.<br>For support open an issue at <a href=\"https://github.com/saharati/GameOne\">https://github.com/saharati/GameOne</a>.</body></html>", JOptionPane.ERROR_MESSAGE);
+			
+			System.exit(0);
+		}
 		
 		switch (this)
 		{

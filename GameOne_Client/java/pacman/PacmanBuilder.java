@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.MediaTracker;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
@@ -19,6 +21,7 @@ import client.Client;
 import objects.pacman.PacmanObject;
 import pacman.objects.PacmanMap;
 import pacman.objects.PacmanMapObject;
+import util.ComponentUtil;
 import windows.GameSelect;
 
 /**
@@ -49,7 +52,19 @@ public final class PacmanBuilder extends JFrame
 		super("GameOne Client - Pacman");
 		
 		for (final PacmanObject obj : PacmanObject.values())
-			_pacmanObjects.put(obj, new ImageIcon(IMAGE_PATH + obj.getImage()).getImage());
+		{
+			final ImageIcon icon = new ImageIcon(IMAGE_PATH + obj.getImage());
+			if (icon.getImageLoadStatus() == MediaTracker.ERRORED)
+			{
+				LOGGER.severe("Failed initializing pacman image icon: " + IMAGE_PATH + obj.getImage());
+				
+				ComponentUtil.showHyperLinkPopup("Initialize Error", "<html><body>Could not read file " + IMAGE_PATH + obj.getImage() + ".<br>Please make sure it exists and that it is readable.<br>For support open an issue at <a href=\"https://github.com/saharati/GameOne\">https://github.com/saharati/GameOne</a>.</body></html>", JOptionPane.ERROR_MESSAGE);
+				
+				System.exit(0);
+			}
+			
+			_pacmanObjects.put(obj, icon.getImage());
+		}
 		_selectedEntry = _pacmanObjects.entrySet().iterator().next();
 		
 		setLayout(new BorderLayout());

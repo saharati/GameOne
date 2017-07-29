@@ -5,3 +5,6 @@ Games to add:
 * Monopol.
 * Lottery.
 * Brick Breaker.
+
+* Add prefs.reg to client/server build.xml.
+* What happens if the user renames/moves/deletes the images or any data file in the future (such as XMLs).

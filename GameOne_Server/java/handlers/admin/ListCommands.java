@@ -9,10 +9,9 @@ public final class ListCommands implements IAdminCommandHandler
 	private static final String[] COMMANDS = {"list"};
 	
 	@Override
-	public boolean useCommand(final String command, final User user)
+	public void useCommand(final String command, final User user)
 	{
 		AdminCommandHandler.getInstance().getAllAvailableCommands().forEach(cmd -> user.sendPacket("Server", cmd));
-		return true;
 	}
 	
 	@Override

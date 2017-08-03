@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameEditResult;
 
-/**
- * Packet responsible for telling the result of a specific game edit request.
- * @author Sahar
- */
 public final class GameEditResponse extends PacketWriter
 {
 	public static final GameEditResponse NO_PERMISSION = new GameEditResponse(GameEditResult.NO_PERMISSION);

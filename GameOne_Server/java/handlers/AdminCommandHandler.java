@@ -1,14 +1,14 @@
 package handlers;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import handlers.admin.*;
 
 public final class AdminCommandHandler
 {
-	private final Map<String, IAdminCommandHandler> _datatable = new HashMap<>();
+	private final Map<String, IAdminCommandHandler> _datatable = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 	
 	protected AdminCommandHandler()
 	{

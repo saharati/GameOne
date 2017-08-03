@@ -4,10 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/**
- * Writer with built in println.
- * @author Sahar
- */
 public final class FileWriterStdout extends BufferedWriter
 {
 	public FileWriterStdout(final FileWriter fileWriter)

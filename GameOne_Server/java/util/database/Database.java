@@ -7,16 +7,11 @@ import java.util.logging.Logger;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-import data.sql.AnnouncementsTable;
-import data.sql.MarioTable;
-import data.sql.PacmanTable;
-import data.sql.UsersTable;
+import data.AnnouncementsTable;
+import data.MarioTable;
+import data.PacmanTable;
+import data.UsersTable;
 
-/**
- * Class holding the current connection source.
- * Could be one of MySQL or Access.
- * @author Sahar
- */
 public final class Database
 {
 	private static final Logger LOGGER = Logger.getLogger(Database.class.getName());

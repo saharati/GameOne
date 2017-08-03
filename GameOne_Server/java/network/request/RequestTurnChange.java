@@ -5,10 +5,6 @@ import network.response.TurnChangeResponse;
 import objects.GameId;
 import server.objects.GameClient;
 
-/**
- * Inform partner that now its his turn, depending on game.
- * @author Sahar
- */
 public final class RequestTurnChange extends PacketReader<GameClient>
 {
 	private GameId _gameId;

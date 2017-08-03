@@ -1,15 +1,11 @@
 package network.request;
 
-import data.sql.UsersTable;
+import data.UsersTable;
 import network.PacketReader;
 import network.response.LoginResponse;
 import server.objects.GameClient;
 import server.objects.User;
 
-/**
- * Packet responsible for handling a login request.
- * @author Sahar
- */
 public final class RequestLogin extends PacketReader<GameClient>
 {
 	private String _username;
@@ -27,8 +23,6 @@ public final class RequestLogin extends PacketReader<GameClient>
 	@Override
 	public void run(final GameClient client)
 	{
-		if (_username == null || _password == null || _mac == null)
-			return;
 		if (_username.isEmpty() || _username.contains(" ") || _password.isEmpty())
 			return;
 		

@@ -63,13 +63,14 @@ public final class S2048 extends JFrame
 	{
 		super.dispose();
 		
-		reset();
+		reset(false);
 		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	
-	public void reset()
+	public void reset(final boolean logout)
 	{
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(has2048Block() ? GameResult.WIN : GameResult.LOSE, _score));
+		if (!logout)
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(has2048Block() ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		for (int i = 0;i < SIZE;i++)
 			for (int j = 0;j < SIZE;j++)

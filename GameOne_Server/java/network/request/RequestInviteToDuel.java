@@ -1,6 +1,6 @@
 package network.request;
 
-import data.sql.UsersTable;
+import data.UsersTable;
 import network.PacketReader;
 import network.response.DuelInviteResponse;
 import network.response.WaitingRoomResponse;
@@ -10,10 +10,6 @@ import server.objects.User;
 import server.objects.UserGroup;
 import util.Broadcast;
 
-/**
- * Packet that notifies users upon duel invitation.
- * @author Sahar
- */
 public final class RequestInviteToDuel extends PacketReader<GameClient>
 {
 	private String _target;

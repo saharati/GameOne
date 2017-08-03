@@ -8,10 +8,6 @@ import java.util.Formatter;
 
 import javax.swing.JOptionPane;
 
-/**
- * Mysql connection for db installer.
- * @author Sahar
- */
 public final class MySqlConnect
 {
 	private Connection _con;

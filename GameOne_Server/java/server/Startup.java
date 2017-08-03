@@ -11,10 +11,10 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import data.sql.AnnouncementsTable;
-import data.sql.MarioTable;
-import data.sql.PacmanTable;
-import data.sql.UsersTable;
+import data.AnnouncementsTable;
+import data.MarioTable;
+import data.PacmanTable;
+import data.UsersTable;
 import handlers.AdminCommandHandler;
 import network.ConnectionManager;
 import util.DeadLockDetector;
@@ -30,10 +30,6 @@ import util.database.MysqlDatabase;
 import util.parsers.XmlFactory;
 import util.threadpool.ThreadPool;
 
-/**
- * This starts the whole thing :)
- * @author Sahar
- */
 public final class Startup
 {
 	private static final Logger LOGGER = Logger.getLogger(Startup.class.getName());
@@ -41,9 +37,9 @@ public final class Startup
 	public static void main(final String[] args) throws SecurityException, URISyntaxException, IOException, PropertyVetoException, SQLException, ParserConfigurationException
 	{
 		CommonConfig.load();
-		IPConfig.load();
-		GameConfig.load();
 		Config.load();
+		GameConfig.load();
+		IPConfig.load();
 		
 		StringUtil.printSection("Parsers");
 		XmlFactory.load();
@@ -80,7 +76,7 @@ public final class Startup
 		ConnectionManager.getInstance().listen();
 		
 		StringUtil.printSection("System");
-		Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());
+		Shutdown.getInstance();
 		
 		if (Config.DEADLOCK_DETECTOR)
 		{

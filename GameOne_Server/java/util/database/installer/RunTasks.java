@@ -5,10 +5,6 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-/**
- * Tasks that are run by both GUI/Console interfaces.
- * @author Sahar
- */
 public final class RunTasks extends Thread
 {
 	private final DBInstallerInterface _frame;

@@ -7,10 +7,6 @@ import java.util.stream.Stream;
 import network.PacketWriter;
 import util.random.Rnd;
 
-/**
- * Group of users connected together for a certain objective (i.e. duel invite, game etc)
- * @author Sahar
- */
 public final class UserGroup
 {
 	private final User _leader;

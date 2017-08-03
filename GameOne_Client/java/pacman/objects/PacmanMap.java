@@ -90,10 +90,9 @@ public final class PacmanMap extends JFrame
 		addKeyListener(new Movement());
 	}
 	
-	@Override
-	public void dispose()
+	public void onEnd(final boolean logout)
 	{
-		super.dispose();
+		dispose();
 		
 		for (final ScheduledFuture<?> future : _schedules)
 			if (future != null)
@@ -101,12 +100,15 @@ public final class PacmanMap extends JFrame
 		
 		PacmanBuilder.getInstance().addScore(_totalStars - getStars().size());
 		
-		final boolean isWin = PacmanBuilder.getInstance().getCurrentMap() == null;
-		final int totalScore = PacmanBuilder.getInstance().getCurrentScore();
+		if (!logout)
+		{
+			final boolean isWin = PacmanBuilder.getInstance().getCurrentMap() == null;
+			final int totalScore = PacmanBuilder.getInstance().getCurrentScore();
+			
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin ? GameResult.WIN : GameResult.LOSE, totalScore));
+		}
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(isWin ? GameResult.WIN : GameResult.LOSE, totalScore));
-		
-		PacmanBuilder.getInstance().reset();
+		PacmanBuilder.getInstance().reload();
 		PacmanBuilder.getInstance().setVisible(true);
 	}
 	
@@ -428,7 +430,7 @@ public final class PacmanMap extends JFrame
 								next.setVisible(true);
 							}
 							else
-								dispose();
+								onEnd(false);
 						}
 					}
 					// If its food.
@@ -449,7 +451,7 @@ public final class PacmanMap extends JFrame
 						// Otherwise player lose, end map.
 						else
 						{
-							dispose();
+							onEnd(false);
 							
 							JOptionPane.showMessageDialog(null, "You lost!", "Noob", JOptionPane.INFORMATION_MESSAGE);
 						}
@@ -575,7 +577,7 @@ public final class PacmanMap extends JFrame
 								break;
 							}
 							
-							dispose();
+							onEnd(false);
 							
 							JOptionPane.showMessageDialog(null, "You lost!", "Noob", JOptionPane.INFORMATION_MESSAGE);
 						}

@@ -21,10 +21,6 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-/**
- * Executes SQL files.
- * @author Sahar
- */
 public final class ScriptExecutor implements FileFilter
 {
 	private final DBInstallerInterface _frame;

@@ -3,17 +3,13 @@ package network.response;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import data.sql.UsersTable;
+import data.UsersTable;
 import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
 import server.objects.GameStat;
 import server.objects.User;
 
-/**
- * Packet responds with list of players for game's waiting room.
- * @author Sahar
- */
 public final class WaitingRoomResponse extends PacketWriter
 {
 	private final GameId _gameId;

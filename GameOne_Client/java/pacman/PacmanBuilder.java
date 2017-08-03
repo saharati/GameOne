@@ -166,7 +166,7 @@ public final class PacmanBuilder extends JFrame
 		_currentScore += score;
 	}
 	
-	public void reset()
+	public void reload()
 	{
 		_selectionPanel.reset();
 		
@@ -183,7 +183,7 @@ public final class PacmanBuilder extends JFrame
 	{
 		super.dispose();
 		
-		reset();
+		reload();
 		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	

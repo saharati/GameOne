@@ -18,6 +18,9 @@
 				<include name="startServer.*" />
 				<include name="gameOne.accdb" />
 			</fileset>
+			<fileset dir="${commons}">
+				<include name="prefs.reg" />
+			</fileset>
 		</copy>
 		<copy todir="${build.dist}/libs">
 			<fileset dir="${basedir}/libs">

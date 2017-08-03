@@ -10,11 +10,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Class for Access database.
- * Used as secondary database where mysql is not supported.
- * @author Sahar
- */
 public final class AccessDatabase
 {
 	private static final Logger LOGGER = Logger.getLogger(AccessDatabase.class.getName());

@@ -42,6 +42,11 @@ public final class PropertiesParser
 	
 	public int getProperty(final String key, final int defaultValue)
 	{
+		return getProperty(key, defaultValue, Integer.MIN_VALUE);
+	}
+	
+	public int getProperty(final String key, final int defaultValue, final int minimumValue)
+	{
 		final String value = getValue(key);
 		if (value == null)
 		{
@@ -51,51 +56,18 @@ public final class PropertiesParser
 		
 		try
 		{
-			return Integer.parseInt(value);
+			final int intValue = Integer.parseInt(value);
+			if (intValue < minimumValue)
+			{
+				LOGGER.warning(_file.getName() + ": invalid value specified for key: " + key + ", specified default: " + value + " cannot be smaller than " + minimumValue + ", using default value: " + defaultValue + ".");
+				return defaultValue;
+			}
+			
+			return intValue;
 		}
 		catch (final NumberFormatException e)
 		{
 			LOGGER.warning(_file.getName() + ": invalid value specified for key: " + key + ", specified default: " + value + " should be \"int\", using default value: " + defaultValue + ".");
-			return defaultValue;
-		}
-	}
-	
-	public long getProperty(final String key, final long defaultValue)
-	{
-		final String value = getValue(key);
-		if (value == null)
-		{
-			LOGGER.warning(_file.getName() + ": missing property for key: " + key + ", using default value: " + defaultValue + ".");
-			return defaultValue;
-		}
-		
-		try
-		{
-			return Long.parseLong(value);
-		}
-		catch (final NumberFormatException e)
-		{
-			LOGGER.warning(_file.getName() + ": invalid value specified for key: " + key + ", specified default: " + value + " should be \"long\", using default value: " + defaultValue + ".");
-			return defaultValue;
-		}
-	}
-	
-	public double getProperty(final String key, final double defaultValue)
-	{
-		final String value = getValue(key);
-		if (value == null)
-		{
-			LOGGER.warning(_file.getName() + ": missing property for key: " + key + ", using default value: " + defaultValue + ".");
-			return defaultValue;
-		}
-		
-		try
-		{
-			return Double.parseDouble(value);
-		}
-		catch (final NumberFormatException e)
-		{
-			LOGGER.warning(_file.getName() + ": invalid value specified for key: " + key + ", specified default: " + value + " should be \"double\", using default value: " + defaultValue + ".");
 			return defaultValue;
 		}
 	}

@@ -26,10 +26,6 @@ import util.database.installer.DBInstallerInterface;
 import util.database.installer.MySqlConnect;
 import util.database.installer.RunTasks;
 
-/**
- * Alternative incase GUI doesn't exist.
- * @author Sahar
- */
 public final class DBInstallerConsole implements DBInstallerInterface
 {
 	private Connection _con;

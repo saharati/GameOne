@@ -4,10 +4,6 @@ import network.PacketReader;
 import network.response.GameConfigsResponse;
 import server.objects.GameClient;
 
-/**
- * Packet respoinsble for requesting game configs.
- * @author Sahar
- */
 public final class RequestGameConfigs extends PacketReader<GameClient>
 {
 	@Override

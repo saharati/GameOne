@@ -4,10 +4,6 @@ import network.PacketReader;
 import network.response.LogoutResponse;
 import server.objects.GameClient;
 
-/**
- * Packet responsible for handling a logout request.
- * @author Sahar
- */
 public final class RequestLogout extends PacketReader<GameClient>
 {
 	@Override

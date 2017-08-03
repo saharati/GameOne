@@ -40,7 +40,7 @@ public final class GameEditResponse extends PacketReader<Client>
 			case PACMAN:
 				if (_response == GameEditResult.SUCCESS)
 				{
-					PacmanBuilder.getInstance().reset();
+					PacmanBuilder.getInstance().reload();
 					
 					JOptionPane.showMessageDialog(null, "Changes saved.", "Success", JOptionPane.INFORMATION_MESSAGE);
 				}

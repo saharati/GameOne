@@ -77,7 +77,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 		_moveTask = ThreadPool.schedule(this, SLOW_SPEED_MILLIS, TimeUnit.MILLISECONDS);
 	}
 	
-	public void reset()
+	public void reset(final boolean logout)
 	{
 		if (_moveTask != null)
 		{
@@ -87,7 +87,8 @@ public final class TetrisScreen extends JFrame implements Runnable
 			_moveTask = null;
 		}
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(_isWin ? GameResult.WIN : GameResult.LOSE, _score));
+		if (!logout)
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(_isWin ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		for (int i = 0;i < ROWS;i++)
 			for (int j = 0;j < COLS;j++)
@@ -105,7 +106,7 @@ public final class TetrisScreen extends JFrame implements Runnable
 	{
 		super.dispose();
 		
-		reset();
+		reset(false);
 		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	

@@ -2,10 +2,11 @@ package handlers.admin;
 
 import java.util.StringTokenizer;
 
-import data.sql.UsersTable;
+import data.UsersTable;
 import handlers.IAdminCommandHandler;
 import network.response.LogoutResponse;
 import server.objects.AccessLevel;
+import server.objects.GameClient;
 import server.objects.User;
 
 public final class ManageAccess implements IAdminCommandHandler
@@ -13,14 +14,14 @@ public final class ManageAccess implements IAdminCommandHandler
 	private static final String[] COMMANDS = {"kick", "ban", "unban", "setgm", "removegm"};
 	
 	@Override
-	public boolean useCommand(final String command, final User user)
+	public void useCommand(final String command, final User user)
 	{
 		final StringTokenizer st = new StringTokenizer(command, " ");
 		final String cmd = st.nextToken();
 		if (!st.hasMoreTokens())
 		{
 			user.sendPacket("Server", "Required syntax: " + cmd + " <username>");
-			return false;
+			return;
 		}
 		
 		final String username = st.nextToken().trim();
@@ -28,50 +29,57 @@ public final class ManageAccess implements IAdminCommandHandler
 		if (target == null)
 		{
 			user.sendPacket("Server", "Username doesn't exist.");
-			return false;
+			return;
 		}
 		if (target == user)
 		{
 			user.sendPacket("Server", "You cannot use this command on yourself.");
-			return false;
+			return;
 		}
 		
-		switch (cmd)
+		if (cmd.equalsIgnoreCase("kick"))
 		{
-			case "kick":
-				if (target.isOnline())
-				{
-					target.sendPacket(LogoutResponse.STATIC_PACKET);
-					target.getClient().setUser(null);
-				}
-				else
-				{
-					user.sendPacket("Server", "This user is not online.");
-					return false;
-				}
-				break;
-			case "ban":
-				target.setAccessLevel(AccessLevel.BANNED);
+			if (target.isOnline())
+			{
+				final GameClient client = target.getClient();
+				client.setUser(null);
+				client.sendPacket(LogoutResponse.STATIC_PACKET);
 				
-				if (target.isOnline())
-				{
-					target.getClient().setUser(null);
-					target.sendPacket(LogoutResponse.STATIC_PACKET);
-					target.onLogout();
-				}
-				break;
-			case "unban":
-			case "removegm":
-				target.setAccessLevel(AccessLevel.NORMAL);
-				break;
-			case "setgm":
-				target.setAccessLevel(AccessLevel.GM);
-				break;
-			default:
-				return false;
+				user.sendPacket("Server", "User " + target.getUsername() + " was kicked.");
+			}
+			else
+				user.sendPacket("Server", "This user is not online.");
 		}
-		
-		return true;
+		else if (cmd.equalsIgnoreCase("ban"))
+		{
+			target.setAccessLevel(AccessLevel.BANNED);
+			if (target.isOnline())
+			{
+				final GameClient client = target.getClient();
+				client.setUser(null);
+				client.sendPacket(LogoutResponse.STATIC_PACKET);
+			}
+			
+			user.sendPacket("Server", "User " + target.getUsername() + " was banned.");
+		}
+		else if (cmd.equalsIgnoreCase("unban"))
+		{
+			target.setAccessLevel(AccessLevel.NORMAL);
+			
+			user.sendPacket("Server", "User " + target.getUsername() + " was unbanned.");
+		}
+		else if (cmd.equalsIgnoreCase("removegm"))
+		{
+			target.setAccessLevel(AccessLevel.NORMAL);
+			
+			user.sendPacket("Server", "Revoked GM status from " + target.getUsername() + ".");
+		}
+		else
+		{
+			target.setAccessLevel(AccessLevel.GM);
+			
+			user.sendPacket("Server", "User " + target.getUsername() + " was given GM status.");
+		}
 	}
 	
 	@Override

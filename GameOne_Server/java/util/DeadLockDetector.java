@@ -11,10 +11,6 @@ import java.util.logging.Logger;
 import server.Shutdown;
 import util.configs.Config;
 
-/**
- * Thread checking for deadlocked threads.
- * @author Sahar
- */
 public final class DeadLockDetector extends Thread
 {
 	private static final Logger LOGGER = Logger.getLogger(DeadLockDetector.class.getName());

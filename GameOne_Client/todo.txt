@@ -28,8 +28,12 @@ Checkers/chess:
 * In chess what happens if a queen eats a solder that is blocking way to king?
 
 Chat:
-* //list line breaks are fucked up.
 * Shutdown doesn't disconnect players.
+
+Games to add:
+* Monopol.
+* Lottery.
+* Brick Breaker.
 
 Errors:
 Exception in thread "pool-9-thread-1" java.lang.NullPointerException

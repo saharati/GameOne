@@ -1,15 +1,11 @@
 package network.response;
 
-import data.sql.UsersTable;
+import data.UsersTable;
 import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
 import objects.GameResult;
 
-/**
- * Packet used to present recent toplist in a specific game to the client.
- * @author Sahar
- */
 public final class GameScoreUpdateResponse extends PacketWriter
 {
 	private final GameResult _result;

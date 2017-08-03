@@ -3,8 +3,8 @@ package network.request;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import data.sql.MarioTable;
-import data.sql.PacmanTable;
+import data.MarioTable;
+import data.PacmanTable;
 import network.PacketReader;
 import network.response.GameObjectsResponse;
 import network.response.GameEditResponse;
@@ -16,10 +16,6 @@ import server.objects.AccessLevel;
 import server.objects.GameClient;
 import util.Broadcast;
 
-/**
- * Packet responsible for editing games.
- * @author Sahar
- */
 public final class RequestGameEdit extends PacketReader<GameClient>
 {
 	private GameId _gameId;

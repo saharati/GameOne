@@ -1,15 +1,11 @@
 package util;
 
-import data.sql.UsersTable;
+import data.UsersTable;
 import network.PacketWriter;
 import network.response.MessageResponse;
 import objects.GameId;
 import server.objects.GameClient;
 
-/**
- * Class responsible to broadcasting packets depending on situation.
- * @author Sahar
- */
 public final class Broadcast
 {
 	public static void toAllUsers(final PacketWriter packet)

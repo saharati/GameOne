@@ -8,11 +8,6 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-/**
- * Class for MySql database.
- * Used as main database.
- * @author Sahar
- */
 public final class MysqlDatabase
 {
 	private static final Logger LOGGER = Logger.getLogger(MysqlDatabase.class.getName());

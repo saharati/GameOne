@@ -14,10 +14,6 @@ import org.xml.sax.SAXException;
 
 import util.configs.Config;
 
-/**
- * Automatically open ports on a router.
- * @author Sahar
- */
 public final class UPnPService
 {
 	private static final Logger LOGGER = Logger.getLogger(UPnPService.class.getName());

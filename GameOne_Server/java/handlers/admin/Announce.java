@@ -2,7 +2,7 @@ package handlers.admin;
 
 import java.util.StringTokenizer;
 
-import data.sql.AnnouncementsTable;
+import data.AnnouncementsTable;
 import handlers.IAdminCommandHandler;
 import server.objects.User;
 
@@ -11,64 +11,62 @@ public final class Announce implements IAdminCommandHandler
 	private static final String[] COMMANDS = {"addAnnounce", "deleteAnnounce"};
 	
 	@Override
-	public boolean useCommand(final String command, final User user)
+	public void useCommand(final String command, final User user)
 	{
 		final StringTokenizer st = new StringTokenizer(command, " ");
 		final String cmd = st.nextToken();
-		switch (cmd)
+		if (cmd.equalsIgnoreCase("addAnnounce"))
 		{
-			case "addAnnounce":
-				if (st.countTokens() < 2)
-				{
-					user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
-					return false;
-				}
-				
-				final String orderString = st.nextToken();
-				int order;
-				try
-				{
-					order = Integer.parseInt(orderString);
-				}
-				catch (final NumberFormatException e)
-				{
-					user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
-					return false;
-				}
-				
-				final String msg = command.substring(command.indexOf(orderString) + 1).trim();
-				if (msg.isEmpty())
-				{
-					user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
-					return false;
-				}
-				
-				AnnouncementsTable.getInstance().addAnnouncement(order, msg);
-				break;
-			case "deleteAnnounce":
-				if (!st.hasMoreTokens())
-				{
-					user.sendPacket("Server", "Required syntax: deleteAnnounce <order>");
-					return false;
-				}
-				
-				try
-				{
-					order = Integer.parseInt(st.nextToken());
-				}
-				catch (final NumberFormatException e)
-				{
-					user.sendPacket("Server", "Required syntax: deleteAnnounce <order>");
-					return false;
-				}
-				
-				AnnouncementsTable.getInstance().deleteAnnouncement(order);
-				break;
-			default:
-				return false;
+			if (st.countTokens() < 2)
+			{
+				user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
+				return;
+			}
+			
+			final String orderString = st.nextToken();
+			final int order;
+			try
+			{
+				order = Integer.parseInt(orderString);
+			}
+			catch (final NumberFormatException e)
+			{
+				user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
+				return;
+			}
+			
+			final String msg = command.substring(command.indexOf(orderString) + 1).trim();
+			if (msg.isEmpty())
+			{
+				user.sendPacket("Server", "Required syntax: addAnnounce <order> <msg>");
+				return;
+			}
+			
+			AnnouncementsTable.getInstance().addAnnouncement(order, msg);
+			user.sendPacket("Server", "Announcement added successfully.");
 		}
-		
-		return true;
+		else
+		{
+			if (!st.hasMoreTokens())
+			{
+				user.sendPacket("Server", "Required syntax: deleteAnnounce <order>");
+				return;
+			}
+			
+			final int order;
+			try
+			{
+				order = Integer.parseInt(st.nextToken());
+			}
+			catch (final NumberFormatException e)
+			{
+				user.sendPacket("Server", "Required syntax: deleteAnnounce <order>");
+				return;
+			}
+			
+			AnnouncementsTable.getInstance().deleteAnnouncement(order);
+			user.sendPacket("Server", "Announcement deleted successfully.");
+		}
 	}
 	
 	@Override

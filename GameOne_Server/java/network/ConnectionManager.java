@@ -13,10 +13,6 @@ import java.util.logging.Logger;
 import server.objects.GameClient;
 import util.configs.Config;
 
-/**
- * This class listens to client connections.
- * @author Sahar
- */
 public final class ConnectionManager implements CompletionHandler<AsynchronousSocketChannel, Void>
 {
 	private static final Logger LOGGER = Logger.getLogger(ConnectionManager.class.getName());

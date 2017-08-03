@@ -6,10 +6,6 @@ import server.objects.GameClient;
 import server.objects.User;
 import util.random.Rnd;
 
-/**
- * Starts a specific multiplayer game to a group.
- * @author Sahar
- */
 public final class RequestGameStart extends PacketReader<GameClient>
 {
 	@Override

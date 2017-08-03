@@ -6,10 +6,6 @@ import objects.GameId;
 import server.objects.GameClient;
 import util.Broadcast;
 
-/**
- * Requests list of players from the server for a certain game's waiting room.
- * @author Sahar
- */
 public final class RequestWaitingRoom extends PacketReader<GameClient>
 {
 	private GameId _gameId;

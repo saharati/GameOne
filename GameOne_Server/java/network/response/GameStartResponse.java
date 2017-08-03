@@ -3,10 +3,6 @@ package network.response;
 import network.PacketInfo;
 import network.PacketWriter;
 
-/**
- * Sends game parameters for starting up back to the client.
- * @author Sahar
- */
 public final class GameStartResponse extends PacketWriter
 {
 	private final boolean _isStarting;

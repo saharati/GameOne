@@ -11,10 +11,6 @@ import javax.swing.JTextArea;
 
 import util.database.installer.DBInstallerInterface;
 
-/**
- * GUI implementation.
- * @author Sahar
- */
 public final class DBInstallerGUI extends JFrame implements DBInstallerInterface
 {
 	private static final long serialVersionUID = -1005504757826370170L;

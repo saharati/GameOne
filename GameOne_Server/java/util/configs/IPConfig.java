@@ -16,14 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-/**
- * Load all network configurations.
- * @author Sahar
- */
 public final class IPConfig
 {
 	private static final Logger LOGGER = Logger.getLogger(IPConfig.class.getName());
-	private static final String TEST_URL = "https://api.ipify.org/";
 	
 	public static final List<String> SUBNETS = new ArrayList<>();
 	public static final List<String> HOSTS = new ArrayList<>();
@@ -34,13 +29,13 @@ public final class IPConfig
 		SUBNETS.clear();
 		
 		String externalIp = "127.0.0.1";
-		try (final BufferedReader in = new BufferedReader(new InputStreamReader(new URL(TEST_URL).openStream())))
+		try (final BufferedReader in = new BufferedReader(new InputStreamReader(new URL(Config.REMOTE_URL).openStream())))
 		{
 			externalIp = in.readLine();
 		}
 		catch (final IOException e)
 		{
-			LOGGER.info("Failed to connect to " + TEST_URL + " please check your internet connection using 127.0.0.1!");
+			LOGGER.info("Failed to connect to " + Config.REMOTE_URL + " please check your internet connection, using 127.0.0.1 instead.");
 		}
 		
 		try

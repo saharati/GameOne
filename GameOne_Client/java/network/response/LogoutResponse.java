@@ -34,24 +34,24 @@ public final class LogoutResponse extends PacketReader<Client>
 			{
 				case MARIO:
 					if (SuperMario.getInstance().isPlaying())
-						SuperMario.getInstance().onEnd();
+						SuperMario.getInstance().onEnd(true);
 					else
 						SuperMario.getInstance().reload();
 					break;
 				case PACMAN:
-					if (PacmanBuilder.getInstance().getCurrentMap() == null)
-						PacmanBuilder.getInstance().reset();
+					if (PacmanBuilder.getInstance().getCurrentMap() != null)
+						PacmanBuilder.getInstance().getCurrentMap().onEnd(true);
 					else
-						PacmanBuilder.getInstance().getCurrentMap().dispose();
+						PacmanBuilder.getInstance().reload();
 					break;
 				case G2048:
-					S2048.getInstance().reset();
+					S2048.getInstance().reset(true);
 					break;
 				case SNAKE:
-					SnakeScreen.getInstance().reset();
+					SnakeScreen.getInstance().reset(true);
 					break;
 				case TETRIS:
-					TetrisScreen.getInstance().reset();
+					TetrisScreen.getInstance().reset(true);
 					break;
 			}
 		}

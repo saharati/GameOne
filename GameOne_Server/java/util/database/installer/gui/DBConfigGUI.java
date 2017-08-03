@@ -16,10 +16,6 @@ import util.ComponentUtil;
 import util.database.installer.MySqlConnect;
 import util.database.installer.RunTasks;
 
-/**
- * Connection information window.
- * @author Sahar
- */
 public final class DBConfigGUI extends JFrame
 {
 	private static final long serialVersionUID = -8391792251140797076L;

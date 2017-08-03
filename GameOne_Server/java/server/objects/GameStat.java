@@ -2,10 +2,6 @@ package server.objects;
 
 import objects.GameId;
 
-/**
- * Class holding records of a certain user.
- * @author Sahar
- */
 public final class GameStat
 {
 	private final GameId _gameId;

@@ -15,10 +15,6 @@ import objects.GameResult;
 import util.Broadcast;
 import util.StringUtil;
 
-/**
- * This class represents a game client attached to the server.
- * @author Sahar
- */
 public final class GameClient extends BasicClient
 {
 	private final SocketAddress _remoteAddr;

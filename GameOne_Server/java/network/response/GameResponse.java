@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
 
-/**
- * Packet responsible for opening a game on the client.
- * @author Sahar
- */
 public final class GameResponse extends PacketWriter
 {
 	private final GameId _gameId;

@@ -10,10 +10,6 @@ import server.objects.GameClient;
 import util.Broadcast;
 import util.StringUtil;
 
-/**
- * Incoming chat message packet implementation.
- * @author Sahar
- */
 public final class RequestMessage extends PacketReader<GameClient>
 {
 	private String _message;
@@ -27,9 +23,6 @@ public final class RequestMessage extends PacketReader<GameClient>
 	@Override
 	public void run(final GameClient client)
 	{
-		if (_message == null)
-			return;
-		
 		_message = _message.trim();
 		if (_message.isEmpty())
 			return;
@@ -44,12 +37,9 @@ public final class RequestMessage extends PacketReader<GameClient>
 			final String cmd = st.nextToken();
 			final IAdminCommandHandler handler = AdminCommandHandler.getInstance().getHandler(cmd);
 			if (handler != null)
-			{
-				if (handler.useCommand(_message, client.getUser()))
-					client.sendPacket("Server", "Command executed succesfully.");
-			}
+				handler.useCommand(_message, client.getUser());
 			else
-				sendMessage(client);
+				client.sendPacket("Server", "No such command, use //list to see available commands.");
 		}
 		else
 			sendMessage(client);

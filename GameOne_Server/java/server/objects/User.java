@@ -7,15 +7,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import data.sql.AnnouncementsTable;
+import data.AnnouncementsTable;
 import network.PacketWriter;
 import objects.GameId;
 import util.database.Database;
 
-/**
- * Class representing a user associated to GameClient.
- * @author Sahar
- */
 public final class User
 {
 	private static final Logger LOGGER = Logger.getLogger(User.class.getName());

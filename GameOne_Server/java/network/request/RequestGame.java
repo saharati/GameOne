@@ -5,10 +5,6 @@ import network.response.GameResponse;
 import objects.GameId;
 import server.objects.GameClient;
 
-/**
- * Packet respoinsble for requesting a specific game to play.
- * @author Sahar
- */
 public final class RequestGame extends PacketReader<GameClient>
 {
 	private int _gameId;

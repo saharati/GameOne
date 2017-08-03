@@ -6,10 +6,6 @@ import java.util.logging.Logger;
 
 import util.parsers.PropertiesParser;
 
-/**
- * Load all game configurations files to be sent to the client.
- * @author Sahar
- */
 public final class GameConfig
 {
 	private static final Logger LOGGER = Logger.getLogger(GameConfig.class.getName());
@@ -32,15 +28,15 @@ public final class GameConfig
 		final PropertiesParser games = new PropertiesParser(GAMES_FILE);
 		
 		// Checkers
-		CONFIGS.put("QueenSingleStep", games.getProperty("QueenSingleStep", "False"));
-		CONFIGS.put("BurnPlayers", games.getProperty("BurnPlayers", "True"));
-		CONFIGS.put("CheckersPaintMoves", games.getProperty("CheckersPaintMoves", "True"));
-		CONFIGS.put("CheckersPaintRoute", games.getProperty("CheckersPaintRoute", "True"));
+		CONFIGS.put("QueenSingleStep", String.valueOf(games.getProperty("QueenSingleStep", false)));
+		CONFIGS.put("BurnPlayers", String.valueOf(games.getProperty("BurnPlayers", true)));
+		CONFIGS.put("CheckersPaintMoves", String.valueOf(games.getProperty("CheckersPaintMoves", true)));
+		CONFIGS.put("CheckersPaintRoute", String.valueOf(games.getProperty("CheckersPaintRoute", true)));
 		
 		// Chess
-		CONFIGS.put("ChessPaintMoves", games.getProperty("ChessPaintMoves", "True"));
-		CONFIGS.put("ChessPaintRoute", games.getProperty("ChessPaintRoute", "True"));
-		CONFIGS.put("ChooseOnPromote", games.getProperty("ChooseOnPromote", "True"));
+		CONFIGS.put("ChessPaintMoves", String.valueOf(games.getProperty("ChessPaintMoves", true)));
+		CONFIGS.put("ChessPaintRoute", String.valueOf(games.getProperty("ChessPaintRoute", true)));
+		CONFIGS.put("ChooseOnPromote", String.valueOf(games.getProperty("ChooseOnPromote", true)));
 		
 		LOGGER.info("GameConfig loaded!");
 	}

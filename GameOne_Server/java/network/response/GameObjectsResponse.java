@@ -2,18 +2,14 @@ package network.response;
 
 import java.util.Map.Entry;
 
-import data.sql.MarioTable;
-import data.sql.PacmanTable;
+import data.MarioTable;
+import data.PacmanTable;
 import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
 import objects.mario.MarioObject;
 import objects.pacman.PacmanObject;
 
-/**
- * Packet responsible for delivering game specific objects to the client.
- * @author Sahar
- */
 public final class GameObjectsResponse extends PacketWriter
 {
 	private final GameId _gameId;

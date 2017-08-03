@@ -11,10 +11,6 @@ import server.objects.User;
 import server.objects.UserGroup;
 import util.Broadcast;
 
-/**
- * Packet responsible updating a user's score data.
- * @author Sahar
- */
 public final class RequestUpdateGameScore extends PacketReader<GameClient>
 {
 	private GameResult _result;

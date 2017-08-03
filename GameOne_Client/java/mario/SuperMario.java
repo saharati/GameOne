@@ -108,7 +108,7 @@ public final class SuperMario extends JFrame implements Runnable
 		
 		// onEnd calls reload.
 		if (_isPlaying)
-			onEnd();
+			onEnd(false);
 		else
 			reload();
 		
@@ -258,7 +258,7 @@ public final class SuperMario extends JFrame implements Runnable
 		requestFocus();
 	}
 	
-	public void onEnd()
+	public void onEnd(final boolean logout)
 	{
 		reload();
 		
@@ -275,7 +275,8 @@ public final class SuperMario extends JFrame implements Runnable
 		
 		MarioTaskManager.getInstance().stop();
 		
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(getObjectsOfType(Coin.class).size() == _score ? GameResult.WIN : GameResult.LOSE, _score));
+		if (!logout)
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(getObjectsOfType(Coin.class).size() == _score ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		_score = 0;
 	}

@@ -11,6 +11,11 @@
 		<mkdir dir="${build.dist}/log" />
 		<mkdir dir="${build.dist}/configs" />
 		<mkdir dir="${build.dist}/images" />
+		<copy todir="${build.dist}">
+			<fileset dir="${commons}">
+				<include name="prefs.reg" />
+			</fileset>
+		</copy>
 		<copy todir="${build.dist}/configs">
 			<fileset dir="configs">
 				<include name="*.properties" />

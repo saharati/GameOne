@@ -11,17 +11,13 @@ import util.configs.CommonConfig;
 import util.configs.Config;
 import util.configs.GameConfig;
 
-/**
- * List available admin commands.
- * @author Sahar
- */
 public final class Reload implements IAdminCommandHandler
 {
 	private static final Logger LOGGER = Logger.getLogger(Reload.class.getName());
 	private static final String[] COMMANDS = {"reload"};
 	
 	@Override
-	public boolean useCommand(final String command, final User user)
+	public void useCommand(final String command, final User user)
 	{
 		try
 		{
@@ -34,7 +30,8 @@ public final class Reload implements IAdminCommandHandler
 		
 		GameConfig.load();
 		Config.load();
-		return true;
+		
+		user.sendPacket("Server", "Configs reloaded successfully.");
 	}
 	
 	@Override

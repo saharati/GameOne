@@ -11,41 +11,33 @@ public final class AdminShutdown implements IAdminCommandHandler
 	private static final String[] COMMANDS = {"shutdown", "restart", "abort"};
 	
 	@Override
-	public boolean useCommand(final String command, final User user)
+	public void useCommand(final String command, final User user)
 	{
 		final StringTokenizer st = new StringTokenizer(command, " ");
 		final String cmd = st.nextToken();
-		switch (cmd)
+		if (cmd.equalsIgnoreCase("shutdown") || cmd.equalsIgnoreCase("restart"))
 		{
-			case "shutdown":
-			case "restart":
-				if (!st.hasMoreTokens())
-				{
-					user.sendPacket("Server", "Required syntax: " + cmd + " <time>");
-					return false;
-				}
-				
-				int time;
-				try
-				{
-					time = Integer.parseInt(st.nextToken());
-				}
-				catch (final NumberFormatException e)
-				{
-					user.sendPacket("Server", "Required syntax: " + cmd + " <time>");
-					return false;
-				}
-				
-				Shutdown.getInstance().startShutdown(user.getUsername(), time, cmd.equalsIgnoreCase("restart"));
-				break;
-			case "abort":
-				Shutdown.getInstance().abort(user.getUsername());
-				break;
-			default:
-				return false;
+			if (!st.hasMoreTokens())
+			{
+				user.sendPacket("Server", "Required syntax: " + cmd + " <time>");
+				return;
+			}
+			
+			final int time;
+			try
+			{
+				time = Integer.parseInt(st.nextToken());
+			}
+			catch (final NumberFormatException e)
+			{
+				user.sendPacket("Server", "Required syntax: " + cmd + " <time>");
+				return;
+			}
+			
+			Shutdown.getInstance().startShutdown(user.getUsername(), time, cmd.equalsIgnoreCase("restart"));
 		}
-		
-		return true;
+		else
+			Shutdown.getInstance().abort(user.getUsername());
 	}
 	
 	@Override

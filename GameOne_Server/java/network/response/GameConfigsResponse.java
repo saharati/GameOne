@@ -6,10 +6,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import util.configs.GameConfig;
 
-/**
- * Packet responsible for sending game configs to the client.
- * @author Sahar
- */
 public final class GameConfigsResponse extends PacketWriter
 {
 	@Override

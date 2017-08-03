@@ -294,6 +294,6 @@ public final class Player extends AbstractObject
 		
 		MarioTaskManager.getInstance().stop();
 		JOptionPane.showMessageDialog(null, "Try better next time.", "You lost!", JOptionPane.INFORMATION_MESSAGE);
-		SuperMario.getInstance().onEnd();
+		SuperMario.getInstance().onEnd(false);
 	}
 }

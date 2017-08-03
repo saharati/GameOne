@@ -74,13 +74,14 @@ public final class SnakeScreen extends JFrame implements Runnable
 	{
 		super.dispose();
 		
-		reset();
+		reset(false);
 		Client.getInstance().setCurrentDetails(GameSelect.getInstance(), null, true);
 	}
 	
-	public void reset()
+	public void reset(final boolean logout)
 	{
-		Client.getInstance().sendPacket(new RequestUpdateGameScore(isFull() ? GameResult.WIN : GameResult.LOSE, _score));
+		if (!logout)
+			Client.getInstance().sendPacket(new RequestUpdateGameScore(isFull() ? GameResult.WIN : GameResult.LOSE, _score));
 		
 		_snake.clear();
 		if (_moveTask != null)

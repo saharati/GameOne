@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
 
-/**
- * Send turn change data to partner.
- * @author Sahar
- */
 public final class TurnChangeResponse extends PacketWriter
 {
 	private final GameId _gameId;

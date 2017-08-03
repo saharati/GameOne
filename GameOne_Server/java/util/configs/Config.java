@@ -4,10 +4,6 @@ import java.util.logging.Logger;
 
 import util.parsers.PropertiesParser;
 
-/**
- * Load all server configurations files.
- * @author Sahar
- */
 public final class Config
 {
 	private static final Logger LOGGER = Logger.getLogger(Config.class.getName());
@@ -50,6 +46,7 @@ public final class Config
 	// --------------------------------------------------
 	public static boolean ENABLE_UPNP;
 	public static int PORT;
+	public static String REMOTE_URL;
 	
 	public static void load()
 	{
@@ -58,13 +55,13 @@ public final class Config
 		
 		DEADLOCK_DETECTOR = deadlock.getProperty("DeadLockDetector", true);
 		RESTART_ON_DEADLOCK = deadlock.getProperty("RestartOnDeadlock", false);
-		DEADLOCK_CHECK_INTERVAL = deadlock.getProperty("DeadLockCheckInterval", 20) * 1000;
+		DEADLOCK_CHECK_INTERVAL = deadlock.getProperty("DeadLockCheckInterval", 20, 1) * 1000;
 		
 		// Load Database.properties file (if exists)
 		final PropertiesParser database = new PropertiesParser(DATABASE_FILE);
 		
-		DATABASE_MAX_CONNECTIONS = database.getProperty("MaximumDbConnections", 10);
-		DATABASE_MAX_IDLE_TIME = database.getProperty("MaximumDbIdleTime", 0);
+		DATABASE_MAX_CONNECTIONS = database.getProperty("MaximumDbConnections", 10, 10);
+		DATABASE_MAX_IDLE_TIME = database.getProperty("MaximumDbIdleTime", 0, 0);
 		MYSQL_URL = database.getProperty("MysqlUrl", "jdbc:mysql://localhost/gameOne");
 		MYSQL_LOGIN = database.getProperty("MysqlLogin", "root");
 		MYSQL_PASSWORD = database.getProperty("MysqlPassword", "");
@@ -75,14 +72,15 @@ public final class Config
 		// Load Server.properties file (if exists)
 		final PropertiesParser server = new PropertiesParser(SERVER_FILE);
 		
-		MAXIMUM_ONLINE_USERS = server.getProperty("MaximumOnlineUsers", 100);
+		MAXIMUM_ONLINE_USERS = server.getProperty("MaximumOnlineUsers", 100, 1);
 		AUTO_CREATE_ACCOUNTS = server.getProperty("AutoCreateAccounts", true);
 		
 		// Load Network.properties file (if exists)
 		final PropertiesParser network = new PropertiesParser(NETWORK_FILE);
 		
 		ENABLE_UPNP = network.getProperty("EnableUPnP", true);
-		PORT = network.getProperty("Port", 777);
+		PORT = network.getProperty("Port", 777, 1);
+		REMOTE_URL = network.getProperty("RemoteUrl", "https://api.ipify.org/");
 		
 		LOGGER.info("Config loaded!");
 	}

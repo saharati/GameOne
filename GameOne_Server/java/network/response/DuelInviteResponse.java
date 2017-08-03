@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.DuelInviteResult;
 
-/**
- * Writing a response for a duel invitation.
- * @author Sahar
- */
 public final class DuelInviteResponse extends PacketWriter
 {
 	public static final DuelInviteResponse CANNOT_INVITE_SELF = new DuelInviteResponse(DuelInviteResult.CANNOT_INVITE_SELF);

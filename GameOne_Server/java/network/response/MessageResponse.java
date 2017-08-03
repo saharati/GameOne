@@ -3,10 +3,6 @@ package network.response;
 import network.PacketInfo;
 import network.PacketWriter;
 
-/**
- * Packet responsible for sending chat messages.
- * @author Sahar
- */
 public final class MessageResponse extends PacketWriter
 {
 	private final String _message;

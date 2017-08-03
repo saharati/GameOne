@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.LoginResult;
 
-/**
- * Packet responsible for telling the client the login status.
- * @author Sahar
- */
 public final class LoginResponse extends PacketWriter
 {
 	public static final LoginResponse LOGIN_OK = new LoginResponse(LoginResult.LOGIN_OK);

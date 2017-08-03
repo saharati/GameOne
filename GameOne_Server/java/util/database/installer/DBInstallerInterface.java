@@ -2,10 +2,6 @@ package util.database.installer;
 
 import java.sql.Connection;
 
-/**
- * Interface for GUI/Console implementation.
- * @author Sahar
- */
 public interface DBInstallerInterface
 {
 	public default void setProgressIndeterminate(final boolean value)

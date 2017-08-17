@@ -4,10 +4,6 @@ import client.Client;
 import network.PacketInfo;
 import network.PacketWriter;
 
-/**
- * Request a specific game from the server.
- * @author Sahar
- */
 public final class RequestGame extends PacketWriter
 {
 	@Override

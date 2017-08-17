@@ -3,10 +3,6 @@ package mario.objects;
 import mario.SuperMario;
 import objects.mario.MarioType;
 
-/**
- * A entrance tube.
- * @author Sahar
- */
 public final class TubeEntrance extends AbstractObject
 {
 	private static final long serialVersionUID = 8124283463462070586L;

@@ -15,10 +15,6 @@ import pacman.objects.PacmanMapObject;
 import pacman.objects.PacmanMap;
 import windows.Startup;
 
-/**
- * Packet collecting objects from the server for specific games upon client login.
- * @author Sahar
- */
 public final class GameObjectsResponse extends PacketReader<Client>
 {
 	private GameId _gameId;

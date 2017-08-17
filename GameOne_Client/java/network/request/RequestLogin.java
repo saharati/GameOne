@@ -3,10 +3,6 @@ package network.request;
 import network.PacketInfo;
 import network.PacketWriter;
 
-/**
- * Request a login from the server with the given information.
- * @author Sahar
- */
 public final class RequestLogin extends PacketWriter
 {
 	private final String _username;

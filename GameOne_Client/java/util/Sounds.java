@@ -10,10 +10,6 @@ import javax.sound.sampled.SourceDataLine;
 
 import util.threadpool.ThreadPool;
 
-/**
- * Utility used to create sounds.
- * @author Sahar
- */
 public final class Sounds
 {
 	private static final Logger LOGGER = Logger.getLogger(Sounds.class.getName());

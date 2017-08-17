@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameId;
 
-/**
- * Request a specific game objects from the server.
- * @author Sahar
- */
 public final class RequestGameObjects extends PacketWriter
 {
 	private final GameId _gameId;

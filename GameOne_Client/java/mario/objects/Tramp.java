@@ -6,10 +6,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * Tramp object player uses to jump on.
- * @author Sahar
- */
 public final class Tramp extends AbstractObject
 {
 	private static final long serialVersionUID = 2382929435743554621L;

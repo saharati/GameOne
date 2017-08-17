@@ -13,10 +13,6 @@ import javax.swing.JOptionPane;
 import client.Client;
 import configs.Config;
 
-/**
- * This class initialize connection to server.
- * @author Sahar
- */
 public final class ConnectionManager
 {
 	private static final Logger LOGGER = Logger.getLogger(ConnectionManager.class.getName());

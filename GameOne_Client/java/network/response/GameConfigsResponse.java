@@ -7,10 +7,6 @@ import client.Client;
 import configs.GameConfig;
 import network.PacketReader;
 
-/**
- * Packet responsible for feeding up game configs.
- * @author Sahar
- */
 public final class GameConfigsResponse extends PacketReader<Client>
 {
 	private Map<String, String> _configs;

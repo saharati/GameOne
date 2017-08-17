@@ -20,10 +20,6 @@ import network.request.RequestInviteToDuel;
 import util.InfoTableModel;
 import util.threadpool.ThreadPool;
 
-/**
- * Waiting room for multiplayer games.
- * @author Sahar
- */
 public final class WaitingRoom extends JFrame
 {
 	private static final long serialVersionUID = -3188277371240708763L;

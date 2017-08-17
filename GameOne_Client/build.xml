@@ -21,8 +21,7 @@
 				<include name="*.properties" />
 			</fileset>
 			<fileset dir="${commons}/configs">
-				<include name="log.cfg" />
-				<include name="Threads.properties" />
+				<include name="*.properties" />
 			</fileset>
 		</copy>
 		<copy todir="${build.dist}/images">

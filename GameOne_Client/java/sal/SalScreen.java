@@ -37,10 +37,6 @@ import util.InfoTableModel;
 import util.random.Rnd;
 import windows.WaitingRoom;
 
-/**
- * Chess board.
- * @author Sahar
- */
 public final class SalScreen extends JFrame
 {
 	private static final long serialVersionUID = -5025724966312043051L;

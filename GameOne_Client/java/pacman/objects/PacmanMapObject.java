@@ -8,10 +8,6 @@ import javax.swing.JPanel;
 import objects.pacman.PacmanObject;
 import pacman.PacmanBuilder;
 
-/**
- * Class represting an object on the map.
- * @author Sahar
- */
 public final class PacmanMapObject extends JPanel
 {
 	private static final long serialVersionUID = -8275383126819103107L;

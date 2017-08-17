@@ -5,10 +5,6 @@ import java.util.logging.Logger;
 
 import util.parsers.PropertiesParser;
 
-/**
- * Load all client configurations files.
- * @author Sahar
- */
 public final class Config
 {
 	private static final Logger LOGGER = Logger.getLogger(Config.class.getName());

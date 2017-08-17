@@ -3,10 +3,6 @@ package network.request;
 import network.PacketInfo;
 import network.PacketWriter;
 
-/**
- * Chat message send request.
- * @author Sahar
- */
 public final class RequestMessage extends PacketWriter
 {
 	private final String _message;

@@ -5,10 +5,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-/**
- * Table model used in waiting room's jtable.
- * @author Sahar
- */
 public final class InfoTableModel extends AbstractTableModel
 {
 	private static final long serialVersionUID = -475285636203274193L;

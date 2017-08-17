@@ -15,10 +15,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * Abstract class for every mario object.
- * @author Sahar
- */
 public abstract class AbstractObject extends JPanel
 {
 	private static final long serialVersionUID = 4977156251835827143L;

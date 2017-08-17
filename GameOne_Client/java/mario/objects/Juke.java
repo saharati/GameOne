@@ -10,10 +10,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A juke monster instance.
- * @author Sahar
- */
 public final class Juke extends AbstractObject
 {
 	private static final long serialVersionUID = 4648934166196245594L;

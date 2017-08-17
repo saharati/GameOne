@@ -8,10 +8,6 @@ import javax.swing.JPanel;
 import mario.SuperMario;
 import objects.mario.MarioType;
 
-/**
- * Background panel for Pacman, panel "moves" with screen.
- * @author Sahar
- */
 public final class BackgroundPanel extends JPanel
 {
 	private static final long serialVersionUID = -4624064378463091449L;

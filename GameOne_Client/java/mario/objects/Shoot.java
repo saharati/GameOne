@@ -7,10 +7,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A shot made by a player.
- * @author Sahar
- */
 public final class Shoot extends AbstractObject
 {
 	private static final long serialVersionUID = -9033654918966651435L;

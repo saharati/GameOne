@@ -28,10 +28,6 @@ import configs.Config;
 import network.request.RequestLogin;
 import util.ComponentUtil;
 
-/**
- * Login screen implementation.
- * @author Sahar
- */
 public final class Login extends JFrame
 {
 	private static final Logger LOGGER = Logger.getLogger(Login.class.getName());

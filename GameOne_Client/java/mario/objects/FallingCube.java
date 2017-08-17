@@ -10,10 +10,6 @@ import objects.mario.MarioType;
 import util.Direction;
 import util.random.Rnd;
 
-/**
- * A cube that falls from the sky, used after killing boss.
- * @author Sahar
- */
 public final class FallingCube extends AbstractObject
 {
 	private static final long serialVersionUID = -8440410700066798066L;

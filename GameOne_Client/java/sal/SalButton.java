@@ -5,10 +5,6 @@ import java.awt.Image;
 
 import javax.swing.JButton;
 
-/**
- * A button used to push an image in slide a lama board.
- * @author Sahar
- */
 public final class SalButton extends JButton
 {
 	private static final long serialVersionUID = -3925153250784725588L;

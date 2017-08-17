@@ -5,10 +5,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A coin object that can be collected by Player.
- * @author Sahar
- */
 public final class Coin extends AbstractObject
 {
 	private static final long serialVersionUID = -9142286700808876795L;

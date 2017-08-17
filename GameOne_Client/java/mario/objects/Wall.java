@@ -4,10 +4,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A wall object.
- * @author Sahar
- */
 public final class Wall extends AbstractObject
 {
 	private static final long serialVersionUID = -4775183339343182254L;

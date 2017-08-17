@@ -9,10 +9,6 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-/**
- * A cell of 2048 puzzle game.
- * @author Sahar
- */
 public final class Cell extends JLabel
 {
 	private static final long serialVersionUID = -8045288160985304143L;

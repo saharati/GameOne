@@ -5,10 +5,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * Flames spited by Flares object.
- * @author Sahar
- */
 public final class Flames extends AbstractObject
 {
 	private static final long serialVersionUID = 4105154943435385601L;

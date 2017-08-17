@@ -7,10 +7,6 @@ import mario.SuperMario;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A mushrum instance used to level up player.
- * @author Sahar
- */
 public final class Mushrum extends AbstractObject
 {
 	private static final long serialVersionUID = 5371512736462304206L;

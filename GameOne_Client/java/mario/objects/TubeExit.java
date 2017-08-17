@@ -3,10 +3,6 @@ package mario.objects;
 import mario.SuperMario;
 import objects.mario.MarioType;
 
-/**
- * An exit tube.
- * @author Sahar
- */
 public final class TubeExit extends AbstractObject
 {
 	private static final long serialVersionUID = 4459335759927808158L;

@@ -4,10 +4,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
-/**
- * Sets a max length for a certain JTextField.
- * @author Sahar
- */
 public final class LengthDocumentFilter extends DocumentFilter
 {
 	private final int _maxLength;

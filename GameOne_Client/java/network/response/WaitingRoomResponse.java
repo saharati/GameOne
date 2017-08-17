@@ -4,10 +4,6 @@ import client.Client;
 import network.PacketReader;
 import windows.WaitingRoom;
 
-/**
- * Shows up the waiting room window and updates user list.
- * @author Sahar
- */
 public final class WaitingRoomResponse extends PacketReader<Client>
 {
 	private Object[][] _userList;

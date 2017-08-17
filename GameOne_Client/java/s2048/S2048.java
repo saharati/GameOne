@@ -16,10 +16,6 @@ import network.request.RequestUpdateGameScore;
 import objects.GameResult;
 import util.random.Rnd;
 
-/**
- * 2048 game.
- * @author Sahar
- */
 public final class S2048 extends JFrame
 {
 	private static final long serialVersionUID = -2474315113654316136L;

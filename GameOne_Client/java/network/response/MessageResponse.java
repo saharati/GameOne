@@ -8,10 +8,6 @@ import network.PacketReader;
 import util.Sounds;
 import windows.GameSelect;
 
-/**
- * Incoming chat message from the server.
- * @author Sahar
- */
 public final class MessageResponse extends PacketReader<Client>
 {
 	private String _message;

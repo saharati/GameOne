@@ -5,10 +5,6 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
-/**
- * A certain image in slide a lama board.
- * @author Sahar
- */
 public final class SalImage extends JPanel
 {
 	private static final long serialVersionUID = -5956612606155953640L;

@@ -24,10 +24,6 @@ import pacman.objects.PacmanMapObject;
 import util.ComponentUtil;
 import windows.GameSelect;
 
-/**
- * Map builder window for pacman.
- * @author Sahar
- */
 public final class PacmanBuilder extends JFrame
 {
 	private static final long serialVersionUID = 1815790049829742350L;

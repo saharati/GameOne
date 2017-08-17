@@ -8,10 +8,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A floating block used to travel around.
- * @author Sahar
- */
 public final class Flat extends AbstractObject
 {
 	private static final long serialVersionUID = 6180703091493796497L;

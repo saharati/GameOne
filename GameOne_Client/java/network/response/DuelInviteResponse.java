@@ -7,10 +7,6 @@ import network.PacketReader;
 import objects.DuelInviteResult;
 import windows.WaitingRoom;
 
-/**
- * Get a response for a duel invitation.
- * @author Sahar
- */
 public final class DuelInviteResponse extends PacketReader<Client>
 {
 	private DuelInviteResult _response;

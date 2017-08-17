@@ -6,10 +6,6 @@ import client.Client;
 import network.PacketReader;
 import sal.SalScreen;
 
-/**
- * Get turn change with attached information from the server.
- * @author Sahar
- */
 public final class TurnChangeResponse extends PacketReader<Client>
 {
 	// Chess

@@ -8,10 +8,6 @@ import objects.GameId;
 import sal.SalScreen;
 import windows.WaitingRoom;
 
-/**
- * Get parameters for starting a specific multiplayer game.
- * @author Sahar
- */
 public final class GameStartResponse extends PacketReader<Client>
 {
 	private boolean _isStarting;

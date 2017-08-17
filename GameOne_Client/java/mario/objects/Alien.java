@@ -9,10 +9,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * An alien object.
- * @author Sahar
- */
 public final class Alien extends AbstractObject
 {
 	private static final long serialVersionUID = 3074246994132545775L;

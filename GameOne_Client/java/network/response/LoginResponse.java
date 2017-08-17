@@ -7,10 +7,6 @@ import network.PacketReader;
 import objects.LoginResult;
 import windows.GameSelect;
 
-/**
- * Packet holding the response for a login request.
- * @author Sahar
- */
 public final class LoginResponse extends PacketReader<Client>
 {
 	private LoginResult _result;

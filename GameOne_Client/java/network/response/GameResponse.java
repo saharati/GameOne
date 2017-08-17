@@ -11,10 +11,6 @@ import tetris.TetrisScreen;
 import util.random.Rnd;
 import windows.GameSelect;
 
-/**
- * Packet responsible for carrying out actions on a specific game request.
- * @author Sahar
- */
 public final class GameResponse extends PacketReader<Client>
 {
 	private GameId _gameId;

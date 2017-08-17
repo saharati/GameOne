@@ -3,10 +3,6 @@ package configs;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Class holding all game configs as they were received from the server.
- * @author Sahar
- */
 public final class GameConfig
 {
 	private static final Logger LOGGER = Logger.getLogger(GameConfig.class.getName());

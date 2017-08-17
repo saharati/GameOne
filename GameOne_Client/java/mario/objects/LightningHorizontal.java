@@ -5,10 +5,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * Horizontal lightning object, delevels player if hit.
- * @author Sahar
- */
 public final class LightningHorizontal extends AbstractObject
 {
 	private static final long serialVersionUID = 5341500261621411180L;

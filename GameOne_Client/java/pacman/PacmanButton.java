@@ -9,10 +9,6 @@ import javax.swing.JButton;
 
 import objects.pacman.PacmanObject;
 
-/**
- * Buttons used in pacman map builder to place objects.
- * @author Sahar
- */
 public final class PacmanButton extends JButton
 {
 	private static final long serialVersionUID = -3053069584521532928L;

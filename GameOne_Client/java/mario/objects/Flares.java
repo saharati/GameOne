@@ -7,10 +7,6 @@ import mario.SuperMario;
 import mario.MarioTaskManager;
 import objects.mario.MarioType;
 
-/**
- * A flares bar splitting flames at a fixed rate.
- * @author Sahar
- */
 public final class Flares extends AbstractObject
 {
 	private static final long serialVersionUID = 3985108844407639047L;

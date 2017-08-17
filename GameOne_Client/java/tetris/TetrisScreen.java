@@ -19,10 +19,6 @@ import util.random.Rnd;
 import util.threadpool.ThreadPool;
 import windows.GameSelect;
 
-/**
- * Tetris game.
- * @author Sahar
- */
 public final class TetrisScreen extends JFrame implements Runnable
 {
 	private static final long serialVersionUID = 2788905536064599286L;

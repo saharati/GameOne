@@ -6,10 +6,6 @@ import network.PacketWriter;
 import objects.GameId;
 import sal.SalImage;
 
-/**
- * Requests a turn change for a specific MP game.
- * @author Sahar
- */
 public final class RequestTurnChange extends PacketWriter
 {
 	private final GameId _gameId;

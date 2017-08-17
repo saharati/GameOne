@@ -16,10 +16,6 @@ import client.Client;
 import network.request.RequestGameEdit;
 import objects.pacman.PacmanObject;
 
-/**
- * The panel with all controls needed to play around with maps.
- * @author Sahar
- */
 public final class PacmanPanel extends JPanel
 {
 	private static final long serialVersionUID = -7219243836284960529L;

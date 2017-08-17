@@ -26,10 +26,6 @@ import pacman.objects.PacmanMapObject;
 import util.random.Rnd;
 import util.threadpool.ThreadPool;
 
-/**
- * A map level in pacman.
- * @author Sahar
- */
 public final class PacmanMap extends JFrame
 {
 	private static final long serialVersionUID = -9081629023961869616L;

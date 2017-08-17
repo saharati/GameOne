@@ -35,10 +35,6 @@ import tetris.TetrisScreen;
 import util.ComponentUtil;
 import util.LengthDocumentFilter;
 
-/**
- * Game select window.
- * @author Sahar
- */
 public final class GameSelect extends JFrame
 {
 	private static final long serialVersionUID = 4663554734276386234L;

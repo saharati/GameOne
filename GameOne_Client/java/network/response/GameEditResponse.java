@@ -8,10 +8,6 @@ import network.PacketReader;
 import objects.GameEditResult;
 import pacman.PacmanBuilder;
 
-/**
- * Response from the server about a game edit request.
- * @author Sahar
- */
 public final class GameEditResponse extends PacketReader<Client>
 {
 	private GameEditResult _response;

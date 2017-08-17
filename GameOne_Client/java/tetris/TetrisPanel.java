@@ -7,10 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-/**
- * A single square in the tetris board.
- * @author Sahar
- */
 public final class TetrisPanel extends JPanel
 {
 	private static final long serialVersionUID = -8339887710661682620L;

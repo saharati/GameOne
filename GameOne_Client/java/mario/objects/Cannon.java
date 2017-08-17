@@ -4,10 +4,6 @@ import mario.SuperMario;
 import mario.MarioTaskManager;
 import objects.mario.MarioType;
 
-/**
- * A cannon that shoots instances of Ball.
- * @author Sahar
- */
 public final class Cannon extends AbstractObject
 {
 	private static final long serialVersionUID = 6115647376073107854L;

@@ -13,10 +13,6 @@ import objects.mario.MarioType;
 import util.Direction;
 import util.random.Rnd;
 
-/**
- * The player instance.
- * @author Sahar
- */
 public final class Player extends AbstractObject
 {
 	private static final long serialVersionUID = -5619383353466379122L;

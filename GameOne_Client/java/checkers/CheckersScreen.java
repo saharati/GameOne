@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
@@ -47,13 +46,13 @@ public final class CheckersScreen extends JFrame
 				IMAGES.put(file.getName().substring(0, file.getName().lastIndexOf('.')), new ImageIcon(file.getAbsolutePath()).getImage());
 	}
 	
-	protected final CheckersButton[][] _buttons = new CheckersButton[BOARD_SIZE][BOARD_SIZE];
-	protected Map<int[], int[]> _possibleEats = new HashMap<>();
-	protected List<int[]> _possibleRoute = new ArrayList<>();
+	protected final CheckersCell[][] _buttons = new CheckersCell[BOARD_SIZE][BOARD_SIZE];
+	protected final List<CheckersCell> _possibleRoute = new ArrayList<>();
+	protected final Map<CheckersCell, CheckersCell> _possibleEats = new HashMap<>();
+	
 	protected String _myColor;
 	protected boolean _myTurn;
-	protected String _selectedSoldierName;
-	protected int[] _selectedSoldierPosition;
+	protected CheckersCell _selectedSoldier;
 	
 	protected CheckersScreen()
 	{
@@ -84,6 +83,7 @@ public final class CheckersScreen extends JFrame
 		
 		boolean turn = false;
 		
+		final CellClick ml = new CellClick();
 		if (_myTurn)
 		{
 			for (int i = 0;i < BOARD_SIZE;i++)
@@ -92,22 +92,22 @@ public final class CheckersScreen extends JFrame
 				{
 					// White blocks.
 					if (turn)
-						_buttons[i][j] = new CheckersButton(null, turn);
+						_buttons[i][j] = new CheckersCell("", i, j, turn);
 					// Empty blocks.
 					else if (i == 3 || i == 4)
 					{
-						_buttons[i][j] = new CheckersButton(null, turn);
-						_buttons[i][j].addMouseListener(new CellClick(i, j));
+						_buttons[i][j] = new CheckersCell("", i, j, turn);
+						_buttons[i][j].addMouseListener(ml);
 					}
 					// Blocks with players.
 					else
 					{
 						if (i < 3)
-							_buttons[i][j] = new CheckersButton("soldier-black", turn);
+							_buttons[i][j] = new CheckersCell("soldier-black", i, j, turn);
 						else
-							_buttons[i][j] = new CheckersButton("soldier-white", turn);
+							_buttons[i][j] = new CheckersCell("soldier-white", i, j, turn);
 						
-						_buttons[i][j].addMouseListener(new CellClick(i, j));
+						_buttons[i][j].addMouseListener(ml);
 					}
 					
 					add(_buttons[i][j]);
@@ -126,22 +126,22 @@ public final class CheckersScreen extends JFrame
 				{
 					// White blocks.
 					if (turn)
-						_buttons[i][j] = new CheckersButton(null, turn);
+						_buttons[i][j] = new CheckersCell("", i, j, turn);
 					// Empty blocks.
 					else if (i == 3 || i == 4)
 					{
-						_buttons[i][j] = new CheckersButton(null, turn);
-						_buttons[i][j].addMouseListener(new CellClick(i, j));
+						_buttons[i][j] = new CheckersCell("", i, j, turn);
+						_buttons[i][j].addMouseListener(ml);
 					}
 					// Blocks with players.
 					else
 					{
 						if (i < 3)
-							_buttons[i][j] = new CheckersButton("soldier-black", turn);
+							_buttons[i][j] = new CheckersCell("soldier-black", i, j, turn);
 						else
-							_buttons[i][j] = new CheckersButton("soldier-white", turn);
+							_buttons[i][j] = new CheckersCell("soldier-white", i, j, turn);
 						
-						_buttons[i][j].addMouseListener(new CellClick(i, j));
+						_buttons[i][j].addMouseListener(ml);
 					}
 					
 					add(_buttons[i][j]);
@@ -188,7 +188,7 @@ public final class CheckersScreen extends JFrame
 		// [2] - Eat, if exists.
 		if (GameConfig.CHECKERS_PAINT_MOVES)
 			_buttons[moves[0][0]][moves[0][1]].setBackground(Color.PINK);
-		_buttons[moves[0][0]][moves[0][1]].setImage(null, true);
+		_buttons[moves[0][0]][moves[0][1]].setImage("", true);
 		if (!image.isEmpty())
 		{
 			if (GameConfig.CHECKERS_PAINT_MOVES)
@@ -199,7 +199,7 @@ public final class CheckersScreen extends JFrame
 			{
 				if (GameConfig.CHECKERS_PAINT_MOVES)
 					_buttons[moves[2][0]][moves[2][1]].setBackground(Color.RED);
-				_buttons[moves[2][0]][moves[2][1]].setImage(null, true);
+				_buttons[moves[2][0]][moves[2][1]].setImage("", true);
 				
 				if (GameConfig.BURN_PLAYERS)
 				{
@@ -207,11 +207,9 @@ public final class CheckersScreen extends JFrame
 					_myColor = _myColor.equals("white") ? "black" : "white";
 					// Check if the player can eat anything else in the spot it moved to.
 					movementHandler(moves[1][0], moves[1][1]);
+					// Nothing to eat, its my turn.
 					if (_possibleEats.isEmpty())
-					{
-						// Nothing to eat, its my turn.
 						setTurn();
-					}
 					// Reset back variables.
 					_myColor = _myColor.equals("white") ? "black" : "white";
 					_possibleEats.clear();
@@ -234,14 +232,9 @@ public final class CheckersScreen extends JFrame
 		}
 	}
 	
-	public int calcScore()
-	{
-		return Math.max(getScoreOfColor("black"), getScoreOfColor("white"));
-	}
-	
 	protected void movementHandler(final int i, final int j)
 	{
-		if (_buttons[i][j].getName().equals("queen"))
+		if (_buttons[i][j].getImage().startsWith("queen"))
 		{
 			if (GameConfig.QUEEN_SINGLE_STEP)
 			{
@@ -253,13 +246,13 @@ public final class CheckersScreen extends JFrame
 				// Flag holding the first index for eat possibility.
 				// Queen cannot eat more than one soldier at once.
 				// As well as any index beyond the first eat index should be added to _possibleEats.
-				int[] engaged = null;
+				CheckersCell engaged = null;
 				
 				// Search main diagonal.
 				for (int x = i + 1, y = j + 1;x < BOARD_SIZE && y < BOARD_SIZE;x++, y++)
 				{
 					// If spot taken by self, break.
-					if (_myColor.equals(_buttons[x][y].getColor()))
+					if (_buttons[x][y].getImage().endsWith(_myColor))
 						break;
 					// If spot taken by enemy.
 					if (hasEnemy(x, y))
@@ -270,14 +263,13 @@ public final class CheckersScreen extends JFrame
 						// Allow to eat only if there's no other soldier behind it.
 						if (canEat(x, y, Direction.BELOW, Direction.RIGHT))
 						{
-							final int[] goIndex = new int[] {x + 1, y + 1};
-							final int[] eatIndex = new int[] {x, y};
-							_possibleEats.put(goIndex, eatIndex);
-							_possibleRoute.add(goIndex);
+							_possibleEats.put(_buttons[x + 1][y + 1], _buttons[x][y]);
+							_possibleRoute.add(_buttons[x + 1][y + 1]);
+							
+							engaged = _buttons[x][y];
 							
 							x++;
 							y++;
-							engaged = eatIndex;
 						}
 						else
 							break;
@@ -285,18 +277,17 @@ public final class CheckersScreen extends JFrame
 					// Spot empty.
 					else
 					{
-						final int[] goIndex = new int[] {x, y};
-						_possibleRoute.add(goIndex);
+						_possibleRoute.add(_buttons[x][y]);
 						
 						if (engaged != null)
-							_possibleEats.put(goIndex, engaged);
+							_possibleEats.put(_buttons[x][y], engaged);
 					}
 				}
 				engaged = null;
 				for (int x = i - 1, y = j - 1;x >= 0 && y >= 0;x--, y--)
 				{
 					// If spot taken by self, break.
-					if (_myColor.equals(_buttons[x][y].getColor()))
+					if (_buttons[x][y].getImage().endsWith(_myColor))
 						break;
 					// If spot taken by enemy.
 					if (hasEnemy(x, y))
@@ -307,14 +298,13 @@ public final class CheckersScreen extends JFrame
 						// Allow to eat only if there's no other soldier behind it.
 						if (canEat(x, y, Direction.ABOVE, Direction.LEFT))
 						{
-							final int[] goIndex = new int[] {x - 1, y - 1};
-							final int[] eatIndex = new int[] {x, y};
-							_possibleEats.put(goIndex, eatIndex);
-							_possibleRoute.add(goIndex);
+							_possibleEats.put(_buttons[x - 1][y - 1], _buttons[x][y]);
+							_possibleRoute.add(_buttons[x - 1][y - 1]);
+							
+							engaged = _buttons[x][y];
 							
 							x--;
 							y--;
-							engaged = eatIndex;
 						}
 						else
 							break;
@@ -322,11 +312,10 @@ public final class CheckersScreen extends JFrame
 					// Spot empty.
 					else
 					{
-						final int[] goIndex = new int[] {x, y};
-						_possibleRoute.add(goIndex);
+						_possibleRoute.add(_buttons[x][y]);
 						
 						if (engaged != null)
-							_possibleEats.put(goIndex, engaged);
+							_possibleEats.put(_buttons[x][y], engaged);
 					}
 				}
 				
@@ -336,7 +325,7 @@ public final class CheckersScreen extends JFrame
 				for (int x = i + 1, y = j - 1;x < BOARD_SIZE && y >= 0;x++, y--)
 				{
 					// If spot taken by self, break.
-					if (_myColor.equals(_buttons[x][y].getColor()))
+					if (_buttons[x][y].getImage().endsWith(_myColor))
 						break;
 					// If spot taken by enemy.
 					if (hasEnemy(x, y))
@@ -347,14 +336,13 @@ public final class CheckersScreen extends JFrame
 						// Allow to eat only if there's no other soldier behind it.
 						if (canEat(x, y, Direction.BELOW, Direction.LEFT))
 						{
-							final int[] goIndex = new int[] {x + 1, y - 1};
-							final int[] eatIndex = new int[] {x, y};
-							_possibleEats.put(goIndex, eatIndex);
-							_possibleRoute.add(goIndex);
+							_possibleEats.put(_buttons[x + 1][y - 1], _buttons[x][y]);
+							_possibleRoute.add(_buttons[x + 1][y - 1]);
+							
+							engaged = _buttons[x][y];
 							
 							x++;
 							y--;
-							engaged = eatIndex;
 						}
 						else
 							break;
@@ -362,18 +350,17 @@ public final class CheckersScreen extends JFrame
 					// Spot empty.
 					else
 					{
-						final int[] goIndex = new int[] {x, y};
-						_possibleRoute.add(goIndex);
+						_possibleRoute.add(_buttons[x][y]);
 						
 						if (engaged != null)
-							_possibleEats.put(goIndex, engaged);
+							_possibleEats.put(_buttons[x][y], engaged);
 					}
 				}
 				engaged = null;
 				for (int x = i - 1, y = j + 1;x >= 0 && y < BOARD_SIZE;x--, y++)
 				{
 					// If spot taken by self, break.
-					if (_myColor.equals(_buttons[x][y].getColor()))
+					if (_buttons[x][y].getImage().endsWith(_myColor))
 						break;
 					// If spot taken by enemy.
 					if (hasEnemy(x, y))
@@ -384,14 +371,13 @@ public final class CheckersScreen extends JFrame
 						// Allow to eat only if there's no other soldier behind it.
 						if (canEat(x, y, Direction.ABOVE, Direction.RIGHT))
 						{
-							final int[] goIndex = new int[] {x - 1, y + 1};
-							final int[] eatIndex = new int[] {x, y};
-							_possibleEats.put(goIndex, eatIndex);
-							_possibleRoute.add(goIndex);
+							_possibleEats.put(_buttons[x - 1][y + 1], _buttons[x][y]);
+							_possibleRoute.add(_buttons[x - 1][y + 1]);
+							
+							engaged = _buttons[x][y];
 							
 							x--;
 							y++;
-							engaged = eatIndex;
 						}
 						else
 							break;
@@ -399,40 +385,31 @@ public final class CheckersScreen extends JFrame
 					// Spot empty.
 					else
 					{
-						final int[] goIndex = new int[] {x, y};
-						_possibleRoute.add(goIndex);
+						_possibleRoute.add(_buttons[x][y]);
 						
 						if (engaged != null)
-							_possibleEats.put(goIndex, engaged);
+							_possibleEats.put(_buttons[x][y], engaged);
 					}
 				}
 			}
 		}
 		else
 		{
-			if (_buttons[i][j].getColor().equals("white"))
+			if (_buttons[i][j].getImage().endsWith("white"))
 				checkDirection(i, j, Direction.ABOVE);
 			else
 				checkDirection(i, j, Direction.BELOW);
 		}
 	}
 	
-	protected boolean canMove(final int i, final int j)
+	protected boolean canMove(final CheckersCell target)
 	{
-		for (final int[] route : _possibleRoute)
-			if (route[0] == i && route[1] == j)
-				return true;
-		
-		return false;
+		return _possibleRoute.contains(target);
 	}
 	
-	protected int[] getEatIndex(final int i, final int j)
+	protected CheckersCell getEatIndex(final CheckersCell source)
 	{
-		for (final Entry<int[], int[]> eats : _possibleEats.entrySet())
-			if (eats.getKey()[0] == i && eats.getKey()[1] == j)
-				return eats.getValue();
-		
-		return null;
+		return _possibleEats.get(source);
 	}
 	
 	protected void setTurn()
@@ -443,20 +420,41 @@ public final class CheckersScreen extends JFrame
 		_myTurn = true;
 	}
 	
-	private static boolean isLegitSpot(final int i, final int j)
+	private boolean lost()
 	{
-		return i >= 0 && j >= 0 && i < BOARD_SIZE && j < BOARD_SIZE;
+		for (final CheckersCell[] cells : _buttons)
+			for (final CheckersCell cell : cells)
+				if (cell.getImage().endsWith(_myColor))
+					return false;
+		
+		return true;
+	}
+	
+	private int getScoreOfColor(final String color)
+	{
+		int score = 0;
+		for (final CheckersCell[] cells : _buttons)
+			for (final CheckersCell cell : cells)
+				if (cell.getImage().endsWith(color))
+					score++;
+		
+		return score;
+	}
+	
+	private int calcScore()
+	{
+		return Math.max(getScoreOfColor("black"), getScoreOfColor("white"));
 	}
 	
 	private boolean isEmptySpot(final int i, final int j)
 	{
-		return _buttons[i][j].getColor() == null;
+		return _buttons[i][j].getImage().isEmpty();
 	}
 	
 	private boolean hasEnemy(final int i, final int j)
 	{
 		final String enemyColor = _myColor.equals("white") ? "black" : "white";
-		return enemyColor.equals(_buttons[i][j].getColor());
+		return _buttons[i][j].getImage().endsWith(enemyColor);
 	}
 	
 	private boolean canEat(int i, int j, final Direction verticalDirection, final Direction horizontalDirection)
@@ -499,49 +497,23 @@ public final class CheckersScreen extends JFrame
 				continue;
 			
 			if (isEmptySpot(x, y))
-				_possibleRoute.add(new int[] {x, y});
+				_possibleRoute.add(_buttons[x][y]);
 			else if (canEat(x, y, verticalDirection, horizontalDirection))
 			{
 				final int[] goIndex = new int[] {verticalDirection == Direction.ABOVE ? x - 1 : x + 1, horizontalDirection == Direction.LEFT ? y - 1 : y + 1};
-				final int[] eatIndex = new int[] {x, y};
-				_possibleEats.put(goIndex, eatIndex);
-				_possibleRoute.add(goIndex);
+				_possibleEats.put(_buttons[goIndex[0]][goIndex[1]], _buttons[x][y]);
+				_possibleRoute.add(_buttons[goIndex[0]][goIndex[1]]);
 			}
 		}
 	}
 	
-	private boolean lost()
+	private static boolean isLegitSpot(final int i, final int j)
 	{
-		for (int i = 0;i < BOARD_SIZE;i++)
-			for (int j = 0;j < BOARD_SIZE;j++)
-				if (_myColor.equals(_buttons[i][j].getColor()))
-					return false;
-		
-		return true;
+		return i >= 0 && j >= 0 && i < BOARD_SIZE && j < BOARD_SIZE;
 	}
 	
-	private int getScoreOfColor(final String color)
+	protected class CellClick extends MouseAdapter
 	{
-		int score = 0;
-		for (int i = 0;i < BOARD_SIZE;i++)
-			for (int j = 0;j < BOARD_SIZE;j++)
-				if (color.equals(_buttons[i][j].getColor()))
-					score++;
-		
-		return score;
-	}
-	
-	private class CellClick extends MouseAdapter
-	{
-		private int _i;
-		private int _j;
-		
-		protected CellClick(final int i, final int j)
-		{
-			_i = i;
-			_j = j;
-		}
-		
 		@Override
 		public void mousePressed(final MouseEvent e)
 		{
@@ -551,20 +523,21 @@ public final class CheckersScreen extends JFrame
 				return;
 			}
 			
-			if (_selectedSoldierName == null)
+			final CheckersCell cell = (CheckersCell) e.getSource();
+			if (_selectedSoldier == null)
 			{
-				if (_buttons[_i][_j].getName() == null)
+				if (cell.getImage().isEmpty())
 				{
 					JOptionPane.showMessageDialog(null, "Please select a soldier to move first.", "Select a soldier", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				if (!_buttons[_i][_j].getColor().equals(_myColor))
+				if (!cell.getImage().endsWith(_myColor))
 				{
 					JOptionPane.showMessageDialog(null, "This is not your soldier.", "Illegal action", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				movementHandler(_i, _j);
+				movementHandler(cell.getI(), cell.getJ());
 				if (_possibleRoute.size() == 0)
 				{
 					JOptionPane.showMessageDialog(null, "This soldier cannot move anywhere.", "Cannot move", JOptionPane.ERROR_MESSAGE);
@@ -572,29 +545,27 @@ public final class CheckersScreen extends JFrame
 				}
 				
 				if (GameConfig.CHECKERS_PAINT_ROUTE)
-					for (final int[] route : _possibleRoute)
-						_buttons[route[0]][route[1]].setBackground(Color.YELLOW);
-				_buttons[_i][_j].setBackground(Color.ORANGE);
+					for (final CheckersCell route : _possibleRoute)
+						route.setBackground(Color.YELLOW);
+				cell.setBackground(Color.ORANGE);
 				
-				_selectedSoldierName = _buttons[_i][_j].getFullName();
-				_selectedSoldierPosition = new int[] {_i, _j};
+				_selectedSoldier = cell;
 			}
 			else
 			{
-				if (_i == _selectedSoldierPosition[0] && _j == _selectedSoldierPosition[1])
+				if (_selectedSoldier == cell)
 				{
 					if (GameConfig.CHECKERS_PAINT_ROUTE)
-						for (final int[] route : _possibleRoute)
-							_buttons[route[0]][route[1]].setBackground(_buttons[route[0]][route[1]].getBackgroundColor());
-					_buttons[_i][_j].setBackground(_buttons[_i][_j].getBackgroundColor());
+						for (final CheckersCell route : _possibleRoute)
+							route.setBackground(route.getOriginalBackground());
+					cell.setBackground(cell.getOriginalBackground());
 					
-					_selectedSoldierName = null;
-					_selectedSoldierPosition = null;
+					_selectedSoldier = null;
 					_possibleRoute.clear();
 					_possibleEats.clear();
 					return;
 				}
-				if (!canMove(_i, _j))
+				if (!canMove(cell))
 				{
 					JOptionPane.showMessageDialog(null, "This soldier cannot move to this location.", "Cannot move", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -604,21 +575,23 @@ public final class CheckersScreen extends JFrame
 				
 				for (int i = 0;i < BOARD_SIZE;i++)
 					for (int j = 0;j < BOARD_SIZE;j++)
-						_buttons[i][j].setBackground(_buttons[i][j].getBackgroundColor());
+						_buttons[i][j].setBackground(_buttons[i][j].getOriginalBackground());
 				
-				_buttons[_selectedSoldierPosition[0]][_selectedSoldierPosition[1]].setImage(null, true);
+				String soldierName = _selectedSoldier.getImage();
+				
+				_selectedSoldier.setImage("", true);
 				if (_myColor.equals("white"))
 				{
-					if (_i == 0 && _selectedSoldierName.equals("soldier-" + _myColor))
-						_selectedSoldierName = "queen-" + _myColor;
+					if (cell.getI() == 0 && soldierName.equals("soldier-" + _myColor))
+						soldierName = "queen-" + _myColor;
 				}
 				else
 				{
-					if (_i == BOARD_SIZE - 1 && _selectedSoldierName.equals("soldier-" + _myColor))
-						_selectedSoldierName = "queen-" + _myColor;
+					if (cell.getI() == BOARD_SIZE - 1 && soldierName.equals("soldier-" + _myColor))
+						soldierName = "queen-" + _myColor;
 				}
 				
-				final int[] eatIndex = getEatIndex(_i, _j);
+				final CheckersCell eatIndex = getEatIndex(cell);
 				if (GameConfig.BURN_PLAYERS && eatIndex == null)
 				{
 					boolean burn = false;
@@ -626,7 +599,7 @@ public final class CheckersScreen extends JFrame
 					{
 						for (int j = 0;j < BOARD_SIZE && !burn;j++)
 						{
-							if (_myColor.equals(_buttons[i][j].getColor()))
+							if (_buttons[i][j].getImage().endsWith(_myColor))
 							{
 								_possibleEats.clear();
 								
@@ -640,30 +613,30 @@ public final class CheckersScreen extends JFrame
 					{
 						JOptionPane.showMessageDialog(null, "You must eat whenever possible and you didn't do so.", "Missed Eat", JOptionPane.INFORMATION_MESSAGE);
 					
-						_selectedSoldierName = null;
+						soldierName = null;
 					}
 					else
-						_buttons[_i][_j].setImage(_selectedSoldierName, true);
+						cell.setImage(soldierName, true);
 				}
 				else
-					_buttons[_i][_j].setImage(_selectedSoldierName, true);
+					cell.setImage(soldierName, true);
 				
-				final String image = _selectedSoldierName;
+				final String image = soldierName;
 				final int[][] moves = new int[3][2];
-				moves[0][0] = _selectedSoldierPosition[0];
-				moves[0][1] = _selectedSoldierPosition[1];
-				moves[1][0] = _i;
-				moves[1][1] = _j;
+				moves[0][0] = _selectedSoldier.getI();
+				moves[0][1] = _selectedSoldier.getJ();
+				moves[1][0] = cell.getI();
+				moves[1][1] = cell.getJ();
 				if (eatIndex != null)
 				{
-					_buttons[eatIndex[0]][eatIndex[1]].setImage(null, true);
+					eatIndex.setImage("", true);
 					
-					moves[2][0] = eatIndex[0];
-					moves[2][1] = eatIndex[1];
+					moves[2][0] = eatIndex.getI();
+					moves[2][1] = eatIndex.getJ();
 					
 					_possibleEats.clear();
 					
-					movementHandler(_i, _j);
+					movementHandler(cell.getI(), cell.getJ());
 					if (!_possibleEats.isEmpty())
 						setTurn();
 				}
@@ -673,8 +646,7 @@ public final class CheckersScreen extends JFrame
 					moves[2][1] = -1;
 				}
 				
-				_selectedSoldierName = null;
-				_selectedSoldierPosition = null;
+				_selectedSoldier = null;
 				_possibleEats.clear();
 				_possibleRoute.clear();
 				

@@ -20,10 +20,6 @@ import network.request.RequestGameEdit;
 import objects.mario.MarioType;
 import util.threadpool.ThreadPool;
 
-/**
- * Navigation bar in mario map builder.
- * @author Sahar
- */
 public final class SelectionPanel extends JPanel
 {
 	private static final long serialVersionUID = -8356976796308267070L;

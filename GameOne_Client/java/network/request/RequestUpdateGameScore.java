@@ -4,10 +4,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import objects.GameResult;
 
-/**
- * Packing updating server with new score data from current game.
- * @author Sahar
- */
 public final class RequestUpdateGameScore extends PacketWriter
 {
 	private final GameResult _result;

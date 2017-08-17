@@ -8,10 +8,6 @@ import objects.mario.MarioType;
 import util.Direction;
 import util.random.Rnd;
 
-/**
- * A shot made by a monster.
- * @author Sahar
- */
 public final class MonsterFire extends AbstractObject
 {
 	private static final long serialVersionUID = 4667015215144191407L;

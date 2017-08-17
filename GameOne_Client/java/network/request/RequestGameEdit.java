@@ -9,10 +9,6 @@ import network.PacketInfo;
 import network.PacketWriter;
 import pacman.PacmanButton;
 
-/**
- * Packet sending game edit request to the server.
- * @author Sahar
- */
 public final class RequestGameEdit extends PacketWriter
 {
 	// Mario

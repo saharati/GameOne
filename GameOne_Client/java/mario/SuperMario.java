@@ -44,10 +44,6 @@ import util.Direction;
 import util.threadpool.ThreadPool;
 import windows.GameSelect;
 
-/**
- * Super Mario map editor and game screen.
- * @author Sahar
- */
 public final class SuperMario extends JFrame implements Runnable
 {
 	private static final long serialVersionUID = 5147600842261285898L;

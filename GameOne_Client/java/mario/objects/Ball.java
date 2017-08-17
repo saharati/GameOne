@@ -8,10 +8,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A ball object shoot by Cannon.
- * @author Sahar
- */
 public final class Ball extends AbstractObject
 {
 	private static final long serialVersionUID = -271362941270521530L;

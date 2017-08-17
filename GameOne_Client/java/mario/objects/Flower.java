@@ -5,10 +5,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * A flower that comes out of an entrance cube.
- * @author Sahar
- */
 public final class Flower extends AbstractObject
 {
 	private static final long serialVersionUID = -1352175284717660778L;

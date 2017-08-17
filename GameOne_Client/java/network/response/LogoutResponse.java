@@ -10,10 +10,6 @@ import tetris.TetrisScreen;
 import windows.GameSelect;
 import windows.Login;
 
-/**
- * Packet indicates that logging out succeed.
- * @author Sahar
- */
 public final class LogoutResponse extends PacketReader<Client>
 {
 	@Override

@@ -7,10 +7,6 @@ import java.util.concurrent.TimeUnit;
 import mario.objects.AbstractObject;
 import util.threadpool.ThreadPool;
 
-/**
- * This class manages all animations.
- * @author Sahar
- */
 public final class MarioTaskManager extends CopyOnWriteArrayList<AbstractObject> implements Runnable
 {
 	private static final long serialVersionUID = 8406133696365848464L;

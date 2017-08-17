@@ -1,9 +1,5 @@
 package util;
 
-/**
- * Enum representing a specific direction.
- * @author Sahar
- */
 public enum Direction
 {
 	ABOVE,

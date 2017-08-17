@@ -23,10 +23,6 @@ import util.random.Rnd;
 import util.threadpool.ThreadPool;
 import windows.GameSelect;
 
-/**
- * Snake game.
- * @author Sahar
- */
 public final class SnakeScreen extends JFrame implements Runnable
 {
 	private static final long serialVersionUID = -7154700434188653121L;

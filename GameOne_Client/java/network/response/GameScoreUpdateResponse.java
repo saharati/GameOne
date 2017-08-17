@@ -8,10 +8,6 @@ import objects.GameResult;
 import sal.SalScreen;
 import windows.Top;
 
-/**
- * Packet responsible for displaying out top lists for games.
- * @author Sahar
- */
 public final class GameScoreUpdateResponse extends PacketReader<Client>
 {
 	private GameResult _result;

@@ -10,10 +10,6 @@ import mario.MarioTaskManager;
 import objects.mario.MarioType;
 import util.Direction;
 
-/**
- * An alien boss object.
- * @author Sahar
- */
 public final class Alien2 extends AbstractObject
 {
 	private static final long serialVersionUID = 75038392805825335L;

@@ -8,10 +8,6 @@ import objects.mario.MarioType;
 import util.Direction;
 import util.random.Rnd;
 
-/**
- * A breakable cube object.
- * @author Sahar
- */
 public final class BreakableCube extends AbstractObject
 {
 	private static final long serialVersionUID = 2694706540045414476L;

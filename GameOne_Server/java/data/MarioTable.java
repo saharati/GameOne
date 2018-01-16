@@ -49,17 +49,20 @@ public final class MarioTable
 			{
 				ps.execute();
 			}
-			try (final PreparedStatement ps = con.prepareStatement(INSERT))
+			if (!_objects.isEmpty())
 			{
-				for (final MarioObject o : _objects)
+				try (final PreparedStatement ps = con.prepareStatement(INSERT))
 				{
-					ps.setInt(1, o.getX());
-					ps.setInt(2, o.getY());
-					ps.setInt(3, o.getType().ordinal());
-					ps.addBatch();
+					for (final MarioObject o : _objects)
+					{
+						ps.setInt(1, o.getX());
+						ps.setInt(2, o.getY());
+						ps.setInt(3, o.getType().ordinal());
+						ps.addBatch();
+					}
+					
+					ps.executeBatch();
 				}
-				
-				ps.executeBatch();
 			}
 		}
 		catch (final SQLException e)

@@ -32,7 +32,7 @@ public final class CommonConfig
 		
 		File logFile = new File(LOGS_FILE);
 		File threadFile;
-		// It exists only when running compiled version.
+		// Exists only when running compiled version.
 		if (logFile.exists())
 			threadFile = new File(THREADS_FILE);
 		// Doesn't exist when running through source.

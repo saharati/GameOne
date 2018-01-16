@@ -25,7 +25,7 @@ public final class RequestInviteToDuel extends PacketReader<GameClient>
 	{
 		final User user = client.getUser();
 		
-		// Static packet just to update user's status.
+		// Just update user's status.
 		if (_target.isEmpty())
 		{
 			if (user.isInGroup())
@@ -41,7 +41,7 @@ public final class RequestInviteToDuel extends PacketReader<GameClient>
 			else
 				user.setGroup(new UserGroup(user));
 		}
-		// Actually invite someone, update his status temporary as well.
+		// Invite someone, update his status as well.
 		else
 		{
 			if (_target.equals(user.getUsername()))

@@ -49,16 +49,19 @@ public final class AnnouncementsTable
 			{
 				ps.execute();
 			}
-			try (final PreparedStatement ps = con.prepareStatement(ADD_ANNOUNCEMENT))
+			if (!_announcements.isEmpty())
 			{
-				for (final Entry<Integer, String> ann : _announcements.entrySet())
+				try (final PreparedStatement ps = con.prepareStatement(ADD_ANNOUNCEMENT))
 				{
-					ps.setInt(1, ann.getKey());
-					ps.setString(2, ann.getValue());
-					ps.addBatch();
+					for (final Entry<Integer, String> ann : _announcements.entrySet())
+					{
+						ps.setInt(1, ann.getKey());
+						ps.setString(2, ann.getValue());
+						ps.addBatch();
+					}
+					
+					ps.executeBatch();
 				}
-				
-				ps.executeBatch();
 			}
 		}
 		catch (final SQLException e)

@@ -67,26 +67,29 @@ public final class PacmanTable
 			{
 				ps.execute();
 			}
-			try (final PreparedStatement ps = con.prepareStatement(INSERT_OBJECT))
+			if (!_maps.isEmpty())
 			{
-				for (final Entry<Integer, PacmanObject[][]> map : _maps.entrySet())
+				try (final PreparedStatement ps = con.prepareStatement(INSERT_OBJECT))
 				{
-					ps.setInt(1, map.getKey());
-					
-					final PacmanObject[][] objects = map.getValue();
-					for (int i = 0;i < objects.length;i++)
+					for (final Entry<Integer, PacmanObject[][]> map : _maps.entrySet())
 					{
-						for (int j = 0;j < objects[i].length;j++)
+						ps.setInt(1, map.getKey());
+						
+						final PacmanObject[][] objects = map.getValue();
+						for (int i = 0;i < objects.length;i++)
 						{
-							ps.setInt(2, i);
-							ps.setInt(3, j);
-							ps.setInt(4, objects[i][j].ordinal());
-							ps.addBatch();
+							for (int j = 0;j < objects[i].length;j++)
+							{
+								ps.setInt(2, i);
+								ps.setInt(3, j);
+								ps.setInt(4, objects[i][j].ordinal());
+								ps.addBatch();
+							}
 						}
 					}
+					
+					ps.executeBatch();
 				}
-				
-				ps.executeBatch();
 			}
 		}
 		catch (final SQLException e)

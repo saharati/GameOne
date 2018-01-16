@@ -5,13 +5,16 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import util.configs.Config;
 
 import java.beans.PropertyVetoException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
 public final class MysqlDatabase
 {
 	private static final Logger LOGGER = Logger.getLogger(MysqlDatabase.class.getName());
 	private static final ComboPooledDataSource SOURCE = new ComboPooledDataSource();
+	private static final String CREATE_DB = "CREATE DATABASE IF NOT EXISTS " + Config.MYSQL_DB_NAME;
 	
 	public static void load() throws PropertyVetoException, SQLException
 	{
@@ -34,11 +37,17 @@ public final class MysqlDatabase
 		SOURCE.setBreakAfterAcquireFailure(false); // false = avoid generating FATAL errors, so program will not crash.
 		
 		SOURCE.setDriverClass("com.mysql.jdbc.Driver");
-		SOURCE.setJdbcUrl(Config.MYSQL_URL);
 		SOURCE.setUser(Config.MYSQL_LOGIN);
 		SOURCE.setPassword(Config.MYSQL_PASSWORD);
+		SOURCE.setJdbcUrl(Config.MYSQL_URL);
 		
-		SOURCE.getConnection().close(); // Test the connection.
+		try (final Connection con = SOURCE.getConnection();
+			final Statement s = con.createStatement())
+		{
+			s.execute(CREATE_DB);
+		}
+		
+		SOURCE.setJdbcUrl(Config.MYSQL_URL + Config.MYSQL_DB_NAME);
 		
 		LOGGER.info("MySQL database loaded.");
 	}

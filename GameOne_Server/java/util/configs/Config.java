@@ -28,6 +28,7 @@ public final class Config
 	// --------------------------------------------------
 	public static int DATABASE_MAX_CONNECTIONS;
 	public static int DATABASE_MAX_IDLE_TIME;
+	public static String MYSQL_DB_NAME;
 	public static String MYSQL_URL;
 	public static String MYSQL_LOGIN;
 	public static String MYSQL_PASSWORD;
@@ -62,7 +63,8 @@ public final class Config
 		
 		DATABASE_MAX_CONNECTIONS = database.getProperty("MaximumDbConnections", 10, 10);
 		DATABASE_MAX_IDLE_TIME = database.getProperty("MaximumDbIdleTime", 0, 0);
-		MYSQL_URL = database.getProperty("MysqlUrl", "jdbc:mysql://localhost/gameOne");
+		MYSQL_DB_NAME = database.getProperty("MysqlDbName", "gameOne");
+		MYSQL_URL = database.getProperty("MysqlUrl", "jdbc:mysql://localhost/");
 		MYSQL_LOGIN = database.getProperty("MysqlLogin", "root");
 		MYSQL_PASSWORD = database.getProperty("MysqlPassword", "");
 		ACCESS_URL = database.getProperty("AccessUrl", "jdbc:ucanaccess://gameOne.accdb;");

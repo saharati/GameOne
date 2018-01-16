@@ -18,9 +18,6 @@
 				<include name="startServer.*" />
 				<include name="gameOne.accdb" />
 			</fileset>
-			<fileset dir="${commons}">
-				<include name="prefs.reg" />
-			</fileset>
 		</copy>
 		<copy todir="${build.dist}/libs">
 			<fileset dir="${basedir}/libs">
@@ -57,14 +54,6 @@
 				<include name="GameOne_Server.jar" />
 			</fileset>
 		</copy>
-		<jar destfile="${build.dist}/Database_Installer.jar">
-			<zipgroupfileset dir="${libs}" includes="*.jar" />
-			<fileset dir="${build.classes}" />
-			<manifest>
-				<attribute name="Main-Class" value="util.database.installer.Launcher" />
-				<attribute name="Class-Path" value="${classpath}" />
-			</manifest>
-		</jar>
 	</target>
 	
 	<target name="compile" depends="init" description="Compile the source.">

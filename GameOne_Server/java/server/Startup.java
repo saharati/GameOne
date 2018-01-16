@@ -50,6 +50,7 @@ public final class Startup
 		{
 			MysqlDatabase.load();
 			Database.setSource(MysqlDatabase.getSource());
+			Database.checkInstallation();
 		}
 		catch (final IOException e)
 		{
@@ -80,7 +81,7 @@ public final class Startup
 		
 		if (Config.DEADLOCK_DETECTOR)
 		{
-			LOGGER.info("Deadlock detector is enabled. Timer: " + Config.DEADLOCK_CHECK_INTERVAL + "ms.");
+			LOGGER.info("Deadlock detector is enabled, timer: " + Config.DEADLOCK_CHECK_INTERVAL + "ms.");
 			
 			final DeadLockDetector deadDetectThread = new DeadLockDetector();
 			deadDetectThread.setDaemon(true);
@@ -96,7 +97,7 @@ public final class Startup
 		
 		LOGGER.info("Server have started, used memory: " + usedMem + " / " + totalMem + " Mb.");
 		LOGGER.info("Server loaded in " + (ManagementFactory.getRuntimeMXBean().getUptime() / 1000) + " seconds.");
-		LOGGER.info("Maximum allowed players: " + Config.MAXIMUM_ONLINE_USERS);
+		LOGGER.info("Maximum allowed players: " + Config.MAXIMUM_ONLINE_USERS + ".");
 		
 		Toolkit.getDefaultToolkit().beep();
 	}

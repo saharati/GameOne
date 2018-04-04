@@ -12,8 +12,6 @@ public final class ChessCell extends JButton
 {
 	private static final long serialVersionUID = 608473057363743650L;
 	
-	private static final Dimension CELL_SIZE = new Dimension(100, 100);
-	
 	private final int _cellX;
 	private final int _cellY;
 	private final Color _backgroundColor;
@@ -25,7 +23,6 @@ public final class ChessCell extends JButton
 		_cellY = cellY;
 		_backgroundColor = turn ? Color.GRAY : Color.LIGHT_GRAY;
 		
-		setPreferredSize(CELL_SIZE);
 		setBackground(_backgroundColor);
 		setOpaque(true);
 	}
@@ -63,6 +60,9 @@ public final class ChessCell extends JButton
 		super.paintComponent(g);
 		
 		if (_object != null)
-			g.drawImage(_object.getImage(), 0, 0, null);
+		{
+			final Dimension dim = getRootPane().getSize();
+			g.drawImage(_object.getImage(), 0, 0, dim.width / 8, dim.height / 8, null);
+		}
 	}
 }

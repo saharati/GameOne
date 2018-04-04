@@ -27,7 +27,6 @@ import util.configs.Config;
 public final class Database
 {
 	private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
-	
 	private static final String CHECK_DATABASE = "SELECT COUNT(*) c FROM information_schema.tables WHERE table_schema=?";
 	
 	private static ComboPooledDataSource _source;

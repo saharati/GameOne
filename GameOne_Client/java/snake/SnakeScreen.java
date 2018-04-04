@@ -56,7 +56,6 @@ public final class SnakeScreen extends JFrame implements Runnable
 		}
 		
 		setLayout(new GridLayout(SCREEN_SIZE, SCREEN_SIZE));
-		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

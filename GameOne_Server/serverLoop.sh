@@ -9,6 +9,5 @@ while :; do
 	[ -f log/stdout.log ] && mv log/stdout.log "log/`date +%Y-%m-%d_%H-%M-%S`_stdout.log"
 	java -XX:+UseConcMarkSweepGC -Xmx256m -cp ./libs/*:GameOne_Server.jar server.Startup > log/stdout.log 2>&1
 	[ $? -ne 2 ] && break
-#	/etc/init.d/mysql restart
 	sleep 10
 done

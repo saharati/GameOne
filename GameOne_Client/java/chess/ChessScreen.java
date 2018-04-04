@@ -1,6 +1,7 @@
 package chess;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -31,11 +32,11 @@ public final class ChessScreen extends JFrame
 		super("GameOne Client - Chess");
 		
 		setLayout(_layout);
+		setMinimumSize(new Dimension(600, 600));
 		
 		add(ChessBoard.getInstance(), BOARD);
 		add(_promotionPanel, PROMOTION);
 		
-		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		LOGGER.info("Chess screen loaded.");

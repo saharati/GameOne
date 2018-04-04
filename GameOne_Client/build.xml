@@ -12,7 +12,7 @@
 		<mkdir dir="${build.dist}/configs" />
 		<mkdir dir="${build.dist}/images" />
 		<copy todir="${build.dist}">
-			<fileset dir="${commons}">
+			<fileset dir="${basedir}">
 				<include name="prefs.reg" />
 			</fileset>
 		</copy>

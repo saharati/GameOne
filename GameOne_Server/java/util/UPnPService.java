@@ -34,7 +34,6 @@ public final class UPnPService
 			LOGGER.info("Looking for UPnP Gateway Devices...");
 			_gatewayDiscover.discover();
 			
-			// Choose the first active gateway for the tests.
 			_activeGW = _gatewayDiscover.getValidGateway();
 			if (_activeGW == null)
 				LOGGER.info("No active UPnP gateway found.");

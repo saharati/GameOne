@@ -61,7 +61,6 @@ public final class ChessPromotion extends JPanel
 				LOGGER.log(Level.WARNING, "Failed initializing ChessPromotion: ", e);
 			}
 		}
-		_cardPanel.setMaximumSize(new Dimension(400, 100));
 		_cardPanel.add(optionsWhite, "white");
 		_cardPanel.add(optionsBlack, "black");
 		add(_cardPanel);
